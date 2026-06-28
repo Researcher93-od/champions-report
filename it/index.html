@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="{lingua}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{t_home_title} | {t_app_title}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0044ff;
+            --hover-blue: #0033cc;
+            --bg-light: #f8f9fa;
+            --text-dark: #333;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-light); 
+            color: var(--text-dark); 
+            line-height: 1.5;
+        }
+
+        /* HEADER E TITOLO 3D PREMIUM */
+        header { 
+            background: #fff; 
+            padding: 35px 0 25px 0; 
+            text-align: center; 
+            border-bottom: 1px solid #f0f0f0; 
+            position: relative; 
+        }
+        
+        .header-container { 
+            max-width: 650px; 
+            margin: 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 15px; 
+            position: relative; 
+        }
+
+        .main-title-3d {
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            font-size: 4rem;
+            color: var(--primary-blue);
+            display: inline-block;
+            letter-spacing: 2px;
+            margin: 0;
+            -webkit-text-stroke: 1.2px #93c5fd;
+            text-shadow:
+                1px 1px 0px #0033cc,
+                2px 2px 0px #0022aa,
+                3px 3px 0px #001188,
+                4px 4px 5px rgba(0, 17, 136, 0.4),
+                5px 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* SELETTORE LINGUA ELEGANTE */
+        .lang-selector { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 0.85rem; 
+        }
+        
+        .lang-selector select { 
+            padding: 6px 10px; 
+            border-radius: 8px; 
+            border: 1px solid #e0e0e0; 
+            background-color: #fff;
+            font-family: 'Inter', sans-serif; 
+            font-weight: 600;
+            color: #555;
+            cursor: pointer; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: border-color 0.2s;
+        }
+        
+        .lang-selector select:hover {
+            border-color: var(--primary-blue);
+        }
+
+        /* BARRA DI NAVIGAZIONE */
+        nav { 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            padding: 16px; 
+            background: #fff; 
+            border-bottom: 1px solid #f0f0f0; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+        }
+        
+        nav a { 
+            text-decoration: none; 
+            color: #666; 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            transition: color 0.2s, transform 0.2s; 
+        }
+        
+        nav a:hover { 
+            color: var(--primary-blue);
+            transform: translateY(-1px);
+        }
+
+        /* CONTENITORE EDITORIALE CENTRALE */
+        .container { 
+            max-width: 650px; 
+            margin: 30px auto; 
+            padding: 30px; 
+            background: #fff; 
+            border-radius: 12px; 
+            box-shadow: var(--container-shadow); 
+        }
+        
+        h1 { 
+            font-weight: 600; 
+            color: #111; 
+            line-height: 1.25; 
+            font-size: 2rem; 
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle { 
+            color: #666; 
+            font-size: 1rem; 
+            margin-bottom: 30px; 
+            font-weight: 300;
+        }
+
+        /* MONETIZZAZIONE BANNER SLOTS */
+        .ad-slot { 
+            margin: 30px 0; 
+            text-align: center; 
+            min-height: 50px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* COSTRUZIONE STRUTTURALI DELLE CARD ARTICOLI */
+        #news-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .card { 
+            border: 1px solid #f5f5f5;
+            border-radius: 10px;
+            padding: 15px; 
+            display: flex; 
+            gap: 20px; 
+            align-items: center; 
+            background: #fff;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 44, 255, 0.06);
+        }
+        
+        .card img { 
+            width: 140px; 
+            height: 95px; 
+            border-radius: 8px; 
+            object-fit: cover; 
+            flex-shrink: 0;
+        }
+        
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .card-title { 
+            font-size: 1.15rem; 
+            font-weight: 600; 
+            color: #111; 
+            text-decoration: none; 
+            line-height: 1.3;
+            transition: color 0.2s; 
+        }
+        
+        .card-title:hover { 
+            color: var(--primary-blue); 
+        }
+    </style>
+    {script_popunder}
+    {script_social_bar}
+</head>
+<body>
+
+    <header>
+        <div class="lang-selector">
+            <select onchange="location = '/' + this.value.toLowerCase() + '/' + location.pathname.split('/').pop();">
+                <option value="IT" {sel_it}>IT</option>
+                <option value="EN" {sel_en}>EN</option>
+                <option value="ES" {sel_es}>ES</option>
+                <option value="FR" {sel_fr}>FR</option>
+            </select>
+        </div>
+        <div class="header-container">
+            <h1 class="main-title-3d">{t_app_title}</h1>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/{lingua}/index.html">{t_home}</a>
+        <a href="/{lingua}/partite.html">{t_matches}</a>
+        <a href="/{lingua}/mercato.html">{t_market}</a>
+        <a href="/{lingua}/live.html">{t_live}</a>
+    </nav>
+
+    <main class="container">
+        <h1>{t_home_title}</h1>
+        <p class="subtitle">{t_home_subtitle}</p>
+
+        <div class="ad-slot">
+            {adsterra_banner_300x250_top}
+        </div>
+
+        <div id="news-feed">
+            <!-- CARD_SLOT -->
+        </div>
+
+        <div class="ad-slot">
+            {adsterra_banner_300x250_bottom}
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "nav": { "home": "Accueil", "matches": "Matchs", "market": "Mercato", "live": "En direct" },
+  "btn": { "watch_live": "REGARDEZ LE MATCH EN DIRECT" },
+  "app_title": "Champion's Report",
+  "t_app_title": "Champion's Report",
+  "t_home": "Accueil",
+  "t_matches": "Matchs",
+  "t_market": "Mercato",
+  "t_live": "En direct",
+  "t_home_title": "Toutes les Dernières Nouvelles du Football",
+  "t_home_subtitle": "Rapports, exclusivités et mises à jour en temps réel de notre équipe.",
+  "t_matches_title": "Calendriers et Classements Officiels",
+  "t_matches_subtitle": "Vérifiez les résultats et les prochains matchs de la compétition.",
+  "t_market_title": "Rapport del Mercato",
+  "t_market_subtitle": "Négociations, transferts officiels et rumeurs exclusives du marché.",
+  "t_live_score_title": "🔴 Scores en Temps Réel & Compositions Officielles",
+  "t_live_score_subtitle": "Analyse tactique en direct et positionnement des joueurs en temps réel.",
+  "t_live_waiting_message": "En attente du coup d'envoi ou aucun match en direct pour le moment.",
+  "t_btn_watch_live": "REGARDEZ LE MATCH EN DIRECT"
+}

@@ -1,0 +1,20 @@
+{
+  "nav": { "home": "Home", "matches": "Matches", "market": "Market", "live": "Live" },
+  "btn": { "watch_live": "WATCH THE MATCH LIVE" },
+  "app_title": "Champion's Report",
+  "t_app_title": "Champion's Report",
+  "t_home": "Home",
+  "t_matches": "Matches",
+  "t_market": "Market",
+  "t_live": "Live",
+  "t_home_title": "All the Latest Football News",
+  "t_home_subtitle": "Reports, exclusives, and real-time updates from our editorial team.",
+  "t_matches_title": "Official Schedules & Standings",
+  "t_matches_subtitle": "Check results and upcoming fixtures for the selected competition.",
+  "t_market_title": "Transfer Market Report",
+  "t_market_subtitle": "Negotiations, official deals, and exclusive international market rumors.",
+  "t_live_score_title": "🔴 Real-Time Scores & Official Lineups",
+  "t_live_score_subtitle": "Live tactical analysis and real-time player positioning on the pitch.",
+  "t_live_waiting_message": "Waiting for kick-off or no live match active at the moment.",
+  "t_btn_watch_live": "WATCH THE MATCH LIVE"
+}
