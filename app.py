@@ -349,7 +349,7 @@ def t_lang(key, target_lang):
 def build_rendered_html_package(l_target, section_title, content_structure):
     """Fonde chirurgicamente il template master generale con la pancia della pagina e i testi dei dizionari."""
     frontend_strings = get_frontend_locale(l_target)
-    
+
     # Costruzione dizionario di formattazione robusto contro chiavi mancanti nel JSON locale
     safe_formatting_map = {
         "t_app_title": frontend_strings.get("t_app_title", "Champion's Report"),
@@ -511,106 +511,15 @@ def genera_testo_gemini_ciclico(prompt_sistema, prompt_utente):
 # =====================================================================
 # 3. TEMPLATE STRUTTURALI RIGIDI PER NETWORK AUTOMATICO MULTIPAGINA
 # =====================================================================
-TEMPLATE_HTML_MASTER = """<!DOCTYPE html>
-<html lang="{lingua}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{titolo_articolo} | {t_app_title}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {{
-            --primary-blue: #0044ff;
-            --hover-blue: #0033cc;
-            --bg-light: #f8f9fa;
-            --text-dark: #333;
-        }}
+base_dir = os.path.dirname(__file__)
+template_path = os.path.join(base_dir, "template.html")
 
-        * {{ box-sizing: border-box; }}
-        body {{ font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-dark); margin: 0; padding: 0; }}
-        header {{ background: #fff; padding: 30px 0 20px 0; text-align: center; border-bottom: 1px solid #eee; position: relative; }}
-        .header-container {{ max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }}
-
-        .main-title-3d {{
-            font-family: 'Dancing Script', cursive;
-            font-weight: 700;
-            font-size: 3.8rem;
-            color: #0044ff;
-            display: inline-block;
-            letter-spacing: 2px;
-            margin: 0;
-            -webkit-text-stroke: 1.2px #93c5fd;
-            text-shadow:
-                1px 1px 0px #0033cc,
-                2px 2px 0px #0022aa,
-                3px 3px 0px #001188,
-                4px 4px 5px rgba(0, 17, 136, 0.4),
-                5px 5px 10px rgba(0, 0, 0, 0.15);
-        }}
-
-        .lang-selector {{ position: absolute; top: 10px; right: 20px; font-size: 0.85rem; }}
-        .lang-selector select {{ padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Inter', sans-serif; cursor: pointer; }}
-        nav {{ display: flex; justify-content: center; gap: 20px; padding: 15px; background: #fff; border-bottom: 1px solid #eee; }}
-        nav a {{ text-decoration: none; color: #555; font-weight: 400; font-size: 0.9rem; transition: color 0.2s; }}
-        nav a:hover {{ color: var(--primary-blue); }}
-
-        .container {{ max-width: 600px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }}
-        h1 {{ font-weight: 600; color: #111; line-height: 1.2; font-size: 1.8rem; margin-top: 10px; }}
-        h2 {{ font-weight: 400; color: #222; font-size: 1.4rem; }}
-        .subtitle {{ color: #666; font-size: 0.95rem; margin-top: -5px; margin-bottom: 20px; }}
-        .content {{ font-size: 1.1rem; line-height: 1.7; color: #444; }}
-        .cover-hero {{ width: 100%; height: auto; border-radius: 8px; margin: 15px 0; object-fit: cover; }}
-
-        .ad-slot {{ margin: 25px 0; text-align: center; min-height: 50px; }}
-        .btn-cta {{ display: block; background: var(--primary-blue); color: #fff; text-align: center; padding: 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 25px 0; transition: background 0.2s; }}
-        .btn-cta:hover {{ background: var(--hover-blue); }}
-
-        .card {{ border-bottom: 1px solid #eee; padding: 15px 0; display: flex; gap: 15px; align-items: center; }}
-        .card:last-child {{ border-bottom: none; }}
-        .card img {{ width: 120px; height: 80px; border-radius: 6px; object-fit: cover; }}
-        .card-title {{ font-size: 1.1rem; font-weight: 600; color: #111; text-decoration: none; transition: color 0.2s; }}
-        .card-title:hover {{ color: var(--primary-blue); }}
-
-        .pitch-container {{ perspective: 800px; width: 100%; margin: 30px 0; display: flex; justify-content: center; }}
-        .pitch {{ width: 100%; max-width: 500px; height: 350px; background: linear-gradient(180deg, #1b6613 0%, #298c1c 100%); border: 3px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.25); transform: rotateX(25deg); position: relative; overflow: hidden; border-radius: 4px; }}
-        .pitch-lines {{ position: absolute; width: 100%; height: 2px; background: rgba(255,255,255,0.6); top: 50%; transform: translateY(-50%); }}
-        .center-circle {{ position: absolute; width: 90px; height: 90px; border: 2px solid rgba(255,255,255,0.6); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }}
-        .player-node {{ position: absolute; width: 16px; height: 16px; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; transition: all 0.2s ease; z-index: 10; }}
-        .player-node:hover {{ width: 22px; height: 22px; z-index: 20; }}
-        .team-home {{ background: #ff3b30; border: 2px solid #fff; }}
-        .team-away {{ background: #007aff; border: 2px solid #fff; }}
-        .player-tooltip {{ visibility: hidden; background-color: rgba(0, 0, 0, 0.85); color: #fff; text-align: center; padding: 6px 10px; border-radius: 6px; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.75rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.2s; font-family: 'Inter', sans-serif; pointer-events: none; }}
-        .player-node:hover .player-tooltip {{ visibility: visible; opacity: 1; }}
-    </style>
-    {script_popunder}
-    {script_social_bar}
-</head>
-<body>
-    <header>
-        <div class="lang-selector">
-            <select onchange="location = '/' + this.value.toLowerCase() + '/' + location.pathname.split('/').pop();">
-                <option value="IT" {sel_it}>IT</option>
-                <option value="EN" {sel_en}>EN</option>
-                <option value="ES" {sel_es}>ES</option>
-                <option value="FR" {sel_fr}>FR</option>
-            </select>
-        </div>
-        <div class="header-container">
-            <h1 class="main-title-3d">{t_app_title}</h1>
-        </div>
-    </header>
-    <nav>
-        <a href="/{lingua}/index.html">{t_home}</a>
-        <a href="/{lingua}/partite.html">{t_matches}</a>
-        <a href="/{lingua}/mercato.html">{t_market}</a>
-        <a href="/{lingua}/live.html">{t_live}</a>
-    </nav>
-    <main class="container">
-        {page_content}
-    </main>
-</body>
-</html>
-"""
+if os.path.exists(template_path):
+    with open(template_path, "r", encoding="utf-8") as f:
+        TEMPLATE_HTML_MASTER = f.read()
+else:
+    st.error("Errore: Il file template.html non è stato trovato!")
+    st.stop()
 
 def fetch_github_file_raw(filename):
     try:
@@ -683,7 +592,7 @@ def cascading_home_and_market_update(l_target, base_slug, localized_title, art_c
         <div class="ad-slot">{st.secrets.get("MONETIZATION", {}).get("ADSTERRA_BANNER_300X250_BOTTOM", "")}</div>"""
 
         updated_html = build_rendered_html_package(l_target, section_title, content_structure)
-        
+
     push_to_github(target_file, updated_html, sha)
 
 def update_dynamic_matches_and_live(l_target, selected_league_id=None, selected_league_name=None):
@@ -726,7 +635,7 @@ def update_dynamic_matches_and_live(l_target, selected_league_id=None, selected_
     matches_html_content += f"<div class='ad-slot'>{st.secrets.get('MONETIZATION', {}).get('ADSTERRA_BANNER_300X250_BOTTOM', '')}</div>"
 
     final_matches_html = build_rendered_html_package(l_target, frontend_strings.get('t_matches_title', ''), matches_html_content)
-    
+
     _, sha_m = fetch_github_file_raw(f"{l_target}/partite.html")
     push_to_github(f"{l_target}/partite.html", final_matches_html, sha_m)
 
@@ -1018,7 +927,7 @@ with tab_config:
 
                 lang_current = st.session_state.lang
                 batch_html = build_rendered_html_package(lang_current, match, batch_article_content)
-                
+
                 slug_batch = f"{lang_current}/{match.lower().replace(' vs ', '-').replace(' ', '-')}.html"
                 if push_to_github(slug_batch, batch_html):
                     cascading_home_and_market_update(lang_current, f"{match.lower().replace(' vs ', '-').replace(' ', '-')}.html", match, "https://via.placeholder.com/120x80", is_market=False)
