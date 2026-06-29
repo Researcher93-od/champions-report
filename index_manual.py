@@ -1,31 +1,33 @@
-from googleapiclient.discovery import build
-import google.auth
+import requests
 
-# Carica le tue credenziali esistenti
-key_file = 'service-account.json'
-creds, _ = google.auth.load_credentials_from_file(key_file, scopes=['https://www.googleapis.com/auth/indexing'])
-service = build('indexing', 'v3', credentials=creds)
+# URL del file feed che pubblicherai su Cloudflare Pages
+feed_url = "https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/feed.xml"
 
-# Elenco dei 4 URL manuali pronti per l'indicizzazione istantanea
-urls = [
-    "https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/it.html",
-    "https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/en.html",
-    "https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/es.html",
-    "https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/fr.html"
-]
+# URL dell'Hub WebSub ufficiale di Google
+hub_url = "https://pubsubhubbub.appspot.com/"
 
-print("🚀 Avvio notifica push su Google Indexing API...")
+# Parametri richiesti dal protocollo WebSub
+payload = {"hub.mode": "publish", "hub.url": feed_url}
+
+print("🚀 Avvio notifica push tramite WebSub su Google Hub...")
 print("-" * 50)
 
-for url in urls:
-    lang = url.split('/')[-1].upper()
-    body = {'url': url, 'type': 'URL_UPDATED'}
-    
-    try:
-        response = service.urlNotifications().publish(body=body).execute()
-        print(f"✅ [{lang}] Inviato con successo!")
-    except Exception as e:
-        print(f"❌ [{lang}] Errore durante l'invio: {e}")
+try:
+    # Invia la richiesta HTTP POST all'hub pubblico di Google
+    response = requests.post(hub_url, data=payload)
+
+    # L'hub risponde con codice 204 (No Content) o 200 quando riceve il ping correttamente
+    if response.status_code in [200, 204]:
+        print("✅ [WebSub] Notifica inviata con successo!")
+        print(
+            "Googlebot ha ricevuto l'impulso per scansionare il tuo feed XML immediatamente."
+        )
+    else:
+        print(
+            f"❌ [WebSub] Errore dall'hub (Stato {response.status_code}): {response.text}"
+        )
+except Exception as e:
+    print(f"❌ Errore di connessione durante il ping: {e}")
 
 print("-" * 50)
 print("🏁 Operazione completata!")

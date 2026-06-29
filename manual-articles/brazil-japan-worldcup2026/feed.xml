@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/feed.xml" type="application/rss+xml" />
+  
+  <item>
+    <title>Diretta Brasile - Giappone Mondiali 2026</title>
+    <link>https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/it</guid>
+    <description>Cronaca in tempo reale e aggiornamenti della partita tra Brasile e Giappone.</description>
+  </item>
+  <item>
+    <title>Live Brazil - Japan World Cup 2026</title>
+    <link>https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/en</guid>
+    <description>Real-time coverage and live updates of the World Cup match between Brazil and Japan.</description>
+  </item>
+  <item>
+    <title>En vivo Brasil - Japón Mundial 2026</title>
+    <link>https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/es</guid>
+    <description>Narración en tiempo real y actualizaciones del partido entre Brasil y Japón del Mundial.</description>
+  </item>
+  <item>
+    <title>En direct Brésil - Japon Coupe du Monde 2026</title>
+    <link>https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/fr</guid>
+    <description>Suivi en direct et mises à jour du match de la Coupe du Monde entre le Brésil et le Japon.</description>
+  </item>
+</channel>
+</rss>
