@@ -187,7 +187,7 @@ LANGUAGES = {
         "finance_section_ledger": "📑 Registro Manual de Recibos y Pagos",
         "finance_section_stats": "📊 Dasísticas de Tráfico y Seguimiento de Clics en Tiempo Real",
         "finance_lbl_network": "Red Publicitaria / Fuente",
-        "finance_lbl_amount": "Monto Recibido ($ / €)",
+        "finance_lbl_amount": "Monto Recibido ($ / EM)",
         "finance_lbl_status": "Estado del Pago",
         "finance_status_paid": "Cobrado",
         "finance_status_pending": "Pendiente",
@@ -346,11 +346,23 @@ def t_lang(key, target_lang):
     locale_data = get_frontend_locale(target_lang)
     return locale_data.get(key, key)
 
+# =====================================================================
+# MOTORE DI COMPILAZIONE DINAMICA E COERENTE DEL TEMPLATE MASTER (I18N)
+# =====================================================================
 def build_rendered_html_package(l_target, section_title, content_structure):
-    """Fonde chirurgicamente il template master generale con la pancia della pagina e i testi dei dizionari."""
+    """Carica il template master generale dal disco e lo fonde con il modulo della pagina."""
+    base_dir = os.path.dirname(__file__)
+    template_path = os.path.join(base_dir, "template.html")
+    
+    if os.path.exists(template_path):
+        with open(template_path, "r", encoding="utf-8") as f:
+            master_template_content = f.read()
+    else:
+        st.error("Errore fatale: Il file template.html di base è mancante sul disco!")
+        st.stop()
+
     frontend_strings = get_frontend_locale(l_target)
 
-    # Costruzione dizionario di formattazione robusto contro chiavi mancanti nel JSON locale
     safe_formatting_map = {
         "t_app_title": frontend_strings.get("t_app_title", "Champion's Report"),
         "t_home": frontend_strings.get("t_home", "Home"),
@@ -360,7 +372,7 @@ def build_rendered_html_package(l_target, section_title, content_structure):
     }
     safe_formatting_map.update(frontend_strings)
 
-    return TEMPLATE_HTML_MASTER.format(
+    return master_template_content.format(
         lingua=l_target,
         titolo_articolo=section_title,
         script_popunder=st.secrets.get("MONETIZATION", {}).get("ADSTERRA_POPUNDER", ""),
@@ -373,15 +385,48 @@ def build_rendered_html_package(l_target, section_title, content_structure):
         **safe_formatting_map
     )
 
+def load_local_component_template(template_name):
+    """Carica un frammento HTML statico di sezione (partite.html, mercato.html, live.html) dal disco."""
+    try:
+        base_dir = os.path.dirname(__file__)
+        filepath = os.path.join(base_dir, template_name)
+        if os.path.exists(filepath):
+            with open(filepath, "r", encoding="utf-8") as f:
+                return f.read()
+    except Exception as e:
+        print(f"Errore lettura frammento {template_name}: {e}")
+    return ""
+
+# =====================================================================
+# MOTORE DI INDICIZZAZIONE AUTOMATICA RAPIDA (GOOGLE INDEXING API)
+# =====================================================================
 def ping_google_indexing(url):
-    """Placeholder nativo per l'invio delle notifiche a Google."""
-    pass
+    """Interroga il Service Account ed esegue una notifica push in tempo reale a Googlebot."""
+    key_file = 'service-account.json'
+    
+    if not os.path.exists(key_file):
+        print(f"⚠️ Chiamata Indexing API fallita: {key_file} non trovato localmente.")
+        return False
+        
+    try:
+        creds, _ = google.auth.load_credentials_from_file(
+            key_file, 
+            scopes=['https://www.googleapis.com/auth/indexing']
+        )
+        service = build('indexing', 'v3', credentials=creds)
+        body = {'url': url, 'type': 'URL_UPDATED'}
+        service.urlNotifications().publish(body=body).execute()
+        print(f"🚀 [API RAPIDA] Google Indexing notificato con successo per: {url}")
+        return True
+    except Exception as e:
+        print(f"❌ Errore interno Google Indexing API per {url}: {e}")
+        return False
 
 QUEUE_FILE = "scheduler_queue.json"
 FINANCE_FILE = "finance_register.csv"
 
 # =====================================================================
-# 1. CONFIGURAZIONE PAGINA E STRUTTURA GRAFICA 3D SENZA RIQUADRO
+# 1. CONFIGURAZIONE PAGINA E STRUTTURA GRAFICA 3D
 # =====================================================================
 st.set_page_config(
     page_title="Champion's Report - Console Admin",
@@ -509,18 +554,8 @@ def genera_testo_gemini_ciclico(prompt_sistema, prompt_utente):
     return f"Errore di generation dopo {max_tentativi} tentativi."
 
 # =====================================================================
-# 3. TEMPLATE STRUTTURALI RIGIDI PER NETWORK AUTOMATICO MULTIPAGINA
+# 3. INTERFACCIA GITHUB CONNESSI VIA REST API
 # =====================================================================
-base_dir = os.path.dirname(__file__)
-template_path = os.path.join(base_dir, "template.html")
-
-if os.path.exists(template_path):
-    with open(template_path, "r", encoding="utf-8") as f:
-        TEMPLATE_HTML_MASTER = f.read()
-else:
-    st.error("Errore: Il file template.html non è stato trovato!")
-    st.stop()
-
 def fetch_github_file_raw(filename):
     try:
         token = st.secrets["GITHUB"]["REPOSITORIES_TOKEN"]
@@ -580,18 +615,21 @@ def cascading_home_and_market_update(l_target, base_slug, localized_title, art_c
             updated_html = old_content.replace('<div id="news-feed">', f'<div id="news-feed">\n{new_card_html}').replace('<div id="market-feed">', f'<div id="market-feed">\n{new_card_html}')
     else:
         frontend_strings = get_frontend_locale(l_target)
-        section_title = frontend_strings.get('t_market_title', '') if is_market else frontend_strings.get('t_home_title', '')
-        section_sub = frontend_strings.get('t_market_subtitle', '') if is_market else frontend_strings.get('t_home_subtitle', '')
+        if is_market:
+            raw_comp = load_local_component_template("mercato.html")
+            section_title = frontend_strings.get('t_market_title', 'Mercato')
+        else:
+            section_title = frontend_strings.get('t_home_title', 'Home')
+            section_sub = frontend_strings.get('t_home_subtitle', '')
+            raw_comp = f"""<h1>{section_title}</h1><p class="subtitle">{section_sub}</p>
+            <div class="ad-slot">{st.secrets.get("MONETIZATION", {}).get("ADSTERRA_BANNER_300X250_TOP", "")}</div>
+            <div id="news-feed">{new_card_html}</div>
+            <div class="ad-slot">{st.secrets.get("MONETIZATION", {}).get("ADSTERRA_BANNER_300X250_BOTTOM", "")}</div>"""
 
-        content_structure = f"""<h1>{section_title}</h1>
-        <p class="subtitle">{section_sub}</p>
-        <div class="ad-slot">{st.secrets.get("MONETIZATION", {}).get("ADSTERRA_BANNER_300X250_TOP", "")}</div>
-        <div id="{"market-feed" if is_market else "news-feed"}">
-            {new_card_html}
-        </div>
-        <div class="ad-slot">{st.secrets.get("MONETIZATION", {}).get("ADSTERRA_BANNER_300X250_BOTTOM", "")}</div>"""
-
-        updated_html = build_rendered_html_package(l_target, section_title, content_structure)
+        if is_market:
+            raw_comp = raw_comp.replace('<div id="market-feed">', f'<div id="market-feed">\n{new_card_html}')
+            
+        updated_html = build_rendered_html_package(l_target, section_title, raw_comp)
 
     push_to_github(target_file, updated_html, sha)
 
@@ -613,105 +651,24 @@ def update_dynamic_matches_and_live(l_target, selected_league_id=None, selected_
 
     frontend_strings = get_frontend_locale(l_target)
 
-    matches_widget = f"""
-    <div id="wg-api-football-games"
-         data-host="v3.football.api-sports.io"
-         data-key="{api_key}"
-         data-league="{league_id}"
-         data-season="{current_year}"
-         data-theme="light"
-         data-refresh="0"
-         data-show-toolbar="true"
-         data-show-errors="false">
-    </div>
-    <script type="module" src="https://widgets.api-sports.io/2.0.3/widgets.js"></script>
-    """
-
-    matches_html_content = f"<h1>{frontend_strings.get('t_matches_title', '')}</h1>"
-    matches_html_content += f"<p class='subtitle'>{frontend_strings.get('t_matches_subtitle', '')}</p>"
-    matches_html_content += f"<h2>⚽ {comp_name} ({current_year})</h2>"
-    matches_html_content += f"<div class='ad-slot'>{st.secrets.get('MONETIZATION', {}).get('ADSTERRA_BANNER_300X250_TOP', '')}</div>"
-    matches_html_content += matches_widget
-    matches_html_content += f"<div class='ad-slot'>{st.secrets.get('MONETIZATION', {}).get('ADSTERRA_BANNER_300X250_BOTTOM', '')}</div>"
-
-    final_matches_html = build_rendered_html_package(l_target, frontend_strings.get('t_matches_title', ''), matches_html_content)
-
+    # 1. COMPILAZIONE COMPONENTE PARTITE
+    raw_matches_template = load_local_component_template("partite.html")
+    matches_widget_filled = raw_matches_template.replace('data-league="auto"', f'data-league="{league_id}"')
+    matches_widget_filled = matches_widget_filled.replace('data-key=""', f'data-key="{api_key}"')
+    matches_widget_filled = matches_widget_filled.replace('<h2>⚽ {t_app_title} - Live Brackets</h2>', f'<h2>⚽ {comp_name} ({current_year})</h2>')
+    
+    final_matches_html = build_rendered_html_package(l_target, frontend_strings.get('t_matches_title', 'Partite'), matches_widget_filled)
     _, sha_m = fetch_github_file_raw(f"{l_target}/partite.html")
     push_to_github(f"{l_target}/partite.html", final_matches_html, sha_m)
 
-    live_pitch_html = f"""
-    <h2>{frontend_strings.get('t_live_score_title', '')}</h2>
-    <p class="subtitle">{frontend_strings.get('t_live_score_subtitle', '')}</p>
-    <div class='ad-slot'>{st.secrets.get('MONETIZATION', {}).get('ADSTERRA_BANNER_300X250_TOP', '')}</div>
+    # 2. COMPILAZIONE COMPONENTE LIVE
+    raw_live_template = load_local_component_template("live.html")
+    live_filled = raw_live_template.replace('league={league_id}', f'league={league_id}')
+    live_filled = live_filled.replace('{api_key}', api_key)
+    live_filled = live_filled.replace('href="#"', f'href="{st.secrets.get("MONETIZATION", {}).get("STREAMING_AFFILIATE_URL", "#")}"')
 
-    <div class="pitch-container">
-        <div class="pitch">
-            <div class="pitch-lines"></div>
-            <div class="center-circle"></div>
-            <div id="players-layout-target"></div>
-        </div>
-    </div>
-
-    <script>
-        async function fetchTacticalLiveEngine() {{
-            try {{
-                const res = await fetch('https://v3.football.api-sports.io/fixtures?league={league_id}&current=true', {{
-                    method: 'GET',
-                    headers: {{
-                        'x-rapidapi-host': 'v3.football.api-sports.io',
-                        'x-rapidapi-key': '{api_key}'
-                    }}
-                }});
-                const data = await res.json();
-                if(!data.response || data.response.length === 0) {{
-                    document.getElementById('players-layout-target').innerHTML = "<div style='color:white; text-align:center; padding-top:160px; font-size:0.9rem;'>{frontend_strings.get('t_live_waiting_message', '')}</div>";
-                    return;
-                }}
-
-                const fixtureId = data.response[0].fixture.id;
-                const lineupRes = await fetch('https://v3.football.api-sports.io/fixtures/lineups?fixture=' + fixtureId, {{
-                    method: 'GET',
-                    headers: {{ 'x-rapidapi-host': 'v3.football.api-sports.io', 'x-rapidapi-key': '{api_key}' }}
-                }});
-                const lineupData = await lineupRes.json();
-
-                const target = document.getElementById('players-layout-target');
-                target.innerHTML = '';
-
-                if(lineupData.response && lineupData.response.length >= 2) {{
-                    lineupData.response[0].startXI.forEach(p => {{
-                        if(p.player.grid) {{
-                            const parts = p.player.grid.split(':');
-                            const x = parseFloat(parts[0]) * 8;
-                            const y = parseFloat(parts[1]) * 22;
-                            target.innerHTML += `<div class="player-node team-home" style="left: ${{x}}%; top: ${{y}}px;">
-                                <span class="player-tooltip">${{p.player.name}} (${{p.player.number}})</span>
-                            </div>`;
-                        }
-                    }});
-                    lineupData.response[1].startXI.forEach(p => {{
-                        if(p.player.grid) {{
-                            const parts = p.player.grid.split(':');
-                            const x = parseFloat(parts[0]) * 8;
-                            const y = 340 - (parseFloat(parts[1]) * 22);
-                            target.innerHTML += `<div class="player-node team-away" style="left: ${{x}}%; top: ${{y}}px;">
-                                <span class="player-tooltip">${{p.player.name}} (${{p.player.number}})</span>
-                            </div>`;
-                        }
-                    }});
-                }}
-            }} catch(e) {{ console.log('Live Widget Offline'); }}
-        }}
-        fetchTacticalLiveEngine();
-        setInterval(fetchTacticalLiveEngine, 60000);
-    </script>
-
-    <div class='ad-slot'>{st.secrets.get('MONETIZATION', {}).get('ADSTERRA_BANNER_300X250_BOTTOM', '')}</div>
-    <a href='{st.secrets.get("MONETIZATION", {}).get("STREAMING_AFFILIATE_URL", "#")}' class='btn-cta'>🔴 {frontend_strings.get('t_btn_watch_live', '')}</a>
-    """
-
-    final_live_html = build_rendered_html_package(l_target, frontend_strings.get('t_live', ''), live_pitch_html)
-    old_l, sha_l = fetch_github_file_raw(f"{l_target}/live.html")
+    final_live_html = build_rendered_html_package(l_target, frontend_strings.get('t_live', 'Live'), live_filled)
+    _, sha_l = fetch_github_file_raw(f"{l_target}/live.html")
     push_to_github(f"{l_target}/live.html", final_live_html, sha_l)
 
 # =====================================================================
@@ -802,6 +759,7 @@ with tab_editoriale:
                         with st.spinner(t("spinner_updating_matches")):
                             update_dynamic_matches_and_live(l_target, chosen_league_id, chosen_league_name)
 
+                        # Chiamata API Rapida nativa integrata
                         full_url = f"https://championsreport.editories.com/{full_filename}"
                         ping_google_indexing(full_url)
 
@@ -931,6 +889,8 @@ with tab_config:
                 slug_batch = f"{lang_current}/{match.lower().replace(' vs ', '-').replace(' ', '-')}.html"
                 if push_to_github(slug_batch, batch_html):
                     cascading_home_and_market_update(lang_current, f"{match.lower().replace(' vs ', '-').replace(' ', '-')}.html", match, "https://via.placeholder.com/120x80", is_market=False)
+                    
+                    # Chiamata API Rapida nativa integrata nel processo batch
                     ping_google_indexing(f"https://championsreport.editories.com/{slug_batch}")
 
                 time.sleep(1.2)
