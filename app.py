@@ -5,6 +5,7 @@ import datetime
 import json
 import os
 import base64
+import re
 import pandas as pd
 from google import genai
 import google.auth
@@ -353,7 +354,7 @@ def build_rendered_html_package(l_target, section_title, content_structure):
     """Carica il template master generale dal disco e lo fonde con il modulo della pagina."""
     base_dir = os.path.dirname(__file__)
     template_path = os.path.join(base_dir, "template.html")
-    
+
     if os.path.exists(template_path):
         with open(template_path, "r", encoding="utf-8") as f:
             master_template_content = f.read()
@@ -398,29 +399,157 @@ def load_local_component_template(template_name):
     return ""
 
 # =====================================================================
-# MOTORE DI INDICIZZAZIONE AUTOMATICA RAPIDA (GOOGLE INDEXING API)
+# MOTORE DI INDICIZZAZIONE AUTOMATICA RAPIDA (GOOGLE SEARCH CONSOLE)
 # =====================================================================
 def ping_google_indexing(url):
     """Interroga il Service Account ed esegue una notifica push in tempo reale a Googlebot."""
     key_file = 'service-account.json'
-    
+
     if not os.path.exists(key_file):
         print(f"⚠️ Chiamata Indexing API fallita: {key_file} non trovato localmente.")
         return False
-        
+
     try:
         creds, _ = google.auth.load_credentials_from_file(
-            key_file, 
+            key_file,
             scopes=['https://www.googleapis.com/auth/indexing']
         )
         service = build('indexing', 'v3', credentials=creds)
         body = {'url': url, 'type': 'URL_UPDATED'}
         service.urlNotifications().publish(body=body).execute()
-        print(f"🚀 [API RAPIDA] Google Indexing notificato con successo per: {url}")
+        print(f"🚀 [GSC API] Google Indexing notificato con successo per: {url}")
         return True
     except Exception as e:
         print(f"❌ Errore interno Google Indexing API per {url}: {e}")
         return False
+
+# =====================================================================
+# AUTOMAZIONE WEBSUB: GENERAZIONE ED INVIO PING RSS FEED NEUTRALE
+# =====================================================================
+def trigger_websub_indexing_cascade(base_slug, titles_dict):
+    """Genera dinamicamente il feed.xml neutrale specifico per l'articolo e invia il ping WebSub."""
+    hub_url = "https://pubsubhubbub.appspot.com/"
+    feed_filename = f"manual-articles/{base_slug}/feed.xml"
+    feed_public_url = f"https://championsreport.editories.com/{feed_filename}"
+
+    rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="{hub_url}" />
+  <atom:link rel="self" href="{feed_public_url}" type="application/rss+xml" />
+
+  <item>
+    <title>{titles_dict.get('it', 'Diretta Match')}</title>
+    <link>https://championsreport.editories.com/it/{base_slug}</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/it/{base_slug}</guid>
+    <description>Cronaca in tempo reale e aggiornamenti live in Italiano.</description>
+  </item>
+  <item>
+    <title>{titles_dict.get('en', 'Live Match')}</title>
+    <link>https://championsreport.editories.com/en/{base_slug}</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/en/{base_slug}</guid>
+    <description>Real-time coverage and live updates in English.</description>
+  </item>
+  <item>
+    <title>{titles_dict.get('es', 'En vivo Partido')}</title>
+    <link>https://championsreport.editories.com/es/{base_slug}</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/es/{base_slug}</guid>
+    <description>Narración en tiempo real y actualizaciones en Español.</description>
+  </item>
+  <item>
+    <title>{titles_dict.get('fr', 'En direct Match')}</title>
+    <link>https://championsreport.editories.com/fr/{base_slug}</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/fr/{base_slug}</guid>
+    <description>Suivi en direct et mises à jour en Français.</description>
+  </item>
+</channel>
+</rss>"""
+
+    # Carichiamo il file feed.xml appena compilato direttamente nella sua directory su GitHub
+    _, sha_f = fetch_github_file_raw(feed_filename)
+    if push_to_github(feed_filename, rss_content, sha_f):
+        try:
+            payload = {"hub.mode": "publish", "hub.url": feed_public_url}
+            response = requests.post(hub_url, data=payload, timeout=5)
+            if response.status_code in [200, 204]:
+                print(f"✅ [WebSub] Ping inviato con successo per il feed: {feed_public_url}")
+                return True
+            else:
+                print(f"❌ [WebSub] Errore Hub ({response.status_code}): {response.text}")
+        except Exception as e:
+            print(f"❌ Errore connessione durante il ping WebSub: {e}")
+    return False
+
+# =====================================================================
+# STRUTTURA API FORMAZIONI (POLLING E CAMALEONTE COMPONENTE HTML)
+# =====================================================================
+def check_and_update_live_lineups(fixture_id, base_slug):
+    """Scandaglia l'API Football per intercettare variazioni o formazioni ufficiali (45' prima)."""
+    api_key = st.secrets["APIS"].get("FOOTBALL_API_KEY", "")
+    if not api_key or not fixture_id or fixture_id == "auto":
+        return
+
+    url = f"https://v3.api-football.com/fixtures/lineups?fixture={fixture_id}"
+    headers = {"x-rapidapi-key": api_key, "x-rapidapi-host": "v3.api-football.com"}
+
+    try:
+        res = requests.get(url, headers=headers, timeout=5)
+        if res.status_code == 200:
+            data = res.json().get("response", [])
+            if not data or len(data) < 2:
+                return # Formazioni non ancora comunicate dall'API
+
+            # Costruiamo il blocco camaleontico in base allo stato (Titolari ufficiali o probabili)
+            # Se l'API restituisce la lista dei giocatori, creiamo la stringa pulita
+            teams_data = []
+            for team_info in data:
+                team_name = team_info.get("team", {}).get("name", "Team")
+                formation = team_info.get("formation", "4-3-3")
+                start_xi = team_info.get("startXI", [])
+                players_list = [p.get("player", {}).get("name", "") for p in start_xi]
+                players_str = ", ".join(filter(None, players_list))
+                coach_name = team_info.get("coach", {}).get("name", "")
+                teams_data.append({"name": team_name, "form": formation, "players": players_str, "coach": coach_name})
+
+            coaches_labels = {
+                "it": "All.", "en": "Coach:", "es": "D.T.", "fr": "Sél."
+            }
+
+            langs = ["it", "en", "es", "fr"]
+            for l_target in langs:
+                full_filename = f"{l_target}/{base_slug}"
+                old_html, sha = fetch_github_file_raw(full_filename)
+                if old_html:
+                    lbl_coach1 = coaches_labels.get(l_target, "Coach")
+                    lbl_coach2 = coaches_labels.get(l_target, "Coach")
+                    
+                    # Generiamo il nuovo frammento HTML pulito sostitutivo
+                    new_lineups_block = f"""<div class="lineups">
+                <p><strong>{teams_data[0]['name']} ({teams_data[0]['form']}):</strong> {teams_data[0]['players']}.</p>
+                <p class="coach">{lbl_coach1} {teams_data[0]['coach']}</p>
+                <br>
+                <p><strong>{teams_data[1]['name']} ({teams_data[1]['form']}):</strong> {teams_data[1]['players']}.</p>
+                <p class="coach">{lbl_coach2} {teams_data[1]['coach']}</p>
+            </div>"""
+
+                    # Sostituzione tramite espressione regolare multi-riga del blocco lineups vecchio
+                    if '<div class="lineups">' in old_html:
+                        updated_html = re.sub(r'<div class="lineups">.*?</div>', new_lineups_block, old_html, flags=re.DOTALL)
+                    else:
+                        # Se non presente, lo iniettiamo subito prima del contenuto finale
+                        updated_html = old_html.replace('</div>\n</body>', f'{new_lineups_block}\n</div>\n</body>')
+
+                    # Eseguiamo il push silenzioso delle formazioni aggiornate
+                    if push_to_github(full_filename, updated_html, sha):
+                        # Spariamo un ping immediato a Google Search Console per avvisare del cambio di stato
+                        ping_google_indexing(f"https://championsreport.editories.com/{l_target}/{base_slug}")
+                        
+            print(f"⚡ [Camaleonte] Formazioni ufficiali sincronizzate per il match ID: {fixture_id}")
+    except Exception as e:
+        print(f"⚠️ Errore durante il recupero automatico formazioni: {e}")
 
 QUEUE_FILE = "scheduler_queue.json"
 FINANCE_FILE = "finance_register.csv"
@@ -598,6 +727,7 @@ def cascading_home_and_market_update(l_target, base_slug, localized_title, art_c
     target_file = f"{l_target}/mercato.html" if is_market else f"{l_target}/index.html"
     old_content, sha = fetch_github_file_raw(target_file)
 
+    # Il link della card viene impostato sull'URL pulito senza estensione .html
     new_card_html = f"""
     <div class="card">
         <img src="{art_cover if art_cover else 'https://via.placeholder.com/120x80'}" alt="Hero">
@@ -628,7 +758,7 @@ def cascading_home_and_market_update(l_target, base_slug, localized_title, art_c
 
         if is_market:
             raw_comp = raw_comp.replace('<div id="market-feed">', f'<div id="market-feed">\n{new_card_html}')
-            
+
         updated_html = build_rendered_html_package(l_target, section_title, raw_comp)
 
     push_to_github(target_file, updated_html, sha)
@@ -656,7 +786,7 @@ def update_dynamic_matches_and_live(l_target, selected_league_id=None, selected_
     matches_widget_filled = raw_matches_template.replace('data-league="auto"', f'data-league="{league_id}"')
     matches_widget_filled = matches_widget_filled.replace('data-key=""', f'data-key="{api_key}"')
     matches_widget_filled = matches_widget_filled.replace('<h2>⚽ {t_app_title} - Live Brackets</h2>', f'<h2>⚽ {comp_name} ({current_year})</h2>')
-    
+
     final_matches_html = build_rendered_html_package(l_target, frontend_strings.get('t_matches_title', 'Partite'), matches_widget_filled)
     _, sha_m = fetch_github_file_raw(f"{l_target}/partite.html")
     push_to_github(f"{l_target}/partite.html", final_matches_html, sha_m)
@@ -703,7 +833,7 @@ with tab_editoriale:
     if st.button(t("btn_generate")):
         if match_name:
             with st.spinner(t("spinner_gemini_writing")):
-                sys_prompt = "Sei un giornalista sportivo esperto SEO. Scrivi in HTML puro usando solo p, h2, strong, ul, li. Output rigidissimo: restituisci SOLO il testo finale in HTML, senza introduzioni o opzioni alternative."
+                sys_prompt = "Sei un giornalista sportivo esperto SEO. Scrivi in HTML puro usando solo p, h2, strong, ul, li. Inserisci anche il seguente blocco vuoto per le formazioni esattamente così: <div class=\"lineups\"></div>. Output rigidissimo: restituisci SOLO il testo finale in HTML, senza introduzioni o opzioni alternative."
                 user_prompt = f"Scrivi una cronaca o un articolo di calciomercato su: {match_name}. Sii avvincente."
                 st.session_state.generated_body = genera_testo_gemini_ciclico(sys_prompt, user_prompt)
 
@@ -720,22 +850,40 @@ with tab_editoriale:
 
     if st.button(t("btn_publish_all")):
         if art_title and art_body and match_name:
-            base_slug = match_name.lower().replace(" vs ", "-").replace(" ", "-") + ".html"
+            # Creiamo lo slug senza l'estensione .html finale per allinearci ai Pretty URLs
+            base_slug = match_name.lower().replace(" vs ", "-").replace(" ", "-")
             is_market_article = any(keyword in match_name.lower() or keyword in art_title.lower() for keyword in ["mercato", "calciomercato", "transfer", "fichajes", "mercato"])
             list_langs = ["it", "en", "es", "fr"]
             success_count = 0
+            titles_by_lang = {}
 
             progress_pub = st.progress(0)
             for index_l, l_target in enumerate(list_langs):
                 with st.spinner(t("spinner_lang_align").format(l_target.upper())):
-                    sys_p = f"Sei un giornalista sportivo esperto SEO. Scrivi l'articolo interamente in lingua: {l_target}. Usa HTML puro (p, h2, strong, ul, li). Output rigidissimo: restituisci SOLO l'HTML senza testo descrittivo aggiuntivo prima o dopo."
+                    sys_p = f"Sei un giornalista sportivo esperto SEO. Scrivi l'articolo interamente in lingua: {l_target}. Usa HTML puro (p, h2, strong, ul, li). Assicurati di includere il blocco segnaposto delle formazioni: <div class=\"lineups\"></div>. Output rigidissimo: restituisci SOLO l'HTML senza testo descrittivo aggiuntivo prima o dopo."
                     user_p = f"Traduci o riscrivi in modo fluido e giornalistico questo contenuto: {art_body}. Il titolo è: {art_title}"
                     localized_body = genera_testo_gemini_ciclico(sys_p, user_p)
 
                     sys_t = f"Sei un traduttore perfetto. Traduci questo titolo in {l_target} per un giornale SEO. Restituisci TASSATIVAMENTE SOLO la stringa del titolo tradotto. Non aggiungere introduzioni, non dare opzioni numerate, non mettere virgolette e non scrivere note di spiegazione."
                     localized_title = genera_testo_gemini_ciclico(sys_t, art_title).replace('"', '').replace("'", "")
+                    titles_by_lang[l_target] = localized_title
+
+                    # Creazione dei tag alternativi hreflang puliti per Cloudflare Pages
+                    hreflang_tags = "\n".join([f'    <link rel="alternate" hreflang="{lang}" href="https://championsreport.editories.com/{lang}/{base_slug}" />' for lang in list_langs])
 
                     article_html_rendered = f"""
+                    <head>
+                    {hreflang_tags}
+                    <script type="application/ld+json">
+                    {{
+                      "@context": "https://schema.org",
+                      "@type": "LiveBlogPosting",
+                      "@id": "https://championsreport.editories.com/{l_target}/{base_slug}",
+                      "headline": "{localized_title}",
+                      "coverageStartTime": "{datetime.datetime.utcnow().isoformat()}Z"
+                    }}
+                    </script>
+                    </head>
                     <h1>{localized_title}</h1>
                     <img src="{art_cover if art_cover else 'https://via.placeholder.com/600x350'}" class="cover-hero" alt="Hero">
                     <div class="ad-slot">{st.secrets.get("MONETIZATION", {}).get("ADSTERRA_BANNER_300X250_TOP", "")}</div>
@@ -745,6 +893,8 @@ with tab_editoriale:
 
                     final_html = build_rendered_html_package(l_target, localized_title, article_html_rendered)
 
+                    # Salvataggio del file fisico su GitHub senza estensione .html nel nome del file se supportato,
+                    # o mantenendo la struttura del path pulito dell'applicazione
                     full_filename = f"{l_target}/{base_slug}"
                     if push_to_github(full_filename, final_html):
                         success_count += 1
@@ -759,15 +909,20 @@ with tab_editoriale:
                         with st.spinner(t("spinner_updating_matches")):
                             update_dynamic_matches_and_live(l_target, chosen_league_id, chosen_league_name)
 
-                        # Chiamata API Rapida nativa integrata
-                        full_url = f"https://championsreport.editories.com/{full_filename}"
+                        # Chiamata di indicizzazione prioritaria su Google Search Console (URL pulito)
+                        full_url = f"https://championsreport.editories.com/{l_target}/{base_slug}"
                         ping_google_indexing(full_url)
 
                 time.sleep(1.2)
                 progress_pub.progress((index_l + 1) / len(list_langs))
 
+            # Trigger della catena WebSub (Generazione ed invio del feed.xml neutrale di questo articolo)
             if success_count == len(list_langs):
+                trigger_websub_indexing_cascade(base_slug, titles_by_lang)
                 st.success(t("success_published"))
+                
+                # Eseguiamo un primo controllo immediato sulle formazioni se applicabile
+                check_and_update_live_lineups(chosen_league_id, base_slug)
             else:
                 st.warning(t("pub_partial_warn").format(success_count, len(list_langs)))
 
@@ -877,7 +1032,7 @@ with tab_config:
             progress_bar = st.progress(0)
             for i, match in enumerate(match_items):
                 st.write(f"🔄 {t('batch_progress').format(i+1, len(match_items))} ({match})")
-                sys_p = "Sei un cronista sportivo SEO. Scrivi in HTML puro (p, h2). Output rigidissimo: restituisci SOLO l'HTML, senza introduzioni o commenti."
+                sys_p = "Sei un cronista sportivo SEO. Scrivi in HTML puro (p, h2). Inserisci il tag segnaposto delle formazioni: <div class=\"lineups\"></div>. Output rigidissimo: restituisci SOLO l'HTML, senza introduzioni o commenti."
                 user_p = f"Genera un report pre-partita per {match}."
                 generated_text = genera_testo_gemini_ciclico(sys_p, user_p)
 
@@ -886,13 +1041,20 @@ with tab_config:
                 lang_current = st.session_state.lang
                 batch_html = build_rendered_html_package(lang_current, match, batch_article_content)
 
-                slug_batch = f"{lang_current}/{match.lower().replace(' vs ', '-').replace(' ', '-')}.html"
-                if push_to_github(slug_batch, batch_html):
-                    cascading_home_and_market_update(lang_current, f"{match.lower().replace(' vs ', '-').replace(' ', '-')}.html", match, "https://via.placeholder.com/120x80", is_market=False)
+                # Rimozione .html anche per le operazioni batch
+                slug_batch = match.lower().replace(' vs ', '-').replace(' ', '-')
+                full_filename_batch = f"{lang_current}/{slug_batch}"
+                
+                if push_to_github(full_filename_batch, batch_html):
+                    cascading_home_and_market_update(lang_current, slug_batch, match, "https://via.placeholder.com/120x80", is_market=False)
+
+                    # Chiamata API Search Console su URL pulito
+                    ping_google_indexing(f"https://championsreport.editories.com/{full_filename_batch}")
                     
-                    # Chiamata API Rapida nativa integrata nel processo batch
-                    ping_google_indexing(f"https://championsreport.editories.com/{slug_batch}")
+                    # Generazione del mini-feed xml specifico per l'elemento batch ed invio WebSub
+                    trigger_websub_indexing_cascade(slug_batch, {lang_current: match})
 
                 time.sleep(1.2)
                 progress_bar.progress((i + 1) / len(match_items))
             st.success(t("batch_success_toast"))
+
