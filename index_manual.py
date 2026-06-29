@@ -1,22 +1,23 @@
 import requests
 
-# URL del file feed che pubblicherai su Cloudflare Pages
-feed_url = "https://championsreport.editories.com/manual-articles/brazil-japan-worldcup2026/feed.xml"
+# ==============================================================================
+# 1. MODIFICA SOLO QUESTO: Inserisci lo slug della cartella del nuovo articolo
+# ==============================================================================
+ARTICLE_SLUG = "inserisci-slug-articolo-qui"
 
-# URL dell'Hub WebSub ufficiale di Google
+# Il link del feed si autogenera dinamicamente usando la variabile sopra
+feed_url = f"https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/feed.xml"
 hub_url = "https://pubsubhubbub.appspot.com/"
-
-# Parametri richiesti dal protocollo WebSub
 payload = {"hub.mode": "publish", "hub.url": feed_url}
 
-print("🚀 Avvio notifica push tramite WebSub su Google Hub...")
+print(
+    f"🚀 Avvio notifica push tramite WebSub per l'articolo: {ARTICLE_SLUG}..."
+)
 print("-" * 50)
 
 try:
-    # Invia la richiesta HTTP POST all'hub pubblico di Google
     response = requests.post(hub_url, data=payload)
 
-    # L'hub risponde con codice 204 (No Content) o 200 quando riceve il ping correttamente
     if response.status_code in [200, 204]:
         print("✅ [WebSub] Notifica inviata con successo!")
         print(

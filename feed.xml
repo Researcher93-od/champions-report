@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/feed.xml" type="application/rss+xml" />
+
+  <!-- 🇮🇹 INIZIO BLOCCO ITALIANO -->
+  <item>
+    <title>{TITOLO_ARTICOLO_IT}</title>
+    <link>https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/it</guid>
+    <description>{DESCRIZIONE_BREVE_IT}</description>
+  </item>
+  <!-- FINE BLOCCO ITALIANO -->
+
+  <!-- 🇬🇧 INIZIO BLOCCO INGLESE -->
+  <item>
+    <title>{TITOLO_ARTICOLO_EN}</title>
+    <link>https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/en</guid>
+    <description>{DESCRIZIONE_BREVE_EN}</description>
+  </item>
+  <!-- FINE BLOCCO INGLESE -->
+
+  <!-- 🇪🇸 INIZIO BLOCCO SPAGNOLO -->
+  <item>
+    <title>{TITOLO_ARTICOLO_ES}</title>
+    <link>https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/es</guid>
+    <description>{DESCRIZIONE_BREVE_ES}</description>
+  </item>
+  <!-- FINE BLOCCO SPAGNOLO -->
+
+  <!-- 🇫🇷 INIZIO BLOCCO FRANCESE -->
+  <item>
+    <title>{TITOLO_ARTICOLO_FR}</title>
+    <link>https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/{ARTICLE_SLUG}/fr</guid>
+    <description>{DESCRIZIONE_BREVE_FR}</description>
+  </item>
+  <!-- FINE BLOCCO FRANCESE -->
+
+</channel>
+</rss>
