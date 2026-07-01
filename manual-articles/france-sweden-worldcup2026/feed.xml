@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/feed.xml" type="application/rss+xml" />
+
+  <!-- 🇮🇹 INIZIO BLOCCO ITALIANO -->
+  <item>
+    <title>Il palcoscenico del MetLife Stadium ospita la Francia e la Svezia: la corazzata francese per avanzare nel torneo dei granitici scandinavi</title>
+    <link>https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/it</guid>
+    <description>Mondiali 2026: la corazzata Francia sfida la travolgente Svezia nel big match di New York. Analisi tattica e formazioni ufficiali.</description>
+  </item>
+  <!-- FINE BLOCCO ITALIANO -->
+
+  <!-- 🇬🇧 INIZIO BLOCCO INGLESE -->
+  <item>
+    <title>MetLife Stadium hosts France and Sweden: the French battleship seeks to advance against gritty Scandinavians</title>
+    <link>https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/en</guid>
+    <description>2026 World Cup: France takes on the dangerous Sweden team at New York's MetLife Stadium. Tactical analysis and lineups.</description>
+  </item>
+  <!-- FINE BLOCCO INGLESE -->
+
+  <!-- 🇪🇸 INIZIO BLOCCO SPAGNOLO -->
+  <item>
+    <title>El escenario del MetLife Stadium acoge a Francia y Suecia: el acorazado francés busca avanzar ante los graníticos escandinavos</title>
+    <link>https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/es</guid>
+    <description>Mundial 2026: Francia se mide ante la peligrosa Suecia en el MetLife Stadium de Nueva York. Análisis táctico y alineaciones.</description>
+  </item>
+  <!-- FINE BLOCCO SPAGNOLO -->
+
+  <!-- 🇫🇷 INIZIO BLOCCO FRANCESE -->
+  <item>
+    <title>Le MetLife Stadium accueille la France et la Suède : le cuirassé français pour avancer face aux scandinaves de granit</title>
+    <link>https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/france-sweden-worldcup2026/fr</guid>
+    <description>Coupe du Monde 2026 : le cuirassé France défie la surprenante équipe de Suède au MetLife Stadium. Analyse et compositions.</description>
+  </item>
+  <!-- FINE BLOCCO FRANCESE -->
+
+</channel>
+</rss>
+

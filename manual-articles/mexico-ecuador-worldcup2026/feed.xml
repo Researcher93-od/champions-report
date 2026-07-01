@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/feed.xml" type="application/rss+xml" />
+
+  <!-- 🇮🇹 INIZIO BLOCCO ITALIANO -->
+  <item>
+    <title>La selezione di Aguirre tenta il passaggio del turno contro la sorpresa Ecuador: sulla cresta dell'onda, una notte di conferme a Città del Messico</title>
+    <link>https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/it</guid>
+    <description>Mondiali 2026: il Messico sfida la travolgente sorpresa Ecuador all'Estadio Azteca per i sedicesimi di finale. Analisi e formazioni.</description>
+  </item>
+  <!-- FINE BLOCCO ITALIANO -->
+
+  <!-- 🇬🇧 INIZIO BLOCCO INGLESE -->
+  <item>
+    <title>Aguirre's squad aims for the next round against surprise package Ecuador: riding the wave, a night of confirmation in Mexico City</title>
+    <link>https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/en</guid>
+    <description>2026 World Cup: Mexico faces the shocking surprise package Ecuador at the Estadio Azteca in the Round of 32. Tactical analysis and lineups.</description>
+  </item>
+  <!-- FINE BLOCCO INGLESE -->
+
+  <!-- 🇪🇸 INIZIO BLOCCO SPAGNOLO -->
+  <item>
+    <title>La selección de Aguirre busca el pase de ronda ante la sorpresa Ecuador: en la cresta de la ola, noche de confirmación en el Azteca</title>
+    <link>https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/es</guid>
+    <description>Mundial 2026: México se mide ante la gran sorpresa Ecuador en el Estadio Azteca por los dieciseisavos de final. Análisis táctico y alineaciones.</description>
+  </item>
+  <!-- FINE BLOCCO SPAGNOLO -->
+
+  <!-- 🇫🇷 INIZIO BLOCCO FRANCESE -->
+  <item>
+    <title>La sélection d'Aguirre vise la qualification face à la surprise l'Équateur : sur la crête de la vague, nuit de confirmation à Mexico</title>
+    <link>https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/mexico-ecuador-worldcup2026/fr</guid>
+    <description>Coupe du Monde 2026 : le Mexique défie la surprise de la compétition l'Équateur au Stade Azteca en seizièmes de finale. Analyse et compos.</description>
+  </item>
+  <!-- FINE BLOCCO FRANCESE -->
+
+</channel>
+</rss>
+
