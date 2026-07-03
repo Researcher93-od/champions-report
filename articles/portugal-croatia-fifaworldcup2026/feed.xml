@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Champions Report Mondiali 2026</title>
+    <link>https://championsreport.editories.com</link>
+    <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+    <atom:link rel="self" href="https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/feed.xml" type="application/rss+xml" />
+    <item>
+        <title>Portogallo - Croazia illumina la Notte di Toronto: in una cornice di Stelle, Ronaldo a caccia di gol contro Modric e compagni</title>
+        <link>https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/it.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/it.html</guid>
+        <description>Analisi tattica e vigilia di Portogallo-Croazia al BMO Field di Toronto per la Coppa del Mondo 2026. Sfida stellare tra Cristiano Ronaldo e Luka Modric.</description>
+    </item>
+    <item>
+        <title>Portugal - Croatia Lights Up the Toronto Night: Amid a Galaxy of Stars, Ronaldo Hunts for Goals Against Modric and Co.</title>
+        <link>https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/en.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/en.html</guid>
+        <description>Tactical preview of Portugal vs Croatia at Toronto's BMO Field for the 2026 World Cup. A stellar clash between Cristiano Ronaldo and Luka Modric.</description>
+    </item>
+    <item>
+        <title>Portugal - Croacia ilumina la Noche de Toronto: en un marco de Estrellas, Ronaldo busca el gol frente a Modric y compañía</title>
+        <link>https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/es.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/es.html</guid>
+        <description>Análisis táctico y previa del Portugal vs Croacia en el BMO Field de Toronto para el Mundial 2026. Choque estelar entre Cristiano Ronaldo y Luka Modric.</description>
+    </item>
+    <item>
+        <title>Portugal - Croatie illumine la Nuit de Toronto : dans un écrin d'Étoiles, Ronaldo en quête de buts face à Modric et ses coéquipiers</title>
+        <link>https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/fr.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/portugal-croatia-fifaworldcup2026/fr.html</guid>
+        <description>Analyse tactique et avant-match de Portugal-Croatie au BMO Field de Toronto pour la Coupe du Monde 2026. Choc stellaire entre Cristiano Ronaldo et Luka Modric.</description>
+    </item>
+</channel>
+</rss>

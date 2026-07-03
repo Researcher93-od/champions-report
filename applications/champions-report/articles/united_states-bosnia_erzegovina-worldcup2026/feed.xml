@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/feed.xml" type="application/rss+xml" />
+
+  <item>
+    <title>Gli Stati Uniti affrontano la Bosnia-Erzegovina di Dzeko: gli uomini di Pochettino hanno una chance imprtante di passare il turno contro l'organizzazione degli slavi</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/it</guid>
+    <description>Gli USA di Pochettino sfidano la Bosnia di Dzeko al MetLife Stadium in un match da dentro o fuori. Analisi, chiavi tattiche e probabili formazioni.</description>
+  </item>
+  <item>
+    <title>The United States face Dzeko's Bosnia-Herzegovina: Pochettino's men have a major chance to advance against the organized Slavs</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/en</guid>
+    <description>Pochettino's USA face Dzeko's Bosnia at the MetLife Stadium in a decisive clash. Analysis, tactical keys, and probable lineups.</description>
+  </item>
+  <item>
+    <title>Estados Unidos se enfrenta a la Bosnia-Herzegovina de Dzeko: los hombres de Pochettino tienen una oportunidad importante de pasar de ronda frente a la organización eslava</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/es</guid>
+    <description>Los Estados Unidos de Pochettino se milen a la Bosnia de Dzeko en el MetLife Stadium en un duelo decisivo. Análisis, claves tácticas y alineaciones probables.</description>
+  </item>
+  <item>
+    <title>Les États-Unis affrontent la Bosnie-Herzégovine de Dzeko : les hommes de Pochettino ont une chance importante de se qualifier face à l'organisation slave</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup2026/fr</guid>
+    <description>Les États-Unis de Pochettino défient la Bosnie de Dzeko au MetLife Stadium lors d'un match décisif. Analyse, clés tactiques et compositions probables.</description>
+  </item>
+</channel>
+</rss>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/feed.xml" type="application/rss+xml" />
+
+  <!-- 🇮🇹 INIZIO BLOCCO ITALIANO -->
+  <item>
+    <title>I Tre Leoni ad Atlanta per dare impulso ad un inizio tra alti e bassi: alle 18:00, il tutto per tutto per superare gli atleti del Congo</title>
+    <link>https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/it</guid>
+    <description>Mondiali 2026: l'Inghilterra di Thomas Tuchel affronta la RD Congo ad Atlanta per i sedicesimi di finale. Analisi tattica e formazioni ufficiali.</description>
+  </item>
+  <!-- FINE BLOCCO ITALIANO -->
+
+  <!-- 🇬🇧 INIZIO BLOCCO INGLESE -->
+  <item>
+    <title>The Three Lions in Atlanta to boost a shaky start: at 18:00, all out to overcome the Congo athletes</title>
+    <link>https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/en</guid>
+    <description>2026 World Cup: Thomas Tuchel's England faces DR Congo in Atlanta for the Round of 32. Tactical preview and confirmed lineups.</description>
+  </item>
+  <!-- FINE BLOCCO INGLESE -->
+
+  <!-- 🇪🇸 INIZIO BLOCCO SPAGNOLO -->
+  <item>
+    <title>Los Tres Leones en Atlanta para impulsar un comienzo irregular: a las 18:00, el todo por el todo para superar a los atletas del Congo</title>
+    <link>https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/es</guid>
+    <description>Mundial 2026: la Inglaterra de Thomas Tuchel se enfrenta a la RD Congo en Atlanta por los dieciseisavos de final. Análisis táctico y alineaciones.</description>
+  </item>
+  <!-- FINE BLOCCO SPAGNOLO -->
+
+  <!-- 🇫🇷 INIZIO BLOCCO FRANCESE -->
+  <item>
+    <title>Les Three Lions à Atlanta pour relancer un début en dents de scie : à 18h00, le tout pour le tout pour vaincre les athlètes du Congo</title>
+    <link>https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/england-congo-worldcup2026/fr</guid>
+    <description>Coupe du Monde 2026 : l'Angleterre de Thomas Tuchel affronte la RD Congo à Atlanta en seizièmes de finale. Analyse tactique et compos probables.</description>
+  </item>
+  <!-- FINE BLOCCO FRANCESE -->
+
+</channel>
+</rss>

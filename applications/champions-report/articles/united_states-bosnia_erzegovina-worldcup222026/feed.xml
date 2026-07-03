@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/feed.xml" type="application/rss+xml" />
+
+  <!-- 🇮🇹 INIZIO BLOCCO ITALIANO -->
+  <item>
+    <title>Gli Stati Uniti affrontano la Bosnia-Erzegovina di Dzeko: per gli uomini di Pochettino chance importante per passare il turno contro l'organizzazione dei slavi</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/it</guid>
+    <description>Decisivo scontro notturno al MetLife Stadium: gli Stati Uniti, guidati da Pulisic e allenati da Pochettino, devono vincere contro la Bosnia-Erzegovina di Dzeko per non compromettere il cammino nel torneo.</description>
+  </item>
+  <!-- FINE BLOCCO ITALIANO -->
+
+  <!-- 🇬🇧 INIZIO BLOCCO INGLESE -->
+  <item>
+    <title>USA Face Dzeko's Bosnia-Herzegovina: Pochettino's Men Eye Crucial Qualification Chance Against Organized Slavs</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/en</guid>
+    <description>Decisive night clash at MetLife Stadium: The United States, led by Pulisic and managed by Pochettino, must win against Dzeko's Bosnia-Herzegovina to keep their tournament hopes alive.</description>
+  </item>
+  <!-- FINE BLOCCO INGLESE -->
+
+  <!-- 🇪🇸 INIZIO BLOCCO SPAGNOLO -->
+  <item>
+    <title>Estados Unidos vs. Bosnia y Herzegovina de Dzeko: Los Hombres de Pochettino Buscan el Pase a la Siguiente Ronda Ante la Solidez Eslava</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/es</guid>
+    <description>Choque nocturno decisivo en el MetLife Stadium: Estados Unidos, con Pulisic y bajo la dirección de Pochettino, debe ganar a Bosnia y Herzegovina de Dzeko para no comprometer su camino en el torneo.</description>
+  </item>
+  <!-- FINE BLOCCO SPAGNOLO -->
+
+  <!-- 🇫🇷 INIZIO BLOCCO FRANCESE -->
+  <item>
+    <title>Les États-Unis Face à la Bosnie-Herzégovine de Dzeko : Une Chance Cruciale pour les Hommes de Pochettino Contre l'Organisation Slave</title>
+    <link>https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/united_states-bosnia_erzegovina-worldcup222026/fr</guid>
+    <description>Affrontement nocturne décisif au MetLife Stadium : les États-Unis, menés par Pulisic et entraînés par Pochettino, doivent impérativement l'emporter face à la Bosnie-Herzégovine de Dzeko pour ne pas compromettre leur parcours dans le tournoi.</description>
+  </item>
+  <!-- FINE BLOCCO FRANCESE -->
+
+</channel>
+</rss>

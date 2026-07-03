@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/feed.xml" type="application/rss+xml" />
+
+  <!-- 🇮🇹 INIZIO BLOCCO ITALIANO -->
+  <item>
+    <title>Il Belgio ospita i senegalesi guidati da Thiaw in quel di Seattle: prova di maturità per i Diavoli Rossi che vale il passaggio agli ottavi</title>
+    <link>https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/it</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/it</guid>
+    <description>Mondiali 2026: il Belgio sfida il Senegal a Seattle per i sedicesimi di finale. Analisi tattica, precedenti e formazioni ufficiali.</description>
+  </item>
+  <!-- FINE BLOCCO ITALIANO -->
+
+  <!-- 🇬🇧 INIZIO BLOCCO INGLESE -->
+  <item>
+    <title>Belgium hosts the Senegalese led by Thiaw in Seattle: a maturity test for the Red Devils for a spot in the Round of 16</title>
+    <link>https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/en</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/en</guid>
+    <description>2026 World Cup: Belgium faces Senegal in Seattle for the Round of 32. Tactical preview, historical background, and confirmed lineups.</description>
+  </item>
+  <!-- FINE BLOCCO INGLESE -->
+
+  <!-- 🇪🇸 INIZIO BLOCCO SPAGNOLO -->
+  <item>
+    <title>Bélgica recibe a los senegaleses liderados por Thiaw en Seattle: prueba de madurez para los Diablos Rojos que vale el pase a octavos</title>
+    <link>https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/es</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/es</guid>
+    <description>Mundial 2026: Bélgica se enfrenta a Senegal en Seattle por los dieciseisavos de final. Análisis táctico, antecedentes y alineaciones.</description>
+  </item>
+  <!-- FINE BLOCCO SPAGNOLO -->
+
+  <!-- 🇫🇷 INIZIO BLOCCO FRANCESE -->
+  <item>
+    <title>La Belgique accueille les Sénégalais menés par Thiaw à Seattle : un test de maturité pour i Diavoli Rossi qui vaut le passage in huitièmes</title>
+    <link>https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/fr</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/manual-articles/belgium-senegal-worldcup2026/fr</guid>
+    <description>Coupe du Monde 2026 : la Belgique défie le Sénégal à Seattle en seizièmes de finale. Analyse tactique, antécédents et compos probables.</description>
+  </item>
+  <!-- FINE BLOCCO FRANCESE -->
+
+</channel>
+</rss>

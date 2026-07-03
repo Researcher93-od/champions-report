@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/feed.xml" type="application/rss+xml" />
+
+  <item>
+    <title>La notte delle stelle al MetLife: gli Stati Uniti sfidano la Bosnia in un incrocio di destini</title>
+    <link>https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/it.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/it.html</guid>
+    <description>Scopri l'analisi dettagliata e le probabili formazioni di Stati Uniti-Bosnia Erzegovina, l'attesissimo match del 2 luglio 2026 al MetLife Stadium.</description>
+  </item>
+  <item>
+    <title>Starry Night at MetLife: United States Face Bosnia in a Clash of Destinies</title>
+    <link>https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/en.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/en.html</guid>
+    <description>Discover the detailed analysis and probable lineups for USA vs Bosnia and Herzegovina, the highly anticipated match on July 2, 2026, at MetLife Stadium.</description>
+  </item>
+  <item>
+    <title>Noche de estrellas en el MetLife: Estados Unidos desafía a Bosnia en un cruce de destinos</title>
+    <link>https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/es.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/es.html</guid>
+    <description>Descubre el análisis detallado y las alineaciones probables del Estados Unidos-Bosnia-Herzegovina, el esperado encuentro del 2 de julio de 2026 en el MetLife Stadium.</description>
+  </item>
+  <item>
+    <title>Nuit étoilée au MetLife : les États-Unis défient la Bosnie dans un choc des destins</title>
+    <link>https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/fr.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/statiuniti-bosniaerzegovina-worldcup2026/fr.html</guid>
+    <description>Découvrez l'analyse détaillée et les compositions probables d'États-Unis - Bosnie-Herzégovine, l'affiche tant attendue du 2 juillet 2026 au MetLife Stadium.</description>
+  </item>
+</channel>
+</rss>

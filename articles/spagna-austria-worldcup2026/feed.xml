@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+  <title>Champions Report Mondiali 2026</title>
+  <link>https://championsreport.editories.com</link>
+  <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+  <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+  <atom:link rel="self" href="https://championsreport.editories.com/articles/spagna-austria-worldcup2026/feed.xml" type="application/rss+xml" />
+  
+  <item>
+    <title>Spagna contro Austria: L'Armonia Tattica Ispanica Incontra la Furia Alpina in un Duello da Brividi</title>
+    <link>https://championsreport.editories.com/articles/spagna-austria-worldcup2026/it.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/spagna-austria-worldcup2026/it.html</guid>
+    <description>Analisi approfondita di Spagna-Austria: il tiki-taka iberico sfida il pressing alpino. Scopri le tattiche, i duelli chiave e le probabili formazioni del 2 luglio 2026.</description>
+  </item>
+  <item>
+    <title>Spain vs Austria: Iberian Tactical Harmony Meets Alpine Fury in a Thrilling Duel</title>
+    <link>https://championsreport.editories.com/articles/spagna-austria-worldcup2026/en.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/spagna-austria-worldcup2026/en.html</guid>
+    <description>In-depth analysis of Spain-Austria: Iberian tiki-taka challenges Alpine pressing. Discover tactics, key duels, and probable lineups for July 2, 2026.</description>
+  </item>
+  <item>
+    <title>España contra Austria: La Armonía Táctica Hispana Encuentra la Furia Alpina en un Duelo Electrizante</title>
+    <link>https://championsreport.editories.com/articles/spagna-austria-worldcup2026/es.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/spagna-austria-worldcup2026/es.html</guid>
+    <description>Análisis profundo de España-Austria: el tiki-taka ibérico desafía la presión alpina. Descubre tácticas, duelos clave y alineaciones probables para el 2 de julio de 2026.</description>
+  </item>
+  <item>
+    <title>Espagne contre Autriche : L'Harmonie Tactique Hispanique Rencontre la Fureur Alpine dans un Duel Palpitant</title>
+    <link>https://championsreport.editories.com/articles/spagna-austria-worldcup2026/fr.html</link>
+    <guid isPermaLink="true">https://championsreport.editories.com/articles/spagna-austria-worldcup2026/fr.html</guid>
+    <description>Analyse approfondie Espagne-Autriche : le tiki-taka ibérique défie le pressing alpin. Découvrez les tactiques, les duels clés et les compositions probables du 2 juillet 2026.</description>
+  </item>
+</channel>
+</rss>

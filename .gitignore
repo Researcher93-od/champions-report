@@ -4,3 +4,4 @@ __pycache__/
 template.html
 service-account.json
 service-account.json
+.env
