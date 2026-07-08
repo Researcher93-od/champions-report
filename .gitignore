@@ -5,3 +5,7 @@ template.html
 service-account.json
 service-account.json
 .env
+
+# Sicurezza: Mai caricare ZIP di deploy o chiavi credenziali
+champions-report.zip
+*.json
