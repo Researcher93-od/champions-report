@@ -58,12 +58,13 @@ if not API_KEY:
     print("Make sure you created a '.env' file containing: GEMINI_API_KEY=your_key_here")
     sys.exit(1)
 
-AI_MODELS_POOL = ["gemini-3.5-flash", "gemini-2.5-pro", "gemini-flash-latest"]
+AI_MODELS_POOL = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-latest"]
 
 # ==============================================================================
 # DYNAMIC TRANSLATION DICTIONARY (I18N SYSTEM)
 # ==============================================================================
 CURRENT_LANG = "en"  # Default global UI environment language
+ATTIVO_SERVER_PREVIEW = None
 
 I18N_DICTIONARY = {
     "en": {
@@ -76,7 +77,6 @@ I18N_DICTIONARY = {
         "nav_market": "Market",
         "nav_live": "Live Focus",
         "meta_journal": "Champion's Report Journal",
-        # Terminal strings
         "ui_welcome": "      🏆 CHAMPION'S REPORT JOURNAL - AUTOMATED REDACTION 🏆     ",
         "ui_input_keyword": "\n🔍 Enter a Competition, Team or Keyword (e.g., World Cup, Serie A, Barcelona)",
         "ui_input_keyword_help": "[Leave EMPTY and press ENTER for live context auto-discovery]: ",
@@ -115,7 +115,48 @@ I18N_DICTIONARY = {
         "ui_rebuilding": "\n🔄 Generating tactical update structure...",
         "ui_json_error": "❌ Critical Error: AI did not return a valid JSON structure. Restarting generation...",
         "ui_template_error": "❌ Error during template compilation: ",
-        "ui_shutdown_clean": "\n\n🛑 Manual interruption caught (Ctrl+C). Clean shutdown of server."
+        "ui_shutdown_clean": "\n\n🛑 Manual interruption caught (Ctrl+C). Clean shutdown of server.",
+        "tag_already_written": "🔵 [ALREADY WRITTEN]",
+        "tag_live_finished": "🟡 Live/Finished",
+        "tag_future": "🟢 Future (Not started)",
+        "ui_caption_prompt_title": "\n✍️  [INTERACTIVE CAPTION PROMPT] Explain to the AI how to create the caption",
+        "ui_caption_prompt_help": "👉 (e.g., 'Translate vision description', 'Highlight the celebration of...').",
+        "ui_caption_prompt_confirm": "👉 Press ENTER twice on an empty line to confirm. Leave empty to auto-generate:",
+        "ui_fase3_operation_title": "Choose the operation to execute:",
+        "ui_fase3_opt_update": " [1] UPDATE (Adds a flash block or modifies metadata without touching the core text)",
+        "ui_fase3_opt_rewrite": " [2] REWRITE (Deletes the old article and regenerates it from scratch)",
+        "ui_fase3_select_option": "Select an option [1/2 or any other key to cancel]: ",
+        "ui_fase3_mode_update": "🔄 SURGICAL UPDATE mode activated.",
+        "ui_fase3_input_flash": "✍️ Enter the flash note or variation to apply (times, injuries, live): ",
+        "ui_fase3_mode_rewrite": "🔄 TOTAL REWRITE mode activated. The old file will be replaced.",
+        "ui_fase3_cancelled_msg": "🛑 Operation cancelled.",
+        "ui_fase2_pre_match": "📅 [Time Filter]: Unlocked and automatically set to [1] Pre-Match option.",
+        "ui_fase2_post_match": "📅 [Time Filter]: Unlocked and automatically set to [2] Post-Match option.",
+        "ui_fase3_alert_pre": "⚠️ [ALERT PRE-MATCH] A Pre-Match preview for {} vs {} is already in the archive!",
+        "ui_fase3_alert_post": "⚠️ [ALERT POST-MATCH] A definitive Post-Match article for {} vs {} is already registered!",
+        "ui_multiline_advanced_confirm": "👉 Write the text. Press ENTER twice consecutively on an empty line to confirm.",
+        "ui_multiline_confirm": "👉 Paste your text below. When done, press ENTER twice (leave an empty line) to confirm.",
+        "ui_title_multiline_help": "👉 You can use multiple lines. Press ENTER twice on an empty line to confirm:",
+        "ui_saving_draft": "\n💾 Saving current article state to localized draft file...",
+        "ui_processing_surgical": "\n🔄 Processing surgical localized edit updates (Saving token payloads)...",
+        "ui_production_links": "\n🌐 PRODUCTION CLICKABLE LINKS:",
+        "ui_google_prettylinks": "\n✨ GOOGLE SEARCH CONSOLE PRETTYLINKS (SEO OPTIMIZED):",
+        "ui_stato4_header": "====================================================================\n📋 [STATO 4 - SYNTHESIS] EDITORIAL ORIENTATION BLUEPRINT GUIDE\n====================================================================",
+        "ui_stato4_match": "⚽ MATCH: {} vs {}",
+        "ui_stato4_time": "⏰ KICKOFF TIME: {}   📅 TARGET DATE: {} ({})",
+        "ui_stato4_venue": "🏟️ VENUE LOCATION: {} ({})",
+        "ui_stato4_context": "ℹ️ CONTEXT SCOPE: {}",
+        "ui_stato4_dossier_title": "====================================================================\n📝 IN-DEPTH DOSSIER DATA RECORDS (PROBABLE LINEUPS & TEAM NEWS):",
+        "ui_stato4_footer": "====================================================================\n",
+        "ui_link_it": "🇮🇹 Italian:  ",
+        "ui_link_en": "🇬🇧 English:  ",
+        "ui_link_es": "🇪🇸 Spanish:  ",
+        "ui_link_fr": "🇫🇷 French:   ",
+        "ui_link_rss": "📡 RSS Feed:  ",
+        "ui_pretty_it": "🇮🇹 IT: ",
+        "ui_pretty_en": "🇬🇧 EN: ",
+        "ui_pretty_es": "🇪🇸 ES: ",
+        "ui_pretty_fr": "🇫🇷 FR: "
     },
     "it": {
         "locale": "it_IT",
@@ -126,7 +167,42 @@ I18N_DICTIONARY = {
         "nav_matches": "Partite",
         "nav_market": "Mercato",
         "nav_live": "Live",
-        "meta_journal": "Champion's Report Journal"
+        "meta_journal": "Champion's Report Journal",
+        "ui_multiline_advanced_confirm": "👉 Scrivi il testo. Premi INVIO due volte consecutive su una riga vuota per confermare.",
+        "ui_fase2_pre_match": "📅 [Filtro Temporale]: Sbloccata ed impostata automaticamente opzione [1] Pre-Match.",
+        "ui_fase2_post_match": "📅 [Filtro Temporale]: Sbloccata ed impostata automaticamente opzione [2] Post-Match.",
+        "ui_fase3_alert_pre": "⚠️ [ALERT PRE-MATCH] Un’anteprima Pre-Match per {} vs {} è già presente in archivio!",
+        "ui_fase3_alert_post": "⚠️ [ALERT POST-MATCH] Un articolo definitivo Post-Match per {} vs {} risulta già registrato!",
+        "ui_fase3_operation_title": "Scegli l'operazione da eseguire:",
+        "ui_fase3_opt_update": " [1] AGGIORNA (Aggiunge un blocco flash o modifica i metadati senza toccare il testo core)",
+        "ui_fase3_opt_rewrite": " [2] RISCRIVI (Cancella il vecchio articolo e lo rigenera da zero)",
+        "ui_fase3_select_option": "Seleziona un'opzione [1/2 o qualsiasi altro tasto per annullare]: ",
+        "ui_fase3_mode_update": "🔄 Modalità AGGIORNAMENTO CHIRURGICO attivata.",
+        "ui_fase3_input_flash": "✍️ Inserisci la nota flash o la variazione da apportare (orari, indisponibilità, live): ",
+        "ui_fase3_mode_rewrite": "🔄 Modalità RISCRITTURA TOTALE attivata. Il vecchio file verrà rimpiazzato.",
+        "ui_fase3_cancelled_msg": "🛑 Operazione annullata.",
+        "ui_multiline_confirm": "👉 Incolla il testo sotto. Al termine, premi INVIO due volte (lascia una riga vuota) per confermare.",
+        "ui_title_multiline_help": "👉 Puoi usare più linee. Premi INVIO due volte su una riga vuota per confermare:",
+        "ui_saving_draft": "\n💾 Salvataggio dello stato attuale dell'articolo nel file bozza locale...",
+        "ui_processing_surgical": "\n🔄 Elaborazione degli aggiornamenti editoriali chirurgici localizzati (Salvataggio payload token)...",
+        "ui_production_links": "\n🌐 LINK DI PRODUZIONE CLICCABILI:",
+        "ui_google_prettylinks": "\n✨ PRETTYLINKS GOOGLE SEARCH CONSOLE (OTTIMIZZATI SEO):",
+        "ui_stato4_header": "====================================================================\n📋 [STATO 4 - SINTESI] GUIDA DI ORIENTAMENTO EDITORIALE\n====================================================================",
+        "ui_stato4_match": "⚽ PARTITA: {} vs {}",
+        "ui_stato4_time": "⏰ ORARIO DETTAGLIO: {}   📅 DATA EVENTO: {} ({})",
+        "ui_stato4_venue": "🏟️ LUOGO EVENTO: {} ({})",
+        "ui_stato4_context": "ℹ️ AMBITO CONTESTO: {}",
+        "ui_stato4_dossier_title": "====================================================================\n📝 DOSSIER INFORMATIVO DETTAGLIATO (FORMAZIONI PROBABILI & NEWS):",
+        "ui_stato4_footer": "====================================================================\n",
+        "ui_link_it": "🇮🇹 Italian:  ",
+        "ui_link_en": "🇬🇧 English:  ",
+        "ui_link_es": "🇪🇸 Spanish:  ",
+        "ui_link_fr": "🇫🇷 French:   ",
+        "ui_link_rss": "📡 RSS Feed:  ",
+        "ui_pretty_it": "🇮🇹 IT: ",
+        "ui_pretty_en": "🇬🇧 EN: ",
+        "ui_pretty_es": "🇪🇸 ES: ",
+        "ui_pretty_fr": "🇫🇷 FR: "
     },
     "es": {
         "locale": "es_ES",
@@ -135,7 +211,7 @@ I18N_DICTIONARY = {
         "label_updated": "Actualizado",
         "nav_home": "Inicio",
         "nav_matches": "Partidos",
-        "nav_market": "Mercado",
+        "nav_market": "Mercato",
         "nav_live": "En Vivo",
         "meta_journal": "Champion's Report Journal"
     },
@@ -156,23 +232,68 @@ def t(chiave):
     """i18n lookup function."""
     return I18N_DICTIONARY[CURRENT_LANG].get(chiave, chiave)
 
+import readline
+
+def input_interattivo_avanzato(prompt_testo, prefill=""):
+    """Gestisce l'input a riga singola permettendo lo spostamento del cursore senza cancellare."""
+    def hook():
+        readline.insert_text(prefill)
+        readline.redisplay()
+    readline.set_pre_input_hook(hook)
+    try:
+        return input(prompt_testo)
+    finally:
+        readline.set_pre_input_hook(None)
+
+def leggi_input_multilinea_avanzato(messaggio_iniziale):
+    print(messaggio_iniziale)
+    print(t("ui_multiline_advanced_confirm"))
+    linee = []
+    while True:
+        try:
+            linea = input()
+            if linea == "" and (len(linee) == 0 or linee[-1] == ""):
+                if len(linee) > 0:
+                    linee.pop() # Rimuove l'invio precedente vuoto
+                break
+            linee.append(linea)
+        except EOFError:
+            break
+    return "\n".join(linee)
+
+
 # ==============================================================================
 # UTILITY HELPER FUNCTIONS (DECLARED BEFORE CALL SCOPE)
 # ==============================================================================
 def avvia_server_anteprima(percorso_progetto, port=8080):
-    """Starts a lightweight python background thread preview server."""
+    """Starts a lightweight python background thread preview server with active socket release validation."""
+    global ATTIVO_SERVER_PREVIEW
+    if ATTIVO_SERVER_PREVIEW is not None:
+        try:
+            ATTIVO_SERVER_PREVIEW.shutdown()
+            ATTIVO_SERVER_PREVIEW.server_close()
+            time.sleep(0.5)
+        except Exception:
+            pass
     os.chdir(percorso_progetto)
-    handler = http.server.SimpleHTTPRequestHandler
+    class SilentHTTPHandler(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, format, *args):
+            pass  # Silenzia i log sul terminale per non rompere l'input utente
+    handler = SilentHTTPHandler
     socketserver.TCPServer.allow_reuse_address = True
-    httpd = socketserver.TCPServer(("", port), handler)
-    thread = threading.Thread(target=httpd.serve_forever)
-    thread.daemon = True
-    thread.start()
-    return httpd
+    try:
+        ATTIVO_SERVER_PREVIEW = socketserver.TCPServer(("", port), handler)
+        thread = threading.Thread(target=ATTIVO_SERVER_PREVIEW.serve_forever)
+        thread.daemon = True
+        thread.start()
+        return ATTIVO_SERVER_PREVIEW
+    except Exception as e:
+        print(f"⚠️ Port {port} bypass fallback triggered: {e}")
+        return ATTIVO_SERVER_PREVIEW
 
 def leggi_input_multilinea(messaggio_iniziale):
     print(messaggio_iniziale)
-    print("👉 Paste your text below. When done, press ENTER twice (leave an empty line) to confirm.")
+    print(t("ui_multiline_confirm"))
     linee = []
     while True:
         try:
@@ -199,23 +320,23 @@ def chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False):
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{modello_nome}:generateContent?key={API_KEY}"
                 headers = {"Content-Type": "application/json"}
-                
+
                 payload = {
                     "contents": [{"parts": [{"text": prompt_utente}]}],
                     "generationConfig": {"temperature": 0.2}
                 }
-                
+
                 if prompt_sistema:
                     payload["systemInstruction"] = {"parts": [{"text": prompt_sistema}]}
-                
+
                 if usa_search:
                     payload["tools"] = [{"googleSearch": {}}]
 
                 response = requests.post(url, headers=headers, json=payload, timeout=30)
-                
+
                 if response.status_code == 200:
                     return response.json()['candidates'][0]['content']['parts'][0]['text']
-                
+
                 elif response.status_code in [503, 429]:
                     print(f"⚠️ [AI ESCALATION] {modello_nome} is temporarily saturated (Status {response.status_code}).")
                     time.sleep(3)
@@ -226,7 +347,7 @@ def chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False):
                     continue
             except Exception:
                 continue
-                
+
         print(f"🕒 [POOL SATURATED] All Gemini models are busy. Waiting {attesa_saturazione} seconds before retrying...")
         time.sleep(attesa_saturazione)
         attesa_saturazione = min(attesa_saturazione * 2, 120)
@@ -236,14 +357,14 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
     """Executes multilingual structured JSON object generation using strict object schemas."""
     tentativi_totali = 0
     mentre_attendi = 15
-    
+
     while True:
         for modello_nome in AI_MODELS_POOL:
             try:
                 print(f"🤖 Attempting REST generation with engine model: {modello_nome}...")
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{modello_nome}:generateContent?key={API_KEY}"
                 headers = {"Content-Type": "application/json"}
-                
+
                 payload = {
                     "contents": [{
                         "parts": [{"text": prompt_utente}]
@@ -266,7 +387,7 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
                         "temperature": 0.65
                     }
                 }
-                
+
                 response = requests.post(url, headers=headers, json=payload, timeout=60)
                 if response.status_code == 200:
                     res_json = response.json()
@@ -277,7 +398,7 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
             except Exception as e:
                 print(f"⚠️ Connection failure with model {modello_nome}: {e}")
                 time.sleep(2)
-                
+
         tentativi_totali += 1
         print(f"🕒 Waiting {mentre_attendi} seconds before renewing the loop cycle...")
         time.sleep(mentre_attendi)
@@ -387,7 +508,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
     </header>
     <nav>
-        </nav>
+    </nav>
     <main class="container">
         <h1>{TITOLO_PAGINA}</h1>
         <div class="meta-box">
@@ -495,10 +616,31 @@ def compila_file_finali(slug, dati_partita, dati_generati_json, orario_pubblicaz
     except Exception:
         ora_fine = "23:45"
 
+    # Estrariamo anno, mese e giorno dalla data ISO per la localizzazione nativa
+    try:
+        y_iso, m_iso, d_iso = map(int, dati_partita["data_iso"].split("-"))
+    except Exception:
+        y_iso, m_iso, d_iso = datetime.now().year, datetime.now().month, datetime.now().day
+
+    mesi_it = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+    mesi_en = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    mesi_es = ["", "de enero", "de febrero", "de marzo", "de abril", "de mayo", "de junio", "de julio", "de agosto", "de septiembre", "de octubre", "de noviembre", "de diciembre"]
+    mesi_fr = ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+
     for lang in ["it", "en", "es", "fr"]:
         lang_key = lang if lang in I18N_DICTIONARY else "en"
         info = I18N_DICTIONARY[lang_key]
-        
+
+        # Formattazione chirurgica della data in base alla lingua corrente
+        if lang == "it":
+            data_localizzata = f"{d_iso} {mesi_it[m_iso]} {y_iso}"
+        elif lang == "es":
+            data_localizzata = f"{d_iso} {mesi_es[m_iso]} {y_iso}"
+        elif lang == "fr":
+            data_localizzata = f"{d_iso} {mesi_fr[m_iso]} {y_iso}"
+        else:
+            data_localizzata = f"{mesi_en[m_iso]} {d_iso}, {y_iso}" 
+
         sel_it = "selected" if lang == "it" else ""
         sel_en = "selected" if lang == "en" else ""
         sel_es = "selected" if lang == "es" else ""
@@ -525,13 +667,13 @@ def compila_file_finali(slug, dati_partita, dati_generati_json, orario_pubblicaz
             LABEL_BY=info["label_by"], LABEL_PUBLISHED=info["label_published"], LABEL_UPDATED=info["label_updated"],
             LABEL_META_JOURNAL=info["meta_journal"],
             NAV_HOME=info["nav_home"], NAV_MATCHES=info["nav_matches"], NAV_MARKET=info["nav_market"], NAV_LIVE=info["nav_live"],
-            DATA_TESTUALE=dati_partita["data_testo"],
+            DATA_TESTUALE=data_localizzata,
             ORARIO_PUBBLICAZIONE_CEST=ora_pubblicazione if "CEST" in ora_pubblicazione else f"{ora_pubblicazione} CEST",
             ALT_IMRAPIDE=meta_clean,
             DIDASCALIA_SOTTO_FOTO=art_lang["didascalia_foto"],
             CORPO_ARTICOLO_HTML=art_lang["corpo_html"]
         )
-        
+
         with open(os.path.join(cartella_articolo, f"{lang}.html"), "w", encoding="utf-8") as f:
             f.write(html_compilato)
 
@@ -569,9 +711,9 @@ def esegui_ping_websub(slug):
 def rileva_contesto_calcio_del_giorno(data_target):
     """Executes a grounding micro-call to isolate the main football tournament running live."""
     print("🔄 [HUNTER WARMUP] Scanning web geopolitically to isolate the premium headline competition...")
-    prompt_contesto = f"""Quali sono i tornei o le competizioni di calcio principali (nazionali o internazionali) in corso di svolgimento nella data del {data_target}? 
+    prompt_contesto = f"""Quali sono i tornei o le competizioni di calcio principali (nazionali o internazionali) in corso di svolgimento nella data del {data_target}?
     Rispondi unicamente con il nome della competizione più importante in lingua inglese (es: FIFA World Cup 2026, UEFA Euro 2026, UEFA Champions League). Non aggiungere altre parole."""
-    
+
     try:
         competizione_rilevata = chiedi_raw_ai(None, prompt_contesto, usa_search=True)
         if competizione_rilevata and len(competizione_rilevata.strip()) > 3:
@@ -588,8 +730,8 @@ def rileva_contesto_calcio_del_giorno(data_target):
 # ==============================================================================
 def genera_slug_internazionale_ai(squadra_a, squadra_b, competizione, anno):
     """Translates team names to English on the fly and generates structural international slugs."""
-    prompt_slug = f"""Traduci i nomi di queste due squadre di calcio in lingua inglese (es: 'Spagna' diventa 'Spain', 'Stati Uniti' diventa 'USA'). 
-    Restituisci esclusivamente una stringa in minuscolo con le due squadre in inglese separate da un trattino, seguite da un trattino e il nome della competizione compresso senza spaces e l'anno.
+    prompt_slug = f"""Traduci i nomi di queste due squadre di calcio in lingua inglese (es: 'Spagna' diventa 'Spain', 'Stati Uniti' diventa 'USA').
+    Restituisci esclusivamente una stringa in minuscolo con le due squadre in inglese separate da un trattino, seguite da un trattino e il nome della competizione compresso senza spaces and l'anno.
     Esempio di output: spain-austria-worldcup2026
     Dati: Squadra A: {squadra_a}, Squadra B: {squadra_b}, Competizione: {competizione}, Anno: {anno}.
     Fornisci SOLO la stringa dello slug pulita, senza markdown o punti fermi."""
@@ -615,7 +757,7 @@ def calcola_slot_oro_pubblicazione_ai(squadra_a, squadra_b, orario_match, stadio
     Match: {squadra_a} vs {squadra_b}
     Calcio d'inizio: {orario_match}
     Luogo: {stadio}, {citta} ({data_testo})
-    
+
     COMPITO: Calcola l'orario di pubblicazione strategico (Slot d'Oro) per massimizzare le visite prima che l'attenzione sul web esploda (es: 2-3 ore prima del calcio d'inizio se in Europa, o calcolato sul fuso orario nativo se d'oltreoceano).
     CONVERTI TASSATIVAMENTE questo orario finale nel formato fuso italiano (es: 18:30 CEST o 14:15 CEST).
     Fornisci SOLO l'orario convertito in formato 'HH:MM CEST'. Nessun commento o testo aggiuntivo."""
@@ -634,29 +776,29 @@ def calcola_slot_oro_pubblicazione_ai(squadra_a, squadra_b, orario_match, stadio
 def targeted_discovery_remota_ai(parola_chiave, data_target, anno_corrente):
     """Injects deterministic time restrictions directly into Google queries to narrow the search footprint."""
     print(f"🔍 [TARGETED DISCOVERY] Targeting query parameters for: '{parola_chiave}' on target date {data_target}...")
-    
+
     # Costringiamo Google e l'AI a basarsi solo sugli orari sincronizzati con il fuso italiano (CEST/CET)
     query_iper_mirata = f"partite calcio oggi {data_target} competizione {parola_chiave} {anno_corrente} orario italia"
     prompt_utente_cerca = f"""Effettua una ricerca sul web in tempo reale usando questa query: '{query_iper_mirata}'.
     Trova unicamente i match programmati o giocati in questa data specifica ({data_target}).
     Normalizza tassativamente gli orari dei match convertendoli tutti nel fuso orario italiano (CEST).
     Esempio: se una partita si gioca a Los Angeles alle 17:00 del 1 luglio, calcola che l'ora italiana corrisponde alle 02:00 del 2 luglio CEST, quindi mostrala sotto la data del 2 luglio.
-    Elenca in lingua inglese le squadre coinvolte, l'orario finale convertito in ora italiana (CEST), lo stadio e la città."""
-    
+    Elenca in lingua inglese le squadre involved, l'orario finale convertito in ora italiana (CEST), lo stadio e la città."""
+
     risultato_ricerca_testuale = chiedi_raw_ai(None, prompt_utente_cerca, usa_search=True)
     if not risultato_ricerca_testuale or len(risultato_ricerca_testuale.strip()) < 10:
         print("⚠️ No raw data harvested from the web for this specific date criteria.")
         return []
 
     print(f"🧠 [COGNITIVE PARSING] Sifting and modeling structural records...")
-    
+
     prompt_sistema_parse = "Sei un analista dati. Converti le informazioni fornite in un array JSON nativo valido e pulito."
     prompt_utente_parse = f"""Analizza questo blocco informativo raccolto dal web:
 ---
 {risultato_ricerca_testuale}
 ---
 COMPITO: Isola i match che appartengono alla data del {data_target} secondo il fuso orario italiano/CEST e strutturali in un array JSON nativo.
-Assicurati che il campo 'ora' rifletta chirurgicamente l'orario italiano (es: '02:00 CEST' o '21:00 CEST'), risolvendo le discrepanze orarie dei report grezzi internazionali.
+Assicurati che il campo 'ora' rifletta chirurgicamente l'orario italiano (es: '02:00 CEST' o '21:00 CEST'), resolving le discrepanze orarie dei report grezzi internazionali.
 
 Struttura esatta richiesta (nomi dei campi e valori strutturali rigorosamente in inglese):
 [ {{
@@ -674,14 +816,14 @@ REGOLE TASSATIVE:
 2. Fornisci SOLO il JSON puro, senza markdown."""
 
     raw_json = chiedi_raw_ai(prompt_sistema_parse, prompt_utente_parse, usa_search=False)
-    
+
     try:
         clean_json_str = raw_json.strip()
         if "```json" in clean_json_str:
             clean_json_str = clean_json_str.split("```json")[1].split("```")[0].strip()
         elif "```" in clean_json_str:
             clean_json_str = clean_json_str.split("```")[1].split("```")[0].strip()
-            
+
         match_json = re.search(r'\[\s*\{.*\}\s*\]', clean_json_str, re.DOTALL)
         if match_json:
             return json.loads(match_json.group(0))
@@ -693,25 +835,82 @@ def estrai_dati_tecnici_ai(squadra_a, squadra_b, anno_corrente):
     """Stato 3: Pulls down probable setups, tactical news, and team conditions."""
     print(f"🎯 [STATO 3 - TARGETED EXTRACTION] Building laser tactical blueprint for: {squadra_a} vs {squadra_b}...")
     prompt_sistema = "Sei un analista tattico della redazione sportiva. Generi report tecnici sulle squadre."
-    prompt_utente = f"Genera un report di dettaglio aggiornato per il match {squadra_a} vs {squadra_b} inserito nel contesto della competizione dell'anno {anno_corrente}. Estrai le probabili formazioni, i ballottaggi aperti, l'elenco degli indisponibili o squalificati e lo stato di forma delle due squadre."
+    prompt_utente = f"Generate an updated detailed technical scouting dossier for the match {squadra_a} vs {squadra_b} within the tournament context of the year {anno_corrente}. Tightly extract expected probable lineups, open tactical doubts, full injured/suspended players lists, and current team form metrics. The entire output blueprint MUST be written strictly in English."
     return chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False)
+
+def scansiona_immagine_vision_ai(percorso_immagine, match_info=None):
+    """Decodes the local image to Base64 and executes a multimodal Vision REST call to Gemini."""
+    import base64
+    if not os.path.exists(percorso_immagine):
+        return "None (File not found)"
+    try:
+        with open(percorso_immagine, "rb") as img_f:
+            b64_data = base64.b64encode(img_f.read()).decode("utf-8")
+
+        mime_type = "image/jpeg"
+        if percorso_immagine.lower().endswith(".png"):
+            mime_type = "image/png"
+        elif percorso_immagine.lower().endswith(".webp"):
+            mime_type = "image/webp"
+
+        if match_info:
+            contesto_match = f"\nContext Match Details: {match_info.get('squadra_a', 'Unknown')} vs {match_info.get('squadra_b', 'Unknown')} at {match_info.get('stadio', 'Stadium')}, {match_info.get('citta', 'City')} ({match_info.get('data_testo', 'Today')})."
+        else:
+            contesto_match = ""
+
+        prompt_vision = f"Analyze this football match cover photo. Describe the players present, jersey colors, expressions, actions, and connect them accurately to the known context of the event.{contesto_match} Provide a highly professional, concise journalistic analysis summary for the redaction."
+
+        for modello_nome in AI_MODELS_POOL:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{modello_nome}:generateContent?key={API_KEY}"
+                headers = {"Content-Type": "application/json"}
+                payload = {
+                    "contents": [{
+                        "parts": [
+                            {"text": prompt_vision},
+                            {
+                                "inlineData": {
+                                    "mimeType": mime_type,
+                                    "data": b64_data
+                                }
+                            }
+                        ]
+                    }],
+                    "generationConfig": {"temperature": 0.2}
+                }
+                r = requests.post(url, headers=headers, json=payload, timeout=40)
+                if r.status_code == 200:
+                    return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+            except Exception:
+                continue
+    except Exception as e:
+        return f"Vision processing breakdown: {e}"
+    return "Vision engine temporarily unavailable."
+
+
 
 def genera_guida(match_info, dossier_tecnico):
     """Stato 4: Formats a synthesis layout wrapper to guide localized copywriters."""
-    testo_guida = f"""
-====================================================================
-📋 [STATO 4 - SYNTHESIS] EDITORIAL ORIENTATION BLUEPRINT GUIDE
-====================================================================
-⚽ MATCH: {match_info['squadra_a']} vs {match_info['squadra_b']}
-⏰ KICKOFF TIME: {match_info.get('ora', '20:45 CEST')}   📅 TARGET DATE: {match_info.get('data_testo', '')} ({match_info.get('data_iso', '')})
-🏟️ VENUE LOCATION: {match_info.get('stadio', 'MetLife Stadium')} ({match_info.get('citta', 'New York')})
-ℹ️ CONTEXT SCOPE: {match_info.get('dati_contesto', 'Official fixture.')}
-====================================================================
-📝 IN-DEPTH DOSSIER DATA RECORDS (PROBABLE LINEUPS & TEAM NEWS):
-{dossier_tecnico}
-====================================================================
-"""
-    return testo_guida
+    header = t("ui_stato4_header")
+    match_str = t("ui_stato4_match").format(match_info['squadra_a'], match_info['squadra_b'])
+    time_str = t("ui_stato4_time").format(match_info.get('ora', '20:45 CEST'), match_info.get('data_testo', ''), match_info.get('data_iso', ''))
+    venue_str = t("ui_stato4_venue").format(match_info.get('stadio', 'MetLife Stadium'), match_info.get('citta', 'New York'))
+    context_str = t("ui_stato4_context").format(match_info.get('dati_contesto', 'Official fixture.'))
+    dossier_title = t("ui_stato4_dossier_title")
+    footer = t("ui_stato4_footer")
+    
+    linee = [
+        "",
+        header,
+        match_str,
+        time_str,
+        venue_str,
+        context_str,
+        dossier_title,
+        dossier_tecnico,
+        footer
+    ]
+    return "\n".join(linee)
 
 # ==============================================================================
 # MAIN REDACTION PIPELINE EXECUTION BLOCK
@@ -727,8 +926,8 @@ if __name__ == "__main__":
 
         # STEP 1: KEYWORD SEARCH SELECTION
         print(t("ui_input_keyword"))
-        query_input = input(t("ui_input_keyword_help")).strip()
-        
+        query_input = input_interattivo_avanzato(t("ui_input_keyword_help")).strip()
+
         if not query_input:
             query_comp = rileva_contesto_calcio_del_giorno(data_corrente.strftime("%d %B %Y"))
         else:
@@ -738,48 +937,72 @@ if __name__ == "__main__":
         print(t("ui_time_horizon"))
         print(t("ui_opt_today"))
         print(t("ui_opt_tomorrow"))
-        scelta_tempo = input(t("ui_select_option")).strip() or "1"
+        scelta_tempo = input_interattivo_avanzato(t("ui_select_option")).strip() or "1"
 
         target_date = data_corrente + timedelta(days=1) if scelta_tempo == "2" else data_corrente
         iso_giorno = target_date.strftime("%Y-%m-%d")
 
-        # STEP 3: RAW HARVESTING RUN
+        # 🔍 FASE 1: SCANSIONE DELL ARCHIVIO LOCALE E DIAGNOSTICA
+        articoli_scritti = os.listdir(ARTICLES_OUTPUT_DIR) if os.path.exists(ARTICLES_OUTPUT_DIR) else []
         match_filtrati = targeted_discovery_remota_ai(query_comp, iso_giorno, anno_corrente)
-        
+
         match_selezionato = None
         lista_match = []
 
         if match_filtrati:
-            for idx, m in enumerate(match_filtrati[:6]):
-                sq_a = m.get('squadra_a', 'Unknown')
-                sq_b = m.get('squadra_b', 'Unknown')
-                
-                dossier = estrai_dati_tecnici_ai(sq_a, sq_b, anno_corrente)
-                
+            print(t("ui_matches_detected"))
+            for m in match_filtrati[:6]:
+                sq_a = m.get("squadra_a", "Unknown")
+                sq_b = m.get("squadra_b", "Unknown")
+                ora_raw = m.get("ora", "18:00 CEST")
+
+                # Calcolo dello stato temporale reale del match
+                partita_iniziata_o_terminata = False
+                try:
+                    ora_pulita = ora_raw.split()[0]
+                    ore_m, min_m = map(int, ora_pulita.split(":"))
+                    ora_match_dt = target_date.replace(hour=ore_m, minute=min_m, second=0, microsecond=0)
+                    if datetime.now() > ora_match_dt:
+                        partita_iniziata_o_terminata = True
+                except Exception:
+                    pass
+
+                # Generazione dello slug teorico esatto basato sul torneo specifico estratto dal record
+                torneo_record = m.get("competizione", query_comp)
+                slug_teorico = genera_slug_internazionale_ai(sq_a, sq_b, torneo_record, anno_corrente)
+                cartella_esistente = slug_teorico if slug_teorico in articoli_scritti else None
+
+                # Assegnazione Tag Diagnostico Visivo
+                if cartella_esistente:
+                    tag_diagnostico = t("tag_already_written")
+                elif partita_iniziata_o_terminata:
+                    tag_diagnostico = t("tag_live_finished")
+                else:
+                    tag_diagnostico = t("tag_future")
+
+                m_id = str(len(lista_match) + 1)
+                print(f" [{m_id}] {tag_diagnostico} {sq_a} vs {sq_b} ({ora_raw})")
+
                 lista_match.append({
-                    "id": str(idx + 1),
+                    "id": m_id,
                     "squadra_a": sq_a,
                     "squadra_b": sq_b,
-                    "ora": m.get('ora', '18:00 CEST'),
-                    "data_iso": m.get('data_iso', iso_giorno),
-                    "data_testo": m.get('data_testo', target_date.strftime("%B %d, %Y")),
-                    "stadio": m.get('stadio', 'MetLife Stadium'),
-                    "citta": m.get('citta', 'International Arena'),
-                    "dati_contesto": f"Official fixture ({query_comp} {anno_corrente}).",
-                    "dossier_match": dossier if dossier else "Data package ready for deployment."
+                    "ora": ora_raw,
+                    "data_iso": m.get("data_iso", iso_giorno),
+                    "data_testo": m.get("data_testo", target_date.strftime("%B %d, %Y")),
+                    "stadio": m.get("stadio", "MetLife Stadium"),
+                    "citta": m.get("citta", "International Arena"),
+                    "partita_iniziata_o_terminata": partita_iniziata_o_terminata,
+                    "cartella_esistente": cartella_esistente
                 })
 
-        if lista_match:
-            print(t("ui_matches_detected"))
-            for m in lista_match:
-                print(f" [{m['id']}] {m['squadra_a']} vs {m['squadra_b']} ({m['ora']} - {m['data_testo']})")
-            scelta = input(t("ui_select_match_id")).strip()
+            scelta = input_interattivo_avanzato(t("ui_select_match_id")).strip()
             try:
                 if scelta:
                     match_selezionato = lista_match[int(scelta) - 1]
             except Exception:
                 pass
-        
+
         if not match_selezionato:
             print(t("ui_manual_mode"))
             sq_a = input(t("ui_input_home")).strip()
@@ -790,56 +1013,146 @@ if __name__ == "__main__":
             ora_m = input(t("ui_input_time")).strip() or "20:45 CEST"
             stadio_m = input(t("ui_input_stadium")).strip() or "MetLife Stadium"
             citta_m = input(t("ui_input_city")).strip() or "New York"
-            dossier = estrai_dati_tecnici_ai(sq_a, sq_b, anno_corrente)
-            
+
+            partita_iniziata_o_terminata = False
+            try:
+                ora_pulita = ora_m.split()[0]
+                ore_m, min_m = map(int, ora_pulita.split(":"))
+                ora_match_dt = target_date.replace(hour=ore_m, minute=min_m, second=0, microsecond=0)
+                if datetime.now() > ora_match_dt:
+                    partita_iniziata_o_terminata = True
+            except Exception:
+                pass
+
+            slug_teorico_man = genera_slug_internazionale_ai(sq_a, sq_b, query_comp, anno_corrente)
+            cartella_esistente = slug_teorico_man if slug_teorico_man in articoli_scritti else None
+
             match_selezionato = {
                 "id": "1", "squadra_a": sq_a, "squadra_b": sq_b, "ora": ora_m,
-                "data_iso": iso_giorno,
-                "data_testo": target_date.strftime("%B %d, %Y").strip(),
-                "stadio": stadio_m, "citta": citta_m, "dati_contesto": f"Direct clash between {sq_a} and {sq_b}.",
-                "dossier_match": dossier if dossier else "Data package ready for deployment."
+                "data_iso": iso_giorno, "data_testo": target_date.strftime("%B %d, %Y").strip(),
+                "stadio": stadio_m, "citta": citta_m,
+                "partita_iniziata_o_terminata": partita_iniziata_o_terminata,
+                "cartella_esistente": cartella_esistente
             }
 
-        # Print briefing outline guide
-        testo_guida_definitivo = genera_guida(match_selezionato, match_selezionato.get('dossier_match', 'No technical dossier records matched.'))
+        # 🎯 FASE 2: SCELTA DELLA MODALITÀ OPERATIVA (FILTRO TEMPORALE AUTOMATICO)
+        if not match_selezionato["partita_iniziata_o_terminata"]:
+            scelta_modalita = "1"
+            print(t("ui_fase2_pre_match"))
+        else:
+            scelta_modalita = "2"
+            print(t("ui_fase2_post_match"))
+
+        # ⚠️ FASE 3: CONTROLLO DI RISCRITTURA COERENTE (SARTORIALE)
+        if match_selezionato["cartella_esistente"]:
+            ha_post_match = False
+            percorso_it = os.path.join(ARTICLES_OUTPUT_DIR, match_selezionato["cartella_esistente"], "it.html")
+            if os.path.exists(percorso_it):
+                try:
+                    with open(percorso_it, "r", encoding="utf-8") as f_check:
+                        contenuto_html = f_check.read()
+                        if "FINISHED" in contenuto_html or "Post-Match" in contenuto_html or "Cronaca" in contenuto_html:
+                            ha_post_match = True
+                except Exception:
+                    pass
+
+            proponi_riscrittura = False
+            messaggio_alert = ""
+
+            if scelta_modalita == "1":
+                proponi_riscrittura = True
+                messaggio_alert = t("ui_fase3_alert_pre").format(match_selezionato['squadra_a'], match_selezionato['squadra_b'])
+            elif scelta_modalita == "2" and ha_post_match:
+                proponi_riscrittura = True
+                messaggio_alert = t("ui_fase3_alert_post").format(match_selezionato['squadra_a'], match_selezionato['squadra_b'])
+
+            if proponi_riscrittura:
+                print(f"\n{messaggio_alert}")
+                print(t("ui_fase3_operation_title"))
+                print(t("ui_fase3_opt_update"))
+                print(t("ui_fase3_opt_rewrite"))
+                scelta_op = input(t("ui_fase3_select_option")).strip()
+
+                if scelta_op == "1":
+                    print(t("ui_fase3_mode_update"))
+                    nota_aggiornamento = input_interattivo_avanzato(t("ui_fase3_input_flash"))
+                    match_selezionato["nota_flash_urgente"] = nota_aggiornamento
+                elif scelta_op == "2":
+                    print(t("ui_fase3_mode_rewrite"))
+                else:
+                    print(t("ui_fase3_cancelled_msg"))
+                    sys.exit(0)
+        # 🚀 FASE 4: INNESCO DEL DOSSIER ED ESTRAZIONE AI MIRATA
+        dossier = estrai_dati_tecnici_ai(match_selezionato["squadra_a"], match_selezionato["squadra_b"], anno_corrente)
+        if scelta_modalita == "2":
+            dossier += "\n\n[EDITORIAL NOTE: This match is finished. Do NOT use the lineages block. Focus exclusively on final tactical match review and statistics.]"
+
+        match_selezionato["dossier_match"] = dossier
+        match_selezionato["dati_contesto"] = f"Official Post-Match Review ({query_comp})" if scelta_modalita == "2" else f"Official Pre-Match Fixture ({query_comp})"
+
+        testo_guida_definitivo = genera_guida(match_selezionato, match_selezionato["dossier_match"])
         print(testo_guida_definitivo)
 
         # AI English slug translation step
         slug_pulito = genera_slug_internazionale_ai(match_selezionato['squadra_a'], match_selezionato['squadra_b'], query_comp, anno_corrente)
-        slug_articolo = input(f"{t('ui_input_slug')} [{slug_pulito}]: ").strip() or slug_pulito
+        slug_articolo = input_interattivo_avanzato(f"{t('ui_input_slug')} [{slug_pulito}]: ").strip() or slug_pulito
 
         # AI Predictive timing slot suggestion
         orario_predetto_default = calcola_slot_oro_pubblicazione_ai(
-            match_selezionato['squadra_a'], match_selezionato['squadra_b'], 
-            match_selezionato['ora'], match_selezionato['stadio'], 
+            match_selezionato['squadra_a'], match_selezionato['squadra_b'],
+            match_selezionato['ora'], match_selezionato['stadio'],
             match_selezionato['citta'], match_selezionato['data_testo']
         )
-        
-        titolo_custom = input(t("ui_input_title")).strip()
-        orario_pub_custom = input(f"{t('ui_input_pub_time')} [leave empty for AI suggestion: {orario_predetto_default}]: ").strip() or orario_predetto_default
+
+        print(t("ui_input_title"))
+        print(t("ui_title_multiline_help"))
+        linee_titolo = []
+        while True:
+            l_tit = input()
+            if l_tit == "":
+                break
+            linee_titolo.append(l_tit)
+        titolo_custom = "\n".join(linee_titolo).strip()
+        orario_pub_custom = input_interattivo_avanzato(f"{t('ui_input_pub_time')} [leave empty for AI suggestion: {orario_predetto_default}]: ").strip() or orario_predetto_default
 
         # Gather customized structural lines
-        prompt_redazionale_utente = leggi_input_multilinea(t("ui_input_multiline_prompt"))
+        prompt_redazionale_utente = leggi_input_multilinea_avanzato(t("ui_input_multiline_prompt"))
 
         print(f"{t('ui_check_downloads')}{DOWNLOADS_DIR}")
         nome_foto = ""
         while not nome_foto:
-            nome_foto = input(t("ui_input_cover")).strip()
+            nome_foto = input_interattivo_avanzato(t("ui_input_cover")).strip()
             if not nome_foto:
                 print("⚠️ Error: File name cannot be empty. Specify exact syntax.")
-        
+
         estensione = os.path.splitext(nome_foto)[1] or ".jpg"
         nome_foto_finalizzat_assets = f"{slug_articolo}{estensione}"
-        
+
         percorso_foto_origine = os.path.join(DOWNLOADS_DIR, nome_foto)
         if os.path.exists(percorso_foto_origine):
+            print("\n👁️  [VISION ENGINE] Initializing multimodal frame analysis via Gemini...")
+            vision_dossier = scansiona_immagine_vision_ai(percorso_foto_origine, match_selezionato)
+            print("--------------------------------------------------------------------")
+            print(f"📸 IMAGE SCAN ANALYSIS OUTPUT:\n{vision_dossier}")
+            print("--------------------------------------------------------------------")
+            print(t("ui_caption_prompt_title"))
+            print(t("ui_caption_prompt_help"))
+            print(t("ui_caption_prompt_confirm"))
+            linee_didascalia = []
+            while True:
+                l_did = input()
+                if l_did == "":
+                    break
+                linee_didascalia.append(l_did)
+            didascalia_istruzione = "\n".join(linee_didascalia).strip()
             shutil.copy(percorso_foto_origine, os.path.join(ASSETS_DIR, nome_foto_finalizzat_assets))
             print(f"{t('ui_img_copied')}{nome_foto_finalizzat_assets}")
         else:
-            print(t("ui_img_missing").format(nome_foto, DOWNLOADS_DIR))
+            print(t('ui_img_missing').format(nome_foto, DOWNLOADS_DIR))
+            vision_dossier = "No cover image analytical data."
+            didascalia_istruzione = ""
         
         match_selezionato["immagine_copertina"] = nome_foto_finalizzat_assets
-
         prompt_completo_ai = f"""Sviluppa l'articolo giornalistico sportivo multilingua seguendo fedelmente queste linee guida ed informazioni reali riscontrate:
 - Incontro: {match_selezionato['squadra_a']} vs {match_selezionato['squadra_b']}
 - Data e Ora: {match_selezionato['data_testo']} alle ore {match_selezionato['ora']}
@@ -851,29 +1164,35 @@ DOSSIER INFORMATIVO ESTRATTO IN TEMPO REALE DA PROCESSARE:
 Direttive ed Espansioni fornite dal Redattore:
 {prompt_redazionale_utente}
 """
+        if didascalia_istruzione:
+            prompt_completo_ai += f"\n- Istruzione Redazionale Didascalia Foto: Genera la didascalia basandoti sull'analisi dell'immagine fornita dal modulo Vision, seguendo questa guida interattiva del redattore: {didascalia_istruzione}. Traducila in tutte e 4 le lingue."
         if titolo_custom:
-            prompt_completo_ai += f"\n- Vincolo Titolo Italiano: Devi usare tassativamente questo titolo: '{titolo_custom}'. Traducilo in modo coerente e vario per le altre tre lingue."
+            prompt_completo_ai += f"\n- Vincolo Titolo Italiano: Devi usare tassativamente questo titolo: '{titolo_custom}'. Traducilo in modo coerente e vario for le altre tre lingue."
 
         print(t("ui_engine_start"))
         raw_ai_output = genera_con_scalo_ai(PROMPT_SISTEMA_EDITORIALE, prompt_completo_ai)
-        
+
         revisione_attiva = True
         while revisione_attiva:
             try:
                 clean_json_str = raw_ai_output.strip().replace("```json", "").replace("```", "")
                 dati_generati_json = json.loads(clean_json_str)
-                
+
                 compila_file_finali(slug_articolo, match_selezionato, dati_generati_json, orario_pub_custom)
-                
+
                 server_preview = avvia_server_anteprima(PROJECT_DIR, port=8080)
-                
+
                 print(t("ui_preview_title").format(slug_articolo))
                 print(f"{t('ui_generated_title')}{dati_generati_json['it']['titolo']}")
-                
+
                 scelta_utente = input(t("ui_user_satisfaction")).strip().lower()
-                
-                server_preview.shutdown()
-                
+
+                try:
+                    server_preview.shutdown()
+                    server_preview.server_close()
+                except Exception:
+                    pass
+
                 if scelta_utente == 'y':
                     revisione_attiva = False
                     print(f"{t('ui_saved_path')}{os.path.join(ARTICLES_OUTPUT_DIR, slug_articolo)}/")
@@ -881,25 +1200,41 @@ Direttive ed Espansioni fornite dal Redattore:
                     os.system("rm -f champions-report.zip")
                     os.system("zip -r champions-report.zip assets articles > /dev/null")
                     print(t("ui_archive_ready"))
-                    
                     print(t("ui_cloudflare_pause"))
-                    print("\n🌐 PRODUCTION PRETTYLINKS FOR THIS DEPLOYMENT:")
-                    print(f"🇮🇹 Italian:  https://championsreport.editories.com/articles/{slug_articolo}/it.html")
-                    print(f"🇬🇧 English:  https://championsreport.editories.com/articles/{slug_articolo}/en.html")
-                    print(f"🇪🇸 Spanish:  https://championsreport.editories.com/articles/{slug_articolo}/es.html")
-                    print(f"🇫🇷 French:   https://championsreport.editories.com/articles/{slug_articolo}/fr.html")
-                    print(f"📡 RSS Feed:  https://championsreport.editories.com/articles/{slug_articolo}/feed.xml\n")
+                    print(t("ui_production_links"))
+                    print(f"{t('ui_link_it')}https://championsreport.editories.com/articles/{slug_articolo}/it.html")
+                    print(f"{t('ui_link_en')}https://championsreport.editories.com/articles/{slug_articolo}/en.html")
+                    print(f"{t('ui_link_es')}https://championsreport.editories.com/articles/{slug_articolo}/es.html")
+                    print(f"{t('ui_link_fr')}https://championsreport.editories.com/articles/{slug_articolo}/fr.html")
+                    print(f"{t('ui_link_rss')}https://championsreport.editories.com/articles/{slug_articolo}/feed.xml")
+                    print(t("ui_google_prettylinks"))
+                    print(f"{t('ui_pretty_it')}https://championsreport.editories.com/articles/{slug_articolo}/it")
+                    print(f"{t('ui_pretty_en')}https://championsreport.editories.com/articles/{slug_articolo}/en")
+                    print(f"{t('ui_pretty_es')}https://championsreport.editories.com/articles/{slug_articolo}/es")
+                    print(f"{t('ui_pretty_fr')}https://championsreport.editories.com/articles/{slug_articolo}/fr\n")
                     input(t("ui_websub_prompt"))
-                    
                     print(t("ui_pinging"))
                     esegui_ping_websub(slug_articolo)
                     print(t("ui_success_finish"))
                 else:
                     modifica_richiesta = input(t("ui_ai_correction")).strip()
-                    prompt_correzione = f"Ecco l'output precedente:\n{raw_ai_output}\n\nApplica rigorosamente queste modifiche mantenendo intatta la struttura JSON, creando titoli originali descrittivi ed elaborando lo schieramento lineups:\n{modifica_richiesta}"
-                    print("\n🔄 Generating update structure...")
-                    raw_ai_output = genera_con_scalo_ai(PROMPT_SISTEMA_EDITORIALE, prompt_correzione)
-                    
+                    print(t("ui_saving_draft"))
+                    prompt_sistema_modifica_chirurgica = """Sei un revisore editoriale di file JSON strutturati.
+Il tuo UNICO compito è ricevere in input un pacchetto JSON multilingua, localizzare chirurgicamente le chiavi o i dettagli testuali richiesti dal redattore e restituire il JSON modificato solo ed esclusivamente in quei punti.
+MANTIENI TOTALMENTE IDENTICI tutti gli altri blocchi HTML, descrizioni e titoli intatti se non interessati dalla richiesta, senza ri-generarli o inventarli da zero.
+Restituisci ESCLUSIVAMENTE un oggetto JSON nativo valido, senza blocchi di testo esterni o marcatori markdown di tipo ```json."""
+
+                    prompt_correzione_chirurgica = f"""Dati JSON della Bozza Attuale:
+{json.dumps(dati_generati_json, indent=2, ensure_ascii=False)}
+
+Richiesta di variazione del redattore:
+{modifica_richiesta}
+
+COMPITO: Applica la variazione richiesta sopra nel JSON modificando solo i campi necessari in tutte e 4 le lingue (es: se la richiesta riguarda la didascalia della foto, modifica solo 'didascalia_foto' in it, en, es, fr). Lascia intatto il resto."""
+
+                    print(t("ui_processing_surgical"))
+                    raw_ai_output = genera_con_scalo_ai(prompt_sistema_modifica_chirurgica, prompt_correzione_chirurgica)
+
             except json.JSONDecodeError:
                 print(t("ui_json_error"))
                 raw_ai_output = genera_con_scalo_ai(PROMPT_SISTEMA_EDITORIALE, prompt_completo_ai)

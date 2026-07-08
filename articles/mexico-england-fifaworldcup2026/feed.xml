@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Champions Report Mondiali 2026</title>
+    <link>https://championsreport.editories.com</link>
+    <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+    <atom:link rel="self" href="https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/feed.xml" type="application/rss+xml" />
+    <item>
+        <title>Un Messico dallo status crescente ospita Kane e compagni: la bolgia della Capitale per imbrigliare gli Inglesi e garantirsi il passaggio ai quarti di finale</title>
+        <link>https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/it.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/it.html</guid>
+        <description>Ottavi di finale Mondiali 2026: all'Estadio Azteca, il Messico sfida l'Inghilterra di Tuchel in un match ad altissima tensione. Analisi, tattica e probabili formazioni.</description>
+    </item>
+    <item>
+        <title>A Rising Mexico Hosts Kane and Company: The Capital's Cauldron to Shackle the English and Secure a Quarter-Final Berth</title>
+        <link>https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/en.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/en.html</guid>
+        <description>World Cup 2026 Round of 16: Mexico faces Tuchel's England at the Estadio Azteca. Tactical preview, key matchups, and predicted lineups.</description>
+    </item>
+    <item>
+        <title>Un México de estatus creciente recibe a Kane y compañía: la caldera de la capital para frenar a los ingleses y asegurar el pase a cuartos</title>
+        <link>https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/es.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/es.html</guid>
+        <description>Octavos de final del Mundial 2026: México se enfrenta a la Inglaterra de Tuchel en el Estadio Azteca. Análisis táctico y alineaciones probables.</description>
+    </item>
+    <item>
+        <title>Un Mexique au statut grandissant accueille Kane et ses troupes : le chaudron de la capitale pour piéger les Anglais et s'assurer un quart de finale</title>
+        <link>https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/fr.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/mexico-england-fifaworldcup2026/fr.html</guid>
+        <description>Huitièmes de finale de la Coupe du Monde 2026 : le Mexique défie l'Angleterre de Tuchel à l'Estadio Azteca. Analyse tactique et compos probables.</description>
+    </item>
+</channel>
+</rss>

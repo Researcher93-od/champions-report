@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Champions Report Mondiali 2026</title>
+    <link>https://championsreport.editories.com</link>
+    <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+    <atom:link rel="self" href="https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/feed.xml" type="application/rss+xml" />
+    <item>
+        <title>Les Bleus sulle ali dell'entusiasmo contro gli uomini di Alfaro: il Paraguay, dopo aver eliminato la Germania, sogna un altro colpo grosso</title>
+        <link>https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/it.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/it.html</guid>
+        <description>Paraguay contro Francia ai Mondiali 2026: analisi tattica, formazioni e chiavi di una sfida stellare tra la stella Mbappé e la leggendaria Garra Guaraní.</description>
+    </item>
+    <item>
+        <title>Les Bleus riding a wave of enthusiasm against Alfaro's men: Paraguay, after eliminating Germany, dream of another giant-killing</title>
+        <link>https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/en.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/en.html</guid>
+        <description>Paraguay vs France at the 2026 World Cup: tactical analysis, probable lineups, and key match-ups between Mbappé's brilliance and the legendary Garra Guaraní.</description>
+    </item>
+    <item>
+        <title>Les Bleus en la cresta de la ola contra los hombres de Alfaro: Paraguay, tras eliminar a Alemania, sueña con otro golpe histórico</title>
+        <link>https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/es.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/es.html</guid>
+        <description>Paraguay vs Francia en el Mundial 2026: análisis táctico, alineaciones probables y las claves de un duelo vibrante entre Mbappé y la Garra Guaraní.</description>
+    </item>
+    <item>
+        <title>Les Bleus sur les ailes de l'enthousiasme face aux hommes d'Alfaro : le Paraguay, après avoir éliminé l'Allemagne, rêve d'un nouvel exploit</title>
+        <link>https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/fr.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/paraguay-france-fifaworldcup2026/fr.html</guid>
+        <description>Paraguay vs France à la Coupe du Monde 2026 : analyse tactique, compositions probables et duels clés entre le génie de Mbappé et la légendaire Garra Guaraní.</description>
+    </item>
+</channel>
+</rss>

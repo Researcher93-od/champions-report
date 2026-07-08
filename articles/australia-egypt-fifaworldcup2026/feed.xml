@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Champions Report Mondiali 2026</title>
+    <link>https://championsreport.editories.com</link>
+    <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+    <atom:link rel="self" href="https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/feed.xml" type="application/rss+xml" />
+    <item>
+        <title>Australia - Egitto a Dallas: la compagine egizia guidata da Salah per proseguire il cammino al cospetto dell'atletismo  degli uomini di Popovic</title>
+        <link>https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/it.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/it.html</guid>
+        <description>La vigilia di Australia-Egitto al Dallas Stadium: l'analisi tattica, le probabili formazioni e i duelli chiave tra la fisicità dei Socceroos e la classe di Salah.</description>
+    </item>
+    <item>
+        <title>Australia vs Egypt in Dallas: Salah leads the Pharaohs to continue their journey against Popovic's athletic Socceroos</title>
+        <link>https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/en.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/en.html</guid>
+        <description>Australia face Egypt at the Dallas Stadium: tactical preview, predicted lineups, and key duels between the Socceroos' physical power and Salah's genius.</description>
+    </item>
+    <item>
+        <title>Australia - Egipto en Dallas: el cuadro egipcio liderado por Salah para continuar el camino ante el atleticismo de los hombres de Popovic</title>
+        <link>https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/es.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/es.html</guid>
+        <description>Australia se enfrenta a Egipto en el Dallas Stadium: análisis táctico, alineaciones probables y duelos clave entre el poderío físico de los Socceroos y el genio de Salah.</description>
+    </item>
+    <item>
+        <title>Australie - Égypte à Dallas : la sélection égyptienne menée par Salah pour poursuivre sa route face à l'athlétisme des hommes de Popovic</title>
+        <link>https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/fr.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/australia-egypt-fifaworldcup2026/fr.html</guid>
+        <description>L'Australie affronte l'Égypte au Dallas Stadium : analyse tactique, compositions probables et duels clés entre la puissance des Socceroos et le génie de Salah.</description>
+    </item>
+</channel>
+</rss>

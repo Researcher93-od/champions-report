@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Champions Report Mondiali 2026</title>
+    <link>https://championsreport.editories.com</link>
+    <description>Notizie flash e cronaca live dei Mondiali 2026</description>
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+    <atom:link rel="self" href="https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/feed.xml" type="application/rss+xml" />
+    <item>
+        <title>La Notte di Seattle chiama gli Stati Uniti ed il Belgio: i padroni di casa per superare i Diavoli Rossi, confermarsi e proseguire il cammino</title>
+        <link>https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/it.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/it.html</guid>
+        <description>Analisi tattica e vigilia di USA-Belgio ai Mondiali 2026. Scopri le probabili formazioni, i duelli chiave e le scelte di Pochettino e Garcia per la sfida di Seattle.</description>
+    </item>
+    <item>
+        <title>The Night in Seattle Calls the United States and Belgium: Hosts Aim to Overcome the Red Devils, Confirm Their Worth, and March On</title>
+        <link>https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/en.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/en.html</guid>
+        <description>Tactical analysis and preview of USA vs. Belgium at the 2026 World Cup. Discover probable lineups, key matchups, and tactical dilemmas in Seattle.</description>
+    </item>
+    <item>
+        <title>La Noche de Seattle convoca a Estados Unidos y Bélgica: los anfitriones buscan superar a los Diablos Rojos, consolidarse y seguir adelante</title>
+        <link>https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/es.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/es.html</guid>
+        <description>Análisis táctico y previa del Estados Unidos vs. Bélgica en el Mundial 2026. Alineaciones probables, duelos clave y las estrategias en Seattle.</description>
+    </item>
+    <item>
+        <title>La Nuit de Seattle appelle les États-Unis et la Belgique : les hôtes pour terrasser les Diables Rouges, s'affirmer et poursuivre l'aventure</title>
+        <link>https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/fr.html</link>
+        <guid isPermaLink="true">https://championsreport.editories.com/articles/usa-belgium-fifaworldcup2026/fr.html</guid>
+        <description>Analyse tactique et présentation d'États-Unis - Belgique au Mondial 2026. Découvrez les compos probables, les duels clés et les choix de Pochettino et Garcia.</description>
+    </item>
+</channel>
+</rss>
