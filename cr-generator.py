@@ -39,28 +39,6 @@ os.makedirs(ASSETS_DIR, exist_ok=True)
 os.makedirs(ARTICLES_OUTPUT_DIR, exist_ok=True)
 
 # ==============================================================================
-# API KEY CONFIGURATION FROM .ENV FILE
-# ==============================================================================
-API_KEY = None
-ENV_PATH = os.path.join(PROJECT_DIR, ".env") if os.path.exists(os.path.join(PROJECT_DIR, ".env")) else os.path.join(BASE_DIR, ".env")
-
-if os.path.exists(ENV_PATH):
-    try:
-        with open(ENV_PATH, "r") as f:
-            for line in f:
-                if line.strip().startswith("GEMINI_API_KEY"):
-                    API_KEY = line.split("=")[1].strip().replace('"', '').replace("'", "")
-    except Exception as e:
-        print(f"⚠️ Error reading .env file: {e}")
-
-if not API_KEY:
-    print("❌ Error: Incomplete configuration.")
-    print("Make sure you created a '.env' file containing: GEMINI_API_KEY=your_key_here")
-    sys.exit(1)
-
-AI_MODELS_POOL = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-latest"]
-
-# ==============================================================================
 # DYNAMIC TRANSLATION DICTIONARY (I18N SYSTEM)
 # ==============================================================================
 CURRENT_LANG = "en"  # Default global UI environment language
@@ -156,7 +134,41 @@ I18N_DICTIONARY = {
         "ui_pretty_it": "🇮🇹 IT: ",
         "ui_pretty_en": "🇬🇧 EN: ",
         "ui_pretty_es": "🇪🇸 ES: ",
-        "ui_pretty_fr": "🇫🇷 FR: "
+        "ui_pretty_fr": "🇫🇷 FR: ",
+        "ui_env_read_error": "⚠️ Error reading .env file: {}",
+        "ui_config_incomplete": "❌ Error: Incomplete configuration.",
+        "ui_config_env_instructions": "Make sure you created a '.env' file containing: GEMINI_API_KEY=your_key_here",
+        "ui_port_fallback": "⚠️ Port {} bypass fallback triggered: {}",
+        "ui_ai_escalation": "⚠️ [AI ESCALATION] {} is temporarily saturated (Status {}).",
+        "ui_ai_trying_fallback": "Trying the next fallback model engine...",
+        "ui_api_debug": "⚠️ [API DEBUG] {} responded with Status {}: {}",
+        "ui_pool_saturated": "🕒 [POOL SATURATED] All Gemini models are busy. Waiting {} seconds before retrying...",
+        "ui_attempting_rest": "🤖 Attempting REST generation with engine model: {}...",
+        "ui_api_error_model": "⚠️ API Error on {} (Status {})",
+        "ui_connection_failure": "⚠️ Connection failure with model {}: {}",
+        "ui_waiting_cycle": "🕒 Waiting {} seconds before renewing the loop cycle...",
+        "ui_websub_success": "✅ [WebSub] Indexation ping successfully broadcasted to Googlebot!",
+        "ui_websub_anomalous": "⚠️ [WebSub] Anomalous hub response (Status {})",
+        "ui_websub_error": "❌ Unable to connect with WebSub Hub: {}",
+        "ui_hunter_warmup": "🔄 [HUNTER WARMUP] Scanning web geopolitically to isolate the premium headline competition...",
+        "ui_context_found": "🏆 [CONTEXT FOUND] Isolated premium tournament: '{}'",
+        "ui_cognitive_prediction": "🔮 [COGNITIVE PREDICTION] Calculating Golden Slot parameters for strategic publication timing...",
+        "ui_targeted_discovery": "🔍 [TARGETED DISCOVERY] Targeting query parameters for: '{}' on target date {}...",
+        "ui_no_raw_data": "⚠️ No raw data harvested from the web for this specific date criteria.",
+        "ui_cognitive_parsing": "🧠 [COGNITIVE PARSING] Sifting and modeling structural records...",
+        "ui_stato3_extraction": "🎯 [STATO 3 - TARGETED EXTRACTION] Building laser tactical blueprint for: {} vs {}...",
+        "ui_vision_none": "None (File not found)",
+        "ui_vision_init": "\n👁️  [VISION ENGINE] Initializing multimodal frame analysis via Gemini...",
+        "ui_vision_output": "📸 IMAGE SCAN ANALYSIS OUTPUT:\n{}",
+        "ui_vision_breakdown": "Vision processing breakdown: {}",
+        "ui_vision_unavailable": "Vision engine temporarily unavailable.",
+        "ui_null_input": "❌ Null input field. Aborting process.",
+        "ui_cover_name_empty": "⚠️ Error: File name cannot be empty. Specify exact syntax.",
+        "ui_no_cover_data": "No cover image analytical data.",
+        "ui_no_remote_data": "Nessun dato remoto riscontrato.",
+        "ui_editorial_postmatch_note": "\n\n[EDITORIAL NOTE: This match is finished. Do NOT use the lineages block. Focus exclusively on final tactical match review and statistics.]",
+        "ui_context_postmatch": "Official Post-Match Review ({})",
+        "ui_context_prematch": "Official Pre-Match Fixture ({})"
     },
     "it": {
         "locale": "it_IT",
@@ -168,6 +180,51 @@ I18N_DICTIONARY = {
         "nav_market": "Mercato",
         "nav_live": "Live",
         "meta_journal": "Champion's Report Journal",
+        "ui_welcome": "      🏆 CHAMPION'S REPORT JOURNAL - AUTOMATED REDACTION 🏆     ",
+        "ui_input_keyword": "\n🔍 Inserisci Competizione, Squadra o Parola Chiave (es. Mondiali, Serie A, Barcellona)",
+        "ui_input_keyword_help": "[Lascia VUOTO e premi INVIO per l'auto-rilevamento live del contesto]: ",
+        "ui_time_horizon": "\n--------------------------------------------------------------------\n📅 Scegli l'orizzonte temporale per la ricerca partite sul web:",
+        "ui_opt_today": " [1] Partite di OGGI",
+        "ui_opt_tomorrow": " [2] Partite di DOMANI",
+        "ui_select_option": "Seleziona un'opzione [1/2]: ",
+        "ui_matches_detected": "\nPartite rilevate sul web in tempo reale:",
+        "ui_select_match_id": "\nSeleziona numero partita [Premi INVIO direttamente per inserimento manuale]: ",
+        "ui_manual_mode": "\n📝 Modalità inserimento manuale assistito attivata (Nessun match selezionato)...",
+        "ui_input_home": "Inserisci Nome Squadra Casa (es. Spagna): ",
+        "ui_input_away": "Inserisci Nome Squadra Ospite (es. Austria): ",
+        "ui_input_time": "Orario inizio match (es. 21:00 CEST): ",
+        "ui_input_stadium": "Nome Stadio: ",
+        "ui_input_city": "Città: ",
+        "ui_input_slug": "Inserisci slug cartella",
+        "ui_input_title": "Inserisci Titolo personalizzato (lascia vuoto per farlo generare all'IA): ",
+        "ui_input_pub_time": "Inserisci orario pubblicazione personalizzato",
+        "ui_input_multiline_prompt": "\n✍️ Inserisci direttive redazionali o incolla fatti grezzi e formazioni per l'IA.",
+        "ui_check_downloads": "\n📂 Controllo file multimediali nella cartella download: ",
+        "ui_input_cover": "Inserisci il nome del file copertina presente nei download (es. match.jpg): ",
+        "ui_img_copied": "📸 Immagine copiata e rinominata con successo per la SEO: ",
+        "ui_img_missing": "⚠️ Attenzione: File '{}' non trovato in '{}'. Ricordati di aggiungerlo manualmente.",
+        "ui_engine_start": "\n🚀 Avvio motore IA multilingua con analisi Dossier Semantico...",
+        "ui_preview_title": "\n====================================================================\n🌐 ANTEPRIMA GRAFICA DISPONIBILE (Funziona anche in incognito)\n👉 Apri link reale: http://127.0.0.1:8080/articles/{}/it.html\n====================================================================",
+        "ui_generated_title": "Titolo IT Generato: ",
+        "ui_user_satisfaction": "\nSoddisfatto del risultato? [Y] Salva e Pubblica / [N] Richiedi modifiche all'IA: ",
+        "ui_saved_path": "\n📦 Articolo salvato fisicamente nel percorso: ",
+        "ui_compressing": "🤐 Compressione asset e articoli in corso...",
+        "ui_archive_ready": "✅ Archivio champions-report.zip pronto per il caricamento",
+        "ui_cloudflare_pause": "\n--------------------------------------------------------------------\n🚀 PAUSA PER DEPLOY MANUALE SU CLOUDFLARE PAGES\n1. Prendi la nuova cartella generata sul tuo dispositivo.\n2. Carica/distribuisci tramite dashboard di Cloudflare Pages.\n3. Verifica che l'articolo sia online sul dominio reale.\n--------------------------------------------------------------------",
+        "ui_websub_prompt": "\n👉 A deploy ultimato e visibile online, premi [INVIO] per lanciare il Ping di Indicizzazione WebSub...",
+        "ui_pinging": "\n📡 Invio notifica di indicizzazione immediata...",
+        "ui_success_finish": "🏁 Operazioni completate con pieno successo!",
+        "ui_ai_correction": "✍️ Indica all'IA cosa correggere o variare: ",
+        "ui_rebuilding": "\n🔄 Generazione struttura di aggiornamento tattico...",
+        "ui_json_error": "❌ Errore Critico: L'IA non ha restituito una struttura JSON valida. Riavvio generazione...",
+        "ui_template_error": "❌ Errore durante la compilazione del template: ",
+        "ui_shutdown_clean": "\n\n🛑 Interruzione manuale rilevata (Ctrl+C). Arresto pulito del server.",
+        "tag_already_written": "🔵 [GIÀ SCRITTO]",
+        "tag_live_finished": "🟡 Live/Terminato",
+        "tag_future": "🟢 Futuro (Non iniziato)",
+        "ui_caption_prompt_title": "\n✍️  [PROMPT DIDASCALIA INTERATTIVO] Spiega all'IA come creare la didascalia",
+        "ui_caption_prompt_help": "👉 (es. 'Traduci la descrizione vision', 'Evidenzia l'esultanza di...').",
+        "ui_caption_prompt_confirm": "👉 Premi INVIO due volte su una riga vuota per confermare. Lascia vuoto per autogenerare:",
         "ui_multiline_advanced_confirm": "👉 Scrivi il testo. Premi INVIO due volte consecutive su una riga vuota per confermare.",
         "ui_fase2_pre_match": "📅 [Filtro Temporale]: Sbloccata ed impostata automaticamente opzione [1] Pre-Match.",
         "ui_fase2_post_match": "📅 [Filtro Temporale]: Sbloccata ed impostata automaticamente opzione [2] Post-Match.",
@@ -202,7 +259,41 @@ I18N_DICTIONARY = {
         "ui_pretty_it": "🇮🇹 IT: ",
         "ui_pretty_en": "🇬🇧 EN: ",
         "ui_pretty_es": "🇪🇸 ES: ",
-        "ui_pretty_fr": "🇫🇷 FR: "
+        "ui_pretty_fr": "🇫🇷 FR: ",
+        "ui_env_read_error": "⚠️ Errore lettura file .env: {}",
+        "ui_config_incomplete": "❌ Errore: Configurazione incompleta.",
+        "ui_config_env_instructions": "Assicurati di aver creato un file '.env' contenente: GEMINI_API_KEY=chiave_qui",
+        "ui_port_fallback": "⚠️ Fallback bypass porta {} innescato: {}",
+        "ui_ai_escalation": "⚠️ [SCALATA IA] {} è temporaneamente saturo (Stato {}).",
+        "ui_ai_trying_fallback": "Tentativo con il motore fallback successivo...",
+        "ui_api_debug": "⚠️ [DEBUG API] {} ha risposto con Stato {}: {}",
+        "ui_pool_saturated": "🕒 [POOL SATURO] Tutti i modelli Gemini sono occupati. Attesa di {} secondi prima di ritentare...",
+        "ui_attempting_rest": "🤖 Tentativo generazione REST con modello: {}...",
+        "ui_api_error_model": "⚠️ Errore API su {} (Stato {})",
+        "ui_connection_failure": "⚠️ Errore connessione con modello {}: {}",
+        "ui_waiting_cycle": "🕒 Attesa di {} secondi prima di rinnovare il ciclo...",
+        "ui_websub_success": "✅ [WebSub] Notifica di indicizzazione inviata a Googlebot!",
+        "ui_websub_anomalous": "⚠️ [WebSub] Risposta anomala dall'hub (Stato {})",
+        "ui_websub_error": "❌ Impossibile connettersi con l'Hub WebSub: {}",
+        "ui_hunter_warmup": "🔄 [WARMUP HUNTER] Scansione geopolitica del web per isolare la competizione di cartello...",
+        "ui_context_found": "🏆 [CONTESTO TROVATO] Torneo di cartello isolato: '{}'",
+        "ui_cognitive_prediction": "🔮 [PREVISIONE COGNITIVA] Calcolo parametri Slot d'Oro per timing strategico...",
+        "ui_targeted_discovery": "🔍 [TARGETED DISCOVERY] Parametri query mirati per: '{}' alla data target {}...",
+        "ui_no_raw_data": "⚠️ Nessun dato grezzo estratto dal web per questa data specifica.",
+        "ui_cognitive_parsing": "🧠 [PARSING COGNITIVO] Analisi e modellazione dei record strutturati...",
+        "ui_stato3_extraction": "🎯 [STATO 3 - ESTRAZIONE MIRATA] Costruzione blueprint tattico per: {} vs {}...",
+        "ui_vision_none": "Nessuna (File non trovato)",
+        "ui_vision_init": "\n👁️  [MOTORE VISION] Inizializzazione analisi fotogramma multimodale con Gemini...",
+        "ui_vision_output": "📸 OUTPUT ANALISI SCANSIONE IMMAGINE:\n{}",
+        "ui_vision_breakdown": "Errore durante analisi vision: {}",
+        "ui_vision_unavailable": "Motore Vision temporaneamente non disponibile.",
+        "ui_null_input": "❌ Campo input vuoto. Processo interrotto.",
+        "ui_cover_name_empty": "⚠️ Errore: Il nome file non può essere vuoto. Specifica la sintassi corretta.",
+        "ui_no_cover_data": "Nessun dato analitico sull'immagine di copertina.",
+        "ui_no_remote_data": "Nessun dato remoto riscontrato.",
+        "ui_editorial_postmatch_note": "\n\n[NOTA EDITORIALE: Match terminato. NON usare il blocco formazioni. Concentrati esclusivamente su cronaca e statistiche finali.]",
+        "ui_context_postmatch": "Revisione Post-Match Ufficiale ({})",
+        "ui_context_prematch": "Match Ufficiale Pre-Partita ({})"
     },
     "es": {
         "locale": "es_ES",
@@ -232,6 +323,28 @@ def t(chiave):
     """i18n lookup function."""
     return I18N_DICTIONARY[CURRENT_LANG].get(chiave, chiave)
 
+# ==============================================================================
+# API KEY CONFIGURATION FROM .ENV FILE
+# ==============================================================================
+API_KEY = None
+ENV_PATH = os.path.join(PROJECT_DIR, ".env") if os.path.exists(os.path.join(PROJECT_DIR, ".env")) else os.path.join(BASE_DIR, ".env")
+
+if os.path.exists(ENV_PATH):
+    try:
+        with open(ENV_PATH, "r") as f:
+            for line in f:
+                if line.strip().startswith("GEMINI_API_KEY"):
+                    API_KEY = line.split("=")[1].strip().replace('"', '').replace("'", "")
+    except Exception as e:
+        print(t("ui_env_read_error").format(e))
+
+if not API_KEY:
+    print(t("ui_config_incomplete"))
+    print(t("ui_config_env_instructions"))
+    sys.exit(1)
+
+AI_MODELS_POOL = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-latest"]
+
 import readline
 
 def input_interattivo_avanzato(prompt_testo, prefill=""):
@@ -254,13 +367,12 @@ def leggi_input_multilinea_avanzato(messaggio_iniziale):
             linea = input()
             if linea == "" and (len(linee) == 0 or linee[-1] == ""):
                 if len(linee) > 0:
-                    linee.pop() # Rimuove l'invio precedente vuoto
+                    linee.pop()  # Rimuove l'invio precedente vuoto
                 break
             linee.append(linea)
         except EOFError:
             break
     return "\n".join(linee)
-
 
 # ==============================================================================
 # UTILITY HELPER FUNCTIONS (DECLARED BEFORE CALL SCOPE)
@@ -288,7 +400,7 @@ def avvia_server_anteprima(percorso_progetto, port=8080):
         thread.start()
         return ATTIVO_SERVER_PREVIEW
     except Exception as e:
-        print(f"⚠️ Port {port} bypass fallback triggered: {e}")
+        print(t("ui_port_fallback").format(port, e))
         return ATTIVO_SERVER_PREVIEW
 
 def leggi_input_multilinea(messaggio_iniziale):
@@ -322,8 +434,7 @@ def chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False):
                 headers = {"Content-Type": "application/json"}
 
                 payload = {
-                    "contents": [{"parts": [{"text": prompt_utente}]}],
-                    "generationConfig": {"temperature": 0.2}
+                    "contents": [{"parts": [{"text": prompt_utente}]}]
                 }
 
                 if prompt_sistema:
@@ -338,17 +449,17 @@ def chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False):
                     return response.json()['candidates'][0]['content']['parts'][0]['text']
 
                 elif response.status_code in [503, 429]:
-                    print(f"⚠️ [AI ESCALATION] {modello_nome} is temporarily saturated (Status {response.status_code}).")
+                    print(t("ui_ai_escalation").format(modello_nome, response.status_code))
                     time.sleep(3)
-                    print("Trying the next fallback model engine...")
+                    print(t("ui_ai_trying_fallback"))
                     continue
                 else:
-                    print(f"⚠️ [API DEBUG] {modello_nome} responded with Status {response.status_code}: {response.text}")
+                    print(t("ui_api_debug").format(modello_nome, response.status_code, response.text))
                     continue
             except Exception:
                 continue
 
-        print(f"🕒 [POOL SATURATED] All Gemini models are busy. Waiting {attesa_saturazione} seconds before retrying...")
+        print(t("ui_pool_saturated").format(attesa_saturazione))
         time.sleep(attesa_saturazione)
         attesa_saturazione = min(attesa_saturazione * 2, 120)
 
@@ -361,7 +472,7 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
     while True:
         for modello_nome in AI_MODELS_POOL:
             try:
-                print(f"🤖 Attempting REST generation with engine model: {modello_nome}...")
+                print(t("ui_attempting_rest").format(modello_nome))
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{modello_nome}:generateContent?key={API_KEY}"
                 headers = {"Content-Type": "application/json"}
 
@@ -383,8 +494,7 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
                                 "fr": {"type": "OBJECT", "properties": {"titolo": {"type": "STRING"}, "meta_description": {"type": "STRING"}, "didascalia_foto": {"type": "STRING"}, "corpo_html": {"type": "STRING"}, "titolo_update": {"type": "STRING"}, "corpo_update": {"type": "STRING"}}, "required": ["titolo", "meta_description", "didascalia_foto", "corpo_html", "titolo_update", "corpo_update"]}
                             },
                             "required": ["it", "en", "es", "fr"]
-                        },
-                        "temperature": 0.65
+                        }
                     }
                 }
 
@@ -393,14 +503,14 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
                     res_json = response.json()
                     return res_json['candidates'][0]['content']['parts'][0]['text']
                 else:
-                    print(f"⚠️ API Error on {modello_nome} (Status {response.status_code})")
+                    print(t("ui_api_error_model").format(modello_nome, response.status_code))
                     time.sleep(2)
             except Exception as e:
-                print(f"⚠️ Connection failure with model {modello_nome}: {e}")
+                print(t("ui_connection_failure").format(modello_nome, e))
                 time.sleep(2)
 
         tentativi_totali += 1
-        print(f"🕒 Waiting {mentre_attendi} seconds before renewing the loop cycle...")
+        print(t("ui_waiting_cycle").format(mentre_attendi))
         time.sleep(mentre_attendi)
         mentre_attendi = min(mentre_attendi * 2, 120)
 
@@ -616,7 +726,6 @@ def compila_file_finali(slug, dati_partita, dati_generati_json, orario_pubblicaz
     except Exception:
         ora_fine = "23:45"
 
-    # Estrariamo anno, mese e giorno dalla data ISO per la localizzazione nativa
     try:
         y_iso, m_iso, d_iso = map(int, dati_partita["data_iso"].split("-"))
     except Exception:
@@ -631,7 +740,6 @@ def compila_file_finali(slug, dati_partita, dati_generati_json, orario_pubblicaz
         lang_key = lang if lang in I18N_DICTIONARY else "en"
         info = I18N_DICTIONARY[lang_key]
 
-        # Formattazione chirurgica della data in base alla lingua corrente
         if lang == "it":
             data_localizzata = f"{d_iso} {mesi_it[m_iso]} {y_iso}"
         elif lang == "es":
@@ -693,16 +801,16 @@ def compila_file_finali(slug, dati_partita, dati_generati_json, orario_pubblicaz
 
 def esegui_ping_websub(slug):
     """Broadcast XML maps pings instantly."""
-    feed_url = f"https://championsreport.editories.com/articles/{slug}/feed.xml"
-    hub_url = "https://pubsubhubbub.appspot.com/"
+    feed_url = f"[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug}/feed.xml"
+    hub_url = "[https://pubsubhubbub.appspot.com/](https://pubsubhubbub.appspot.com/)"
     try:
         r = requests.post(hub_url, data={"hub.mode": "publish", "hub.url": feed_url}, timeout=10)
         if r.status_code in [200, 204]:
-            print("✅ [WebSub] Indexation ping successfully broadcasted to Googlebot!")
+            print(t("ui_websub_success"))
         else:
-            print(f"⚠️ [WebSub] Anomalous hub response (Status {r.status_code})")
+            print(t("ui_websub_anomalous").format(r.status_code))
     except Exception as e:
-        print(f"❌ Unable to connect with WebSub Hub: {e}")
+        print(t("ui_websub_error").format(e))
 
 
 # ==============================================================================
@@ -710,7 +818,7 @@ def esegui_ping_websub(slug):
 # ==============================================================================
 def rileva_contesto_calcio_del_giorno(data_target):
     """Executes a grounding micro-call to isolate the main football tournament running live."""
-    print("🔄 [HUNTER WARMUP] Scanning web geopolitically to isolate the premium headline competition...")
+    print(t("ui_hunter_warmup"))
     prompt_contesto = f"""Quali sono i tornei o le competizioni di calcio principali (nazionali o internazionali) in corso di svolgimento nella data del {data_target}?
     Rispondi unicamente con il nome della competizione più importante in lingua inglese (es: FIFA World Cup 2026, UEFA Euro 2026, UEFA Champions League). Non aggiungere altre parole."""
 
@@ -718,7 +826,7 @@ def rileva_contesto_calcio_del_giorno(data_target):
         competizione_rilevata = chiedi_raw_ai(None, prompt_contesto, usa_search=True)
         if competizione_rilevata and len(competizione_rilevata.strip()) > 3:
             contesto_pulito = competizione_rilevata.strip().split('\n')[0].replace('*', '').strip()
-            print(f"🏆 [CONTEXT FOUND] Isolated premium tournament: '{contesto_pulito}'")
+            print(t("ui_context_found").format(contesto_pulito))
             return contesto_pulito
     except Exception:
         pass
@@ -752,7 +860,7 @@ def genera_slug_internazionale_ai(squadra_a, squadra_b, competizione, anno):
 # ==============================================================================
 def calcola_slot_oro_pubblicazione_ai(squadra_a, squadra_b, orario_match, stadio, citta, data_testo):
     """Analyzes kickoff data metrics and locations to compute strategic high-volume traffic slots."""
-    print("🔮 [COGNITIVE PREDICTION] Calculating Golden Slot parameters for strategic publication timing...")
+    print(t("ui_cognitive_prediction"))
     prompt_orario = f"""Sei un esperto SEO e data analyst sportivo. Analizza questo evento:
     Match: {squadra_a} vs {squadra_b}
     Calcio d'inizio: {orario_match}
@@ -775,9 +883,8 @@ def calcola_slot_oro_pubblicazione_ai(squadra_a, squadra_b, orario_match, stadio
 # ==============================================================================
 def targeted_discovery_remota_ai(parola_chiave, data_target, anno_corrente):
     """Injects deterministic time restrictions directly into Google queries to narrow the search footprint."""
-    print(f"🔍 [TARGETED DISCOVERY] Targeting query parameters for: '{parola_chiave}' on target date {data_target}...")
+    print(t("ui_targeted_discovery").format(parola_chiave, data_target))
 
-    # Costringiamo Google e l'AI a basarsi solo sugli orari sincronizzati con il fuso italiano (CEST/CET)
     query_iper_mirata = f"partite calcio oggi {data_target} competizione {parola_chiave} {anno_corrente} orario italia"
     prompt_utente_cerca = f"""Effettua una ricerca sul web in tempo reale usando questa query: '{query_iper_mirata}'.
     Trova unicamente i match programmati o giocati in questa data specifica ({data_target}).
@@ -787,10 +894,10 @@ def targeted_discovery_remota_ai(parola_chiave, data_target, anno_corrente):
 
     risultato_ricerca_testuale = chiedi_raw_ai(None, prompt_utente_cerca, usa_search=True)
     if not risultato_ricerca_testuale or len(risultato_ricerca_testuale.strip()) < 10:
-        print("⚠️ No raw data harvested from the web for this specific date criteria.")
+        print(t("ui_no_raw_data"))
         return []
 
-    print(f"🧠 [COGNITIVE PARSING] Sifting and modeling structural records...")
+    print(t("ui_cognitive_parsing"))
 
     prompt_sistema_parse = "Sei un analista dati. Converti le informazioni fornite in un array JSON nativo valido e pulito."
     prompt_utente_parse = f"""Analizza questo blocco informativo raccolto dal web:
@@ -833,7 +940,7 @@ REGOLE TASSATIVE:
 
 def estrai_dati_tecnici_ai(squadra_a, squadra_b, anno_corrente):
     """Stato 3: Pulls down probable setups, tactical news, and team conditions."""
-    print(f"🎯 [STATO 3 - TARGETED EXTRACTION] Building laser tactical blueprint for: {squadra_a} vs {squadra_b}...")
+    print(t("ui_stato3_extraction").format(squadra_a, squadra_b))
     prompt_sistema = "Sei un analista tattico della redazione sportiva. Generi report tecnici sulle squadre."
     prompt_utente = f"Generate an updated detailed technical scouting dossier for the match {squadra_a} vs {squadra_b} within the tournament context of the year {anno_corrente}. Tightly extract expected probable lineups, open tactical doubts, full injured/suspended players lists, and current team form metrics. The entire output blueprint MUST be written strictly in English."
     return chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False)
@@ -842,7 +949,7 @@ def scansiona_immagine_vision_ai(percorso_immagine, match_info=None):
     """Decodes the local image to Base64 and executes a multimodal Vision REST call to Gemini."""
     import base64
     if not os.path.exists(percorso_immagine):
-        return "None (File not found)"
+        return t("ui_vision_none")
     try:
         with open(percorso_immagine, "rb") as img_f:
             b64_data = base64.b64encode(img_f.read()).decode("utf-8")
@@ -862,7 +969,7 @@ def scansiona_immagine_vision_ai(percorso_immagine, match_info=None):
 
         for modello_nome in AI_MODELS_POOL:
             try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{modello_nome}:generateContent?key={API_KEY}"
+                url = f"[https://generativelanguage.googleapis.com/v1beta/models/](https://generativelanguage.googleapis.com/v1beta/models/){modello_nome}:generateContent?key={API_KEY}"
                 headers = {"Content-Type": "application/json"}
                 payload = {
                     "contents": [{
@@ -875,8 +982,7 @@ def scansiona_immagine_vision_ai(percorso_immagine, match_info=None):
                                 }
                             }
                         ]
-                    }],
-                    "generationConfig": {"temperature": 0.2}
+                    }]
                 }
                 r = requests.post(url, headers=headers, json=payload, timeout=40)
                 if r.status_code == 200:
@@ -884,10 +990,8 @@ def scansiona_immagine_vision_ai(percorso_immagine, match_info=None):
             except Exception:
                 continue
     except Exception as e:
-        return f"Vision processing breakdown: {e}"
-    return "Vision engine temporarily unavailable."
-
-
+        return t("ui_vision_breakdown").format(e)
+    return t("ui_vision_unavailable")
 
 def genera_guida(match_info, dossier_tecnico):
     """Stato 4: Formats a synthesis layout wrapper to guide localized copywriters."""
@@ -956,7 +1060,6 @@ if __name__ == "__main__":
                 sq_b = m.get("squadra_b", "Unknown")
                 ora_raw = m.get("ora", "18:00 CEST")
 
-                # Calcolo dello stato temporale reale del match
                 partita_iniziata_o_terminata = False
                 try:
                     ora_pulita = ora_raw.split()[0]
@@ -967,12 +1070,10 @@ if __name__ == "__main__":
                 except Exception:
                     pass
 
-                # Generazione dello slug teorico esatto basato sul torneo specifico estratto dal record
                 torneo_record = m.get("competizione", query_comp)
                 slug_teorico = genera_slug_internazionale_ai(sq_a, sq_b, torneo_record, anno_corrente)
                 cartella_esistente = slug_teorico if slug_teorico in articoli_scritti else None
 
-                # Assegnazione Tag Diagnostico Visivo
                 if cartella_esistente:
                     tag_diagnostico = t("tag_already_written")
                 elif partita_iniziata_o_terminata:
@@ -1007,7 +1108,7 @@ if __name__ == "__main__":
             print(t("ui_manual_mode"))
             sq_a = input(t("ui_input_home")).strip()
             if not sq_a:
-                print("❌ Null input field. Aborting process.")
+                print(t("ui_null_input"))
                 sys.exit(0)
             sq_b = input(t("ui_input_away")).strip()
             ora_m = input(t("ui_input_time")).strip() or "20:45 CEST"
@@ -1082,22 +1183,21 @@ if __name__ == "__main__":
                 else:
                     print(t("ui_fase3_cancelled_msg"))
                     sys.exit(0)
+
         # 🚀 FASE 4: INNESCO DEL DOSSIER ED ESTRAZIONE AI MIRATA
         dossier = estrai_dati_tecnici_ai(match_selezionato["squadra_a"], match_selezionato["squadra_b"], anno_corrente)
         if scelta_modalita == "2":
-            dossier += "\n\n[EDITORIAL NOTE: This match is finished. Do NOT use the lineages block. Focus exclusively on final tactical match review and statistics.]"
+            dossier += t("ui_editorial_postmatch_note")
 
         match_selezionato["dossier_match"] = dossier
-        match_selezionato["dati_contesto"] = f"Official Post-Match Review ({query_comp})" if scelta_modalita == "2" else f"Official Pre-Match Fixture ({query_comp})"
+        match_selezionato["dati_contesto"] = t("ui_context_postmatch").format(query_comp) if scelta_modalita == "2" else t("ui_context_prematch").format(query_comp)
 
         testo_guida_definitivo = genera_guida(match_selezionato, match_selezionato["dossier_match"])
         print(testo_guida_definitivo)
 
-        # AI English slug translation step
         slug_pulito = genera_slug_internazionale_ai(match_selezionato['squadra_a'], match_selezionato['squadra_b'], query_comp, anno_corrente)
         slug_articolo = input_interattivo_avanzato(f"{t('ui_input_slug')} [{slug_pulito}]: ").strip() or slug_pulito
 
-        # AI Predictive timing slot suggestion
         orario_predetto_default = calcola_slot_oro_pubblicazione_ai(
             match_selezionato['squadra_a'], match_selezionato['squadra_b'],
             match_selezionato['ora'], match_selezionato['stadio'],
@@ -1113,9 +1213,8 @@ if __name__ == "__main__":
                 break
             linee_titolo.append(l_tit)
         titolo_custom = "\n".join(linee_titolo).strip()
-        orario_pub_custom = input_interattivo_avanzato(f"{t('ui_input_pub_time')} [leave empty for AI suggestion: {orario_predetto_default}]: ").strip() or orario_predetto_default
+        orario_pub_custom = input_interattivo_avanzato(f"{t('ui_input_pub_time')} [{orario_predetto_default}]: ").strip() or orario_predetto_default
 
-        # Gather customized structural lines
         prompt_redazionale_utente = leggi_input_multilinea_avanzato(t("ui_input_multiline_prompt"))
 
         print(f"{t('ui_check_downloads')}{DOWNLOADS_DIR}")
@@ -1123,17 +1222,17 @@ if __name__ == "__main__":
         while not nome_foto:
             nome_foto = input_interattivo_avanzato(t("ui_input_cover")).strip()
             if not nome_foto:
-                print("⚠️ Error: File name cannot be empty. Specify exact syntax.")
+                print(t("ui_cover_name_empty"))
 
         estensione = os.path.splitext(nome_foto)[1] or ".jpg"
         nome_foto_finalizzat_assets = f"{slug_articolo}{estensione}"
 
         percorso_foto_origine = os.path.join(DOWNLOADS_DIR, nome_foto)
         if os.path.exists(percorso_foto_origine):
-            print("\n👁️  [VISION ENGINE] Initializing multimodal frame analysis via Gemini...")
+            print(t("ui_vision_init"))
             vision_dossier = scansiona_immagine_vision_ai(percorso_foto_origine, match_selezionato)
             print("--------------------------------------------------------------------")
-            print(f"📸 IMAGE SCAN ANALYSIS OUTPUT:\n{vision_dossier}")
+            print(t("ui_vision_output").format(vision_dossier))
             print("--------------------------------------------------------------------")
             print(t("ui_caption_prompt_title"))
             print(t("ui_caption_prompt_help"))
@@ -1149,7 +1248,7 @@ if __name__ == "__main__":
             print(f"{t('ui_img_copied')}{nome_foto_finalizzat_assets}")
         else:
             print(t('ui_img_missing').format(nome_foto, DOWNLOADS_DIR))
-            vision_dossier = "No cover image analytical data."
+            vision_dossier = t("ui_no_cover_data")
             didascalia_istruzione = ""
         
         match_selezionato["immagine_copertina"] = nome_foto_finalizzat_assets
@@ -1159,7 +1258,7 @@ if __name__ == "__main__":
 - Stadio: {match_selezionato['stadio']}
 
 DOSSIER INFORMATIVO ESTRATTO IN TEMPO REALE DA PROCESSARE:
-{match_selezionato.get('dossier_match', 'Nessun dato remoto riscontrato.')}
+{match_selezionato.get('dossier_match', t('ui_no_remote_data'))}
 
 Direttive ed Espansioni fornite dal Redattore:
 {prompt_redazionale_utente}
@@ -1202,16 +1301,16 @@ Direttive ed Espansioni fornite dal Redattore:
                     print(t("ui_archive_ready"))
                     print(t("ui_cloudflare_pause"))
                     print(t("ui_production_links"))
-                    print(f"{t('ui_link_it')}https://championsreport.editories.com/articles/{slug_articolo}/it.html")
-                    print(f"{t('ui_link_en')}https://championsreport.editories.com/articles/{slug_articolo}/en.html")
-                    print(f"{t('ui_link_es')}https://championsreport.editories.com/articles/{slug_articolo}/es.html")
-                    print(f"{t('ui_link_fr')}https://championsreport.editories.com/articles/{slug_articolo}/fr.html")
-                    print(f"{t('ui_link_rss')}https://championsreport.editories.com/articles/{slug_articolo}/feed.xml")
+                    print(f"{t('ui_link_it')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/it.html")
+                    print(f"{t('ui_link_en')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/en.html")
+                    print(f"{t('ui_link_es')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/es.html")
+                    print(f"{t('ui_link_fr')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/fr.html")
+                    print(f"{t('ui_link_rss')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/feed.xml")
                     print(t("ui_google_prettylinks"))
-                    print(f"{t('ui_pretty_it')}https://championsreport.editories.com/articles/{slug_articolo}/it")
-                    print(f"{t('ui_pretty_en')}https://championsreport.editories.com/articles/{slug_articolo}/en")
-                    print(f"{t('ui_pretty_es')}https://championsreport.editories.com/articles/{slug_articolo}/es")
-                    print(f"{t('ui_pretty_fr')}https://championsreport.editories.com/articles/{slug_articolo}/fr\n")
+                    print(f"{t('ui_pretty_it')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/it")
+                    print(f"{t('ui_pretty_en')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/en")
+                    print(f"{t('ui_pretty_es')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/es")
+                    print(f"{t('ui_pretty_fr')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/fr\n")
                     input(t("ui_websub_prompt"))
                     print(t("ui_pinging"))
                     esegui_ping_websub(slug_articolo)
@@ -1248,4 +1347,4 @@ COMPITO: Applica la variazione richiesta sopra nel JSON modificando solo i campi
             server_preview.shutdown()
         except NameError:
             pass
-        sys.exit(0)
+        sys.exit(0) 
