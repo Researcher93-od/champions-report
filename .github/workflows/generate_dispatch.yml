@@ -59,6 +59,7 @@ on:
         default: ""
 
 permissions:
+  actions: write
   contents: write
 
 jobs:
@@ -121,3 +122,14 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy . --project-name=championsreport --branch=main
+
+      - name: STEP_CLEANUP_OLD_WORKFLOWS
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          runs=$(gh run list --workflow="cr-dispatcher.yml" --status="completed" --limit 30 --json databaseId -q ".[].databaseId")
+          for run_id in $runs; do
+            if [ "$run_id" != "$GITHUB_RUN_ID" ]; then
+              gh run delete "$run_id" || true
+            fi
+          done
