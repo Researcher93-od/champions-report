@@ -1,4 +1,4 @@
-name: "CR_WORKFLOW_DISPATCH_TITLE"
+name: "Champion's Report - Editorial Generation & Dispatcher"
 
 on:
   workflow_dispatch:
