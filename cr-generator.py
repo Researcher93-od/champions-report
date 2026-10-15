@@ -440,51 +440,107 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
         mentre_attendi = min(mentre_attendi * 2, 120)
 
 # ==============================================================================
-# BASE HTML LAYOUT TEMPLATE
+# BASE HTML LAYOUT TEMPLATE (COMPLETO CON WIDGET TATTICO 3D, CARD E ZHTR)
 # ==============================================================================
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="{LANG}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{TITOLO_PAGINA} | Champion's Report</title>
+    <title>{TITOLO_PAGINA} | {LABEL_META_JOURNAL}</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <meta name="robots" content="max-image-preview:large">
     <link rel="canonical" href="https://championsreport.editories.com/articles/{SLUG}/{LANG}.html" />
     <meta property="og:locale" content="{LANG_LOCALE}" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="{TITOLO_PAGINA} | Champion's Report" />
+    <meta property="og:title" content="{TITOLO_PAGINA} | {LABEL_META_JOURNAL}" />
     <meta property="og:description" content="{META_DESCRIPTION}" />
     <meta property="og:url" content="https://championsreport.editories.com/articles/{SLUG}/{LANG}.html" />
-    <meta property="og:site_name" content="Champion's Report" />
+    <meta property="og:site_name" content="{LABEL_META_JOURNAL}" />
     <meta property="og:image" content="https://championsreport.editories.com/assets/{IMMAGINE_FILE}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="675" />
     <style>
-        :root {{ --primary-blue: #0044ff; --hover-blue: #0033cc; --bg-light: #f8f9fa; --text-dark: #333; }}
+        :root {{
+            --primary-blue: #0044ff;
+            --hover-blue: #0033cc;
+            --bg-light: #f8f9fa;
+            --text-dark: #333;
+        }}
+
         * {{ box-sizing: border-box; }}
         body {{ font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-dark); margin: 0; padding: 0; }}
+
+        /* HEADER E LOGO 3D */
         header {{ background: #fff; padding: 30px 0 20px 0; text-align: center; border-bottom: 1px solid #eee; position: relative; }}
         .header-container {{ max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }}
-        .main-title-3d {{ font-family: 'Dancing Script', cursive; font-weight: 700; font-size: 2.4rem; text-align: center; width: 100%; color: #0044ff; display: inline-block; letter-spacing: 2px; margin: 0; -webkit-text-stroke: 1.2px #93c5fd; text-shadow: 1px 1px 0px #0033cc, 2px 2px 0px #0022aa, 3px 3px 0px #001188, 4px 4px 5px rgba(0, 17, 136, 0.4), 5px 5px 10px rgba(0, 0, 0, 0.15); }}
+
+        .main-title-3d {{
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            font-size: 3.8rem;
+            color: #0044ff;
+            display: inline-block;
+            letter-spacing: 2px;
+            margin: 0;
+            -webkit-text-stroke: 1.2px #93c5fd;
+            text-shadow:
+                1px 1px 0px #0033cc,
+                2px 2px 0px #0022aa,
+                3px 3px 0px #001188,
+                4px 4px 5px rgba(0, 17, 136, 0.4),
+                5px 5px 10px rgba(0, 0, 0, 0.15);
+        }}
+
+        /* SELETTORE LINGUA */
         .lang-selector {{ position: absolute; top: 10px; right: 20px; font-size: 0.85rem; }}
         .lang-selector select {{ padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Inter', sans-serif; cursor: pointer; }}
+
+        /* NAVIGAZIONE */
         nav {{ display: flex; justify-content: center; gap: 20px; padding: 15px; background: #fff; border-bottom: 1px solid #eee; }}
-        nav a {{ text-decoration: none; color: #555; font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }}
+        nav a {{ text-decoration: none; color: #555; font-weight: 400; font-size: 0.9rem; transition: color 0.2s; }}
         nav a:hover {{ color: var(--primary-blue); }}
+
+        /* CONTENITORE CENTRALE */
         .container {{ max-width: 600px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }}
-        h1 {{ font-weight: 600; color: #111; line-height: 1.25; font-size: 1.7rem; margin-top: 10px; margin-bottom: 8px; text-align: justify; text-justify: inter-word; word-spacing: -1px; }}
-        .meta-box {{ font-size: 0.85rem; color: #666; margin: 0 0 20px 0; display: flex; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #eee; padding-bottom: 12px; }}
-        .meta-box strong {{ color: #2d3748; font-weight: 600; }}
-        h3 {{ font-weight: 600; color: #2d3748; font-size: 1.3rem; margin-top: 25px; margin-bottom: 12px; border-left: 4px solid var(--primary-blue); padding-left: 10px; text-align: justify; text-justify: inter-word; word-spacing: -0.5px; }}
-        .content {{ font-size: 1.1rem; line-height: 1.7; color: #444; text-align: justify; }}
-        .content p {{ text-align: justify; text-justify: inter-word; letter-spacing: -0.2px; word-break: break-word; -webkit-hyphens: auto; hyphens: auto; margin-bottom: 16px; }}
+        h1 {{ font-weight: 600; color: #111; line-height: 1.2; font-size: 1.8rem; margin-top: 10px; }}
+        h2 {{ font-weight: 400; color: #222; font-size: 1.4rem; }}
+        .subtitle {{ color: #666; font-size: 0.95rem; margin-top: -5px; margin-bottom: 20px; }}
+        .content {{ font-size: 1.1rem; line-height: 1.7; color: #444; }}
         .cover-hero {{ width: 100%; height: auto; border-radius: 8px; margin: 15px 0; object-fit: cover; }}
+
+        /* MONETIZZAZIONE ADSTERRA SLOTS */
         .ad-slot {{ margin: 25px 0; text-align: center; min-height: 50px; }}
+        .btn-cta {{ display: block; background: var(--primary-blue); color: #fff; text-align: center; padding: 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 25px 0; transition: background 0.2s; }}
+        .btn-cta:hover {{ background: var(--hover-blue); }}
+
+        /* STRUTTURA CARD ARTICOLI RECENTI */
+        .card {{ border-bottom: 1px solid #eee; padding: 15px 0; display: flex; gap: 15px; align-items: center; }}
+        .card:last-child {{ border-bottom: none; }}
+        .card img {{ width: 120px; height: 80px; border-radius: 6px; object-fit: cover; }}
+        .card-title {{ font-size: 1.1rem; font-weight: 600; color: #111; text-decoration: none; transition: color 0.2s; }}
+        .card-title:hover {{ color: var(--primary-blue); }}
+
+        /* WIDGET LIVE ED ELEMENTI DEL CAMPO TATTICO 3D */
+        .pitch-container {{ perspective: 800px; width: 100%; margin: 30px 0; display: flex; justify-content: center; }}
+        .pitch {{ width: 100%; max-width: 500px; height: 350px; background: linear-gradient(180deg, #1b6613 0%, #298c1c 100%); border: 3px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.25); transform: rotateX(25deg); position: relative; overflow: hidden; border-radius: 4px; }}
+        .pitch-lines {{ position: absolute; width: 100%; height: 2px; background: rgba(255,255,255,0.6); top: 50%; transform: translateY(-50%); }}
+        .center-circle {{ position: absolute; width: 90px; height: 90px; border: 2px solid rgba(255,255,255,0.6); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }}
+        .player-node {{ position: absolute; width: 16px; height: 16px; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; transition: all 0.2s ease; z-index: 10; }}
+        .player-node:hover {{ width: 22px; height: 22px; z-index: 20; }}
+        .team-home {{ background: #ff3b30; border: 2px solid #fff; }}
+        .team-away {{ background: #007aff; border: 2px solid #fff; }}
+        .player-tooltip {{ visibility: hidden; background-color: rgba(0, 0, 0, 0.85); color: #fff; text-align: center; padding: 6px 10px; border-radius: 6px; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.75rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.2s; font-family: 'Inter', sans-serif; pointer-events: none; }}
+        .player-node:hover .player-tooltip {{ visibility: visible; opacity: 1; }}
+
+        /* BOX FORMAZIONI TATTICHE */
         .lineups {{ background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin: 20px 0; font-size: 0.95rem; }}
         .lineups p {{ text-align: left; margin-bottom: 8px; line-height: 1.5; }}
         .lineups strong {{ color: #1a202c; }}
         .coach {{ margin-top: 8px; font-style: italic; color: #4a5568; display: block; }}
+        .meta-box {{ font-size: 0.85rem; color: #666; margin: 0 0 20px 0; display: flex; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #eee; padding-bottom: 12px; }}
+        .meta-box strong {{ color: #2d3748; font-weight: 600; }}
+        h3 {{ font-weight: 600; color: #2d3748; font-size: 1.3rem; margin-top: 25px; margin-bottom: 12px; border-left: 4px solid var(--primary-blue); padding-left: 10px; text-align: justify; }}
     </style>
     <link rel="alternate" hreflang="it" href="https://championsreport.editories.com/articles/{SLUG}/it.html" />
     <link rel="alternate" hreflang="en" href="https://championsreport.editories.com/articles/{SLUG}/en.html" />
@@ -539,10 +595,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </select>
         </div>
         <div class="header-container">
-            <h1 class="main-title-3d">Champion's Report</h1>
+            <h1 class="main-title-3d">{LABEL_META_JOURNAL}</h1>
         </div>
     </header>
     <nav>
+        <a href="/{LANG}/index.html">{NAV_HOME}</a>
+        <a href="/{LANG}/partite.html">{NAV_MATCHES}</a>
+        <a href="/{LANG}/mercato.html">{NAV_MARKET}</a>
+        <a href="/{LANG}/live.html">{NAV_LIVE}</a>
     </nav>
     <main class="container">
         <h1>{TITOLO_PAGINA}</h1>
