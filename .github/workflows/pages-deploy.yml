@@ -21,8 +21,23 @@ jobs:
           node-version: '20'
 
       - name: "Fase 3: Pubblicazione e Deploy tramite Wrangler"
-        uses: cloudflare/wrangler-action@3
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy . --project-name=champions-report --branch=main
+
+      - name: "Fase 4: Pulizia Automatica Storico Workflow"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Avvio pulizia dei vecchi workflow..."
+          # Recupera gli ID di tutte le esecuzioni passate dello stesso workflow escludendo quella corrente ($GITHUB_RUN_ID)
+          runs=$(gh run list --workflow="pages-deploy.yml" --status="completed" --limit 30 --json databaseId -q ".[].databaseId")
+          for run_id in $runs; do
+            if [ "$run_id" != "$GITHUB_RUN_ID" ]; then
+              echo "Eliminazione workflow ID: $run_id"
+              gh run delete "$run_id" || true
+            fi
+          done
+          echo "Pulizia completata con successo."
