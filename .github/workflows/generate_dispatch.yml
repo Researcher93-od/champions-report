@@ -1,0 +1,123 @@
+name: "CR_WORKFLOW_DISPATCH_TITLE"
+
+on:
+  workflow_dispatch:
+    inputs:
+      competition:
+        description: "INPUT_KEY_COMPETITION"
+        required: true
+        default: "FIFA World Cup 2026"
+      squadra_a:
+        description: "INPUT_KEY_TEAM_HOME"
+        required: true
+      squadra_b:
+        description: "INPUT_KEY_TEAM_AWAY"
+        required: true
+      orario:
+        description: "INPUT_KEY_MATCH_TIME"
+        required: false
+        default: "21:00 CEST"
+      stadio:
+        description: "INPUT_KEY_VENUE_STADIUM"
+        required: false
+        default: "MetLife Stadium"
+      citta:
+        description: "INPUT_KEY_VENUE_CITY"
+        required: false
+        default: "New York"
+      custom_title:
+        description: "INPUT_KEY_CUSTOM_TITLE"
+        required: false
+        default: ""
+      opzione_foto:
+        description: "INPUT_KEY_PHOTO_STRATEGY"
+        required: false
+        default: "1"
+      photo_author:
+        description: "INPUT_KEY_PHOTO_AUTHOR"
+        required: false
+        default: ""
+      photo_author_link:
+        description: "INPUT_KEY_PHOTO_AUTHOR_LINK"
+        required: false
+        default: ""
+      photo_license:
+        description: "INPUT_KEY_PHOTO_LICENSE"
+        required: false
+        default: "CC-BY 4.0"
+      photo_license_link:
+        description: "INPUT_KEY_PHOTO_LICENSE_LINK"
+        required: false
+        default: ""
+      caption_guideline:
+        description: "INPUT_KEY_CAPTION_GUIDELINE"
+        required: false
+        default: ""
+      guidelines:
+        description: "INPUT_KEY_EDITORIAL_GUIDELINES"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: STEP_CHECKOUT_REPOSITORY
+        uses: actions/checkout@v4
+
+      - name: STEP_SETUP_PYTHON
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: STEP_INSTALL_DEPENDENCIES
+        run: |
+          pip install --upgrade pip
+          pip install requests urllib3 beautifulsoup4
+
+      - name: STEP_RUN_EDITORIAL_ENGINE
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CR_LANG: "it"
+          INPUT_COMPETITION: ${{ github.event.inputs.competition }}
+          INPUT_SQUADRA_A: ${{ github.event.inputs.squadra_a }}
+          INPUT_SQUADRA_B: ${{ github.event.inputs.squadra_b }}
+          INPUT_ORARIO: ${{ github.event.inputs.orario }}
+          INPUT_STADIO: ${{ github.event.inputs.stadio }}
+          INPUT_CITTA: ${{ github.event.inputs.citta }}
+          INPUT_CUSTOM_TITLE: ${{ github.event.inputs.custom_title }}
+          INPUT_OPZIONE_FOTO: ${{ github.event.inputs.opzione_foto }}
+          INPUT_PHOTO_AUTHOR: ${{ github.event.inputs.photo_author }}
+          INPUT_PHOTO_AUTHOR_LINK: ${{ github.event.inputs.photo_author_link }}
+          INPUT_PHOTO_LICENSE: ${{ github.event.inputs.photo_license }}
+          INPUT_PHOTO_LICENSE_LINK: ${{ github.event.inputs.photo_license_link }}
+          INPUT_CAPTION_GUIDELINE: ${{ github.event.inputs.caption_guideline }}
+          INPUT_GUIDELINES: ${{ github.event.inputs.guidelines }}
+        run: |
+          python cr-generator.py
+
+      - name: STEP_COMMIT_AND_SYNC_REPOSITORY
+        env:
+          COMMIT_PREFIX: "CI_COMMIT_EDITORIAL_PUBLISH"
+          EMPTY_LOG: "CI_LOG_NO_CHANGES"
+        run: |
+          git config --global user.name "Champion's Report Bot"
+          git config --global user.email "bot@editories.com"
+          git add articles/ assets/
+          if git diff --staged --quiet; then
+            echo "$EMPTY_LOG"
+          else
+            git commit -m "${COMMIT_PREFIX}: ${{ github.event.inputs.squadra_a }} vs ${{ github.event.inputs.squadra_b }}"
+            git push origin ${{ github.ref_name }}
+          fi
+
+      - name: STEP_CLOUDFLARE_PAGES_DEPLOY_WRANGLER
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=championsreport --branch=main
