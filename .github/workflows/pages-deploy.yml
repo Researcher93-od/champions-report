@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -32,7 +36,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Avvio pulizia dei vecchi workflow..."
-          # Recupera gli ID di tutte le esecuzioni passate dello stesso workflow escludendo quella corrente ($GITHUB_RUN_ID)
           runs=$(gh run list --workflow="pages-deploy.yml" --status="completed" --limit 30 --json databaseId -q ".[].databaseId")
           for run_id in $runs; do
             if [ "$run_id" != "$GITHUB_RUN_ID" ]; then
