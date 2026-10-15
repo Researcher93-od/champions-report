@@ -653,7 +653,7 @@ if not st.session_state.authenticated:
 # 2. MOTORE GENERATIVO CICLICO (NUOVO SDK GOOGLE.GENAI)
 # =====================================================================
 def genera_testo_gemini_ciclico(prompt_sistema, prompt_utente):
-    modelli_fallback = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-2.5-flash-latest"]
+    modelli_fallback = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]
     indice = 0
     tentativi = 0
     max_tentativi = 6
@@ -1057,4 +1057,3 @@ with tab_config:
                 time.sleep(1.2)
                 progress_bar.progress((i + 1) / len(match_items))
             st.success(t("batch_success_toast"))
-
