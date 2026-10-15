@@ -21,6 +21,7 @@
     "STEP_RUN_EDITORIAL_ENGINE": "Step 4: Run AI Editorial Engine",
     "STEP_COMMIT_AND_SYNC_REPOSITORY": "Step 5: Commit and Sync Repository",
     "STEP_CLOUDFLARE_PAGES_DEPLOY_WRANGLER": "Step 6: Publish and Deploy to Cloudflare Pages",
+    "STEP_CLEANUP_OLD_WORKFLOWS": "Step 7: Automatic Workflow History Cleanup",
     "CI_COMMIT_EDITORIAL_PUBLISH": "Automatic article publishing",
     "CI_LOG_NO_CHANGES": "No changes detected in editorial content."
   }
