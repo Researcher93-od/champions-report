@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" id="html_root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Champion's Report - Console di Direzione</title>
+    <title data-i18n="app_page_title">Champion's Report - Console di Direzione</title>
     <meta name="theme-color" content="#0044ff">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -27,8 +27,6 @@
         .terminal { background: #111; color: #00ff00; padding: 15px; font-family: monospace; border-radius: 6px; height: 180px; overflow-y: auto; font-size: 0.85rem; line-height: 1.4; }
         .status-badge { background: #e2e8f0; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
         .status-active { background: #dcfce7; color: #166534; }
-        .match-item { padding: 12px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; cursor: pointer; background: #fafafa; font-weight: 500; }
-        .match-item:hover { background: #f0f4ff; border-color: var(--primary-blue); }
         .step-block { display: none; }
         .step-block.active { display: block; }
         .stat-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; text-align: center; }
@@ -41,61 +39,63 @@
     <div class="header">
         <div>
             <h1>Champion's Report</h1>
-            <p style="font-size: 0.85rem; color: #666; font-weight:600; margin-top:2px;">Console di Direzione</p>
+            <p data-i18n="header_subtitle" style="font-size: 0.85rem; color: #666; font-weight:600; margin-top:2px;"></p>
         </div>
         <div style="display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; margin-top: 5px;">
             <select id="ui_lang" style="width: auto; padding: 4px 10px;" onchange="setLanguage(this.value)">
                 <option value="it">🇮🇹 IT</option>
                 <option value="en">🇬🇧 EN</option>
+                <option value="es">🇪🇸 ES</option>
+                <option value="fr">🇫🇷 FR</option>
             </select>
-            <span class="status-badge status-active">CLOUD SERVERLESS ONLINE</span>
+            <span class="status-badge status-active" data-i18n="status_online"></span>
         </div>
     </div>
 
     <!-- CREDENTIAL CONFIGURATION -->
     <div class="config-box">
-        <strong>⚙️ Connessione GitHub Actions:</strong>
+        <strong data-i18n="config_title"></strong>
         <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-top: 8px;">
-            <input type="text" id="gh_token" placeholder="GitHub Personal Access Token (PAT)" onchange="saveConfig()">
-            <input type="text" id="gh_repo" placeholder="owner/repo (es. user/champions-report)" onchange="saveConfig()">
-            <input type="text" id="gh_branch" placeholder="Branch (main)" value="main" onchange="saveConfig()">
+            <input type="text" id="gh_token" data-i18n-placeholder="ph_gh_token" onchange="saveConfig()">
+            <input type="text" id="gh_repo" data-i18n-placeholder="ph_gh_repo" onchange="saveConfig()">
+            <input type="text" id="gh_branch" data-i18n-placeholder="ph_gh_branch" value="main" onchange="saveConfig()">
         </div>
     </div>
 
     <div class="grid-layout">
         <div class="left-column">
             <div class="panel">
-                <div class="panel-title">🔵 PIPELINE GENERAZIONE EDITORIALE</div>
+                <div class="panel-title" data-i18n="panel_pipeline"></div>
                 
                 <!-- STEP 1 -->
                 <div id="step_1" class="step-block active">
                     <div class="form-group">
-                        <label>Fase 1: Competizione / Keyword</label>
-                        <input type="text" id="keyword" placeholder="Es: FIFA World Cup 2026, Serie A, Champions League">
+                        <label data-i18n="label_step1_competition"></label>
+                        <input type="text" id="keyword" data-i18n-placeholder="ph_step1_competition">
                     </div>
-                    <button class="btn" onclick="nextStep1()">🔍 Conferma Competizione e Procedi</button>
+                    <button class="btn" onclick="nextStep1()" data-i18n="btn_step1_confirm"></button>
                 </div>
 
                 <!-- STEP 2 -->
                 <div id="step_2" class="step-block">
                     <p id="context_badge" style="font-weight:600; color:var(--primary-blue); margin-bottom:15px;"></p>
                     <div class="form-group">
-                        <label>Fase 2: Filtro Temporale</label>
+                        <label data-i18n="label_step2_filter"></label>
                         <select id="time_horizon">
-                            <option value="1">Partite di OGGI</option>
-                            <option value="0">Partite di IERI</option>
-                            <option value="2">Partite di DOMANI</option>
-                            <option value="3">TUTTI i Match</option>
+                            <option value="1" data-i18n="opt_today"></option>
+                            <option value="0" data-i18n="opt_yesterday"></option>
+                            <option value="2" data-i18n="opt_tomorrow"></option>
+                            <option value="3" data-i18n="opt_all_matches"></option>
                         </select>
                     </div>
-                    <button class="btn" onclick="nextStep2()">📡 Procedi alla Selezione Incontro</button>
+                    <button class="btn" onclick="nextStep2()" data-i18n="btn_step2_proceed"></button>
                 </div>
 
                 <!-- STEP 3 -->
                 <div id="step_3" class="step-block">
-                    <label style="margin-bottom:10px; display:block; font-weight:600;">Seleziona o Inserisci Match:</label>
+                    <label data-i18n="label_step3_select" style="margin-bottom:10px; display:block; font-weight:600;"></label>
                     <div id="match_list_container"></div>
-                    <button class="btn btn-secondary" onclick="setupManualMatch()">📝 Inserimento Dati Partita</button>
+                    <button class="btn btn-secondary" onclick="setupManualMatch()" data-i18n="btn_step3_manual"></button>
                 </div>
 
                 <!-- STEP 4 -->
@@ -104,106 +104,104 @@
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="form-group">
-                            <label>Squadra Casa</label>
-                            <input type="text" id="squadra_a" placeholder="Es. Spagna">
+                            <label data-i18n="label_team_home"></label>
+                            <input type="text" id="squadra_a" data-i18n-placeholder="ph_team_home">
                         </div>
                         <div class="form-group">
-                            <label>Squadra Ospite</label>
-                            <input type="text" id="squadra_b" placeholder="Es. Austria">
+                            <label data-i18n="label_team_away"></label>
+                            <input type="text" id="squadra_b" data-i18n-placeholder="ph_team_away">
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                         <div class="form-group">
-                            <label>Orario (CEST)</label>
+                            <label data-i18n="label_time"></label>
                             <input type="text" id="pub_time" value="21:00 CEST">
                         </div>
                         <div class="form-group">
-                            <label>Stadio</label>
+                            <label data-i18n="label_stadium"></label>
                             <input type="text" id="stadio" value="MetLife Stadium">
                         </div>
                         <div class="form-group">
-                            <label>Città</label>
+                            <label data-i18n="label_city"></label>
                             <input type="text" id="citta" value="New York">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Titolo Personalizzato (Lascia vuoto per farlo creare all'AI)</label>
-                        <input type="text" id="custom_title" placeholder="Titolo personalizzato...">
+                        <label data-i18n="label_custom_title"></label>
+                        <input type="text" id="custom_title" data-i18n-placeholder="ph_custom_title">
                     </div>
                     
                     <div class="form-group">
-                        <label>🖼️ Strategia Foto Copertina</label>
+                        <label data-i18n="label_cover_strategy"></label>
                         <select id="opzione_foto" onchange="toggleLicenseFields(this.value)">
-                            <option value="1">Nessuna Foto / Layout Embed</option>
-                            <option value="2">Con Licenza Pubblica (y)</option>
-                            <option value="3">Link Embed Remoto Senza Licenza (N)</option>
+                            <option value="1" data-i18n="opt_photo_none"></option>
+                            <option value="2" data-i18n="opt_photo_license"></option>
+                            <option value="3" data-i18n="opt_photo_remote"></option>
                         </select>
                     </div>
                     
                     <div id="license_input_fields" style="display:none; background: #fafafa; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
                         <div class="form-group">
-                            <label>✍️ Nome Autore Foto</label>
-                            <input type="text" id="photo_author" placeholder="Es: YantsImages">
+                            <label data-i18n="label_photo_author"></label>
+                            <input type="text" id="photo_author" data-i18n-placeholder="ph_photo_author">
                         </div>
                         <div class="form-group">
-                            <label>🔗 Link Autore Foto</label>
-                            <input type="text" id="photo_author_link" placeholder="Es: https://www.yantsimages.com/">
+                            <label data-i18n="label_photo_author_link"></label>
+                            <input type="text" id="photo_author_link" data-i18n-placeholder="ph_photo_author_link">
                         </div>
                         <div class="form-group">
-                            <label>📜 Nome Licenza</label>
+                            <label data-i18n="label_photo_license"></label>
                             <input type="text" id="photo_license" value="CC-BY 4.0">
                         </div>
                         <div class="form-group">
-                            <label>🔗 URL Licenza</label>
+                            <label data-i18n="label_photo_license_link"></label>
                             <input type="text" id="photo_license_link" value="https://creativecommons.org/licenses/by/4.0/deed.it">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>✍️ Istruzione Didascalia Foto (Opzionale)</label>
-                        <input type="text" id="caption_guideline" placeholder="Es: Esultanza collettiva dei giocatori...">
+                        <label data-i18n="label_caption_guideline"></label>
+                        <input type="text" id="caption_guideline" data-i18n-placeholder="ph_caption_guideline">
                     </div>
 
                     <div class="form-group">
-                        <label>Linee Guida del Redattore / Note Tattiche</label>
-                        <textarea id="guidelines" rows="3" placeholder="Note per l'AI, indisponibili, focus sui singoli..."></textarea>
+                        <label data-i18n="label_redactor_guidelines"></label>
+                        <textarea id="guidelines" rows="3" data-i18n-placeholder="ph_redactor_guidelines"></textarea>
                     </div>
                     
-                    <button class="btn" onclick="triggerGitHubActionsDispatch()">🚀 INVIA COMANDO A GITHUB ACTIONS & PUBBLICA</button>
+                    <button class="btn" onclick="triggerGitHubActionsDispatch()" data-i18n="btn_dispatch_publish"></button>
                 </div>
 
                 <!-- STEP 5 -->
                 <div id="step_5" class="step-block">
                     <div class="form-group">
-                        <label style="color: #166534; font-weight:600;">✅ Segnale Inviato Correttamente a GitHub Actions!</label>
-                        <p style="font-size:0.9rem; margin-top:8px; line-height:1.5;">Il workflow di redazione è stato avviato in cloud. GitHub Actions eseguirà <code>cr-generator.py</code>, compilerà le 4 lingue ed effettuerà il deploy su Cloudflare Pages.</p>
+                        <label style="color: #166534; font-weight:600;" data-i18n="msg_step5_success"></label>
+                        <p style="font-size:0.9rem; margin-top:8px; line-height:1.5;" data-i18n="msg_step5_desc"></p>
                     </div>
-                    <button class="btn" onclick="resetWorkflow()">🔄 Nuova Sessione Editoriale</button>
+                    <button class="btn" onclick="resetWorkflow()" data-i18n="btn_reset_workflow"></button>
                 </div>
             </div>
 
             <!-- TERMINAL LOG -->
             <div class="panel">
-                <div class="panel-title">🟢 TRACKING TERMINAL LOG</div>
-                <div class="terminal" id="term_log">
-                    [SISTEMA] Console Cloudflare Pages pronta ed operativa.<br>
-                </div>
+                <div class="panel-title" data-i18n="panel_terminal"></div>
+                <div class="terminal" id="term_log"></div>
             </div>
         </div>
 
         <div class="right-column">
             <!-- REVENUE ADSTERRA -->
             <div class="panel">
-                <div class="panel-title">👑 REVENUE DASHBOARD (ADSTERRA)</div>
+                <div class="panel-title" data-i18n="panel_revenue"></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
                     <div class="stat-card">
-                        <label style="font-size:0.8rem; color:#666;">Daily Revenue</label>
+                        <label style="font-size:0.8rem; color:#666;" data-i18n="lbl_daily_revenue"></label>
                         <div class="stat-value" id="disp_revenue" style="color: #166534;">$0.00</div>
                     </div>
                     <div class="stat-card">
-                        <label style="font-size:0.8rem; color:#666;">Avg CPM</label>
+                        <label style="font-size:0.8rem; color:#666;" data-i18n="lbl_avg_cpm"></label>
                         <div class="stat-value" id="disp_cpm" style="color: var(--gold);">$0.00</div>
                     </div>
                 </div>
@@ -217,20 +215,321 @@
     <script>
         let currentCompetition = "";
         let selectedMatch = null;
+        let revenueChartInstance = null;
+        let currentLang = localStorage.getItem('cr_ui_lang') || 'it';
+
+        // ==============================================================================
+        // I18N DICTIONARY - ZHTR COMPLIANT
+        // ==============================================================================
+        const I18N_CONSOLE = {
+            it: {
+                app_page_title: "Champion's Report - Console di Direzione",
+                header_subtitle: "Console di Direzione",
+                status_online: "CLOUD SERVERLESS ONLINE",
+                config_title: "⚙️ Connessione GitHub Actions:",
+                ph_gh_token: "GitHub Personal Access Token (PAT)",
+                ph_gh_repo: "owner/repo (es. user/champions-report)",
+                ph_gh_branch: "Branch (main)",
+                panel_pipeline: "🔵 PIPELINE GENERAZIONE EDITORIALE",
+                label_step1_competition: "Fase 1: Competizione / Keyword",
+                ph_step1_competition: "Es: FIFA World Cup 2026, Serie A, Champions League",
+                btn_step1_confirm: "🔍 Conferma Competizione e Procedi",
+                label_step2_filter: "Fase 2: Filtro Temporale",
+                opt_today: "Partite di OGGI",
+                opt_yesterday: "Partite di IERI",
+                opt_tomorrow: "Partite di DOMANI",
+                opt_all_matches: "TUTTI i Match",
+                btn_step2_proceed: "📡 Procedi alla Selezione Incontro",
+                label_step3_select: "Seleziona o Inserisci Match:",
+                btn_step3_manual: "📝 Inserimento Dati Partita",
+                label_team_home: "Squadra Casa",
+                ph_team_home: "Es. Spagna",
+                label_team_away: "Squadra Ospite",
+                ph_team_away: "Es. Austria",
+                label_time: "Orario (CEST)",
+                label_stadium: "Stadio",
+                label_city: "Città",
+                label_custom_title: "Titolo Personalizzato (Lascia vuoto per farlo creare all'AI)",
+                ph_custom_title: "Titolo personalizzato...",
+                label_cover_strategy: "🖼️ Strategia Foto Copertina",
+                opt_photo_none: "Nessuna Foto / Layout Embed",
+                opt_photo_license: "Con Licenza Pubblica (y)",
+                opt_photo_remote: "Link Embed Remoto Senza Licenza (N)",
+                label_photo_author: "✍️ Nome Autore Foto",
+                ph_photo_author: "Es: YantsImages",
+                label_photo_author_link: "🔗 Link Autore Foto",
+                ph_photo_author_link: "Es: https://www.yantsimages.com/",
+                label_photo_license: "📜 Nome Licenza",
+                label_photo_license_link: "🔗 URL Licenza",
+                label_caption_guideline: "✍️ Istruzione Didascalia Foto (Opzionale)",
+                ph_caption_guideline: "Es: Esultanza collettiva dei giocatori...",
+                label_redactor_guidelines: "Linee Guida del Redattore / Note Tattiche",
+                ph_redactor_guidelines: "Note per l'AI, indisponibili, focus sui singoli...",
+                btn_dispatch_publish: "🚀 INVIA COMANDO A GITHUB ACTIONS & PUBBLICA",
+                msg_step5_success: "✅ Segnale Inviato Correttamente a GitHub Actions!",
+                msg_step5_desc: "Il workflow di redazione è stato avviato in cloud. GitHub Actions eseguirà cr-generator.py, compilerà le 4 lingue ed effettuerà il deploy su Cloudflare Pages.",
+                btn_reset_workflow: "🔄 Nuova Sessione Editoriale",
+                panel_terminal: "🟢 TRACKING TERMINAL LOG",
+                panel_revenue: "👑 REVENUE DASHBOARD (ADSTERRA)",
+                lbl_daily_revenue: "Entrate Giornaliere",
+                lbl_avg_cpm: "CPM Medio",
+                chart_dataset_label: "Entrate ($)",
+                chart_days: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+                log_init: "[SISTEMA] Console Cloudflare Pages pronta ed operativa.",
+                log_config_saved: "[CONFIG] Parametri GitHub salvati in locale nel browser.",
+                log_context_set: "[CONTESTO] Competizione impostata: ",
+                log_filter_set: "[FILTRO] Orizzonte temporale impostato: opzione ",
+                log_sending_dispatch: "📡 Invio richiesta REST a GitHub Actions...",
+                log_dispatch_success: "🚀 [SUCCESSO] Workflow GitHub Actions avviato!",
+                log_dispatch_running: "🤖 cr-generator.py è ora in esecuzione nei runner di GitHub.",
+                log_error_prefix: "❌ [ERRORE] ",
+                log_net_error_prefix: "❌ Errore di rete: ",
+                alert_missing_fields: "Inserisci il GitHub Token e la Repository in alto!",
+                alert_dispatch_failed: "Errore nell'avvio del workflow GitHub. Controlla il Token e i permessi del repository.",
+                title_config_match: "⚽ Configurazione Dati Match"
+            },
+            en: {
+                app_page_title: "Champion's Report - Executive Console",
+                header_subtitle: "Executive Editorial Console",
+                status_online: "CLOUD SERVERLESS ONLINE",
+                config_title: "⚙️ GitHub Actions Connection:",
+                ph_gh_token: "GitHub Personal Access Token (PAT)",
+                ph_gh_repo: "owner/repo (e.g. user/champions-report)",
+                ph_gh_branch: "Branch (main)",
+                panel_pipeline: "🔵 EDITORIAL GENERATION PIPELINE",
+                label_step1_competition: "Stage 1: Competition / Keyword",
+                ph_step1_competition: "e.g., FIFA World Cup 2026, Serie A, Champions League",
+                btn_step1_confirm: "🔍 Confirm Competition and Proceed",
+                label_step2_filter: "Stage 2: Time Horizon Filter",
+                opt_today: "TODAY's Matches",
+                opt_yesterday: "YESTERDAY's Matches",
+                opt_tomorrow: "TOMORROW's Matches",
+                opt_all_matches: "ALL Matches",
+                btn_step2_proceed: "📡 Proceed to Match Selection",
+                label_step3_select: "Select or Configure Match:",
+                btn_step3_manual: "📝 Assisted Match Data Setup",
+                label_team_home: "Home Team",
+                ph_team_home: "e.g. Spain",
+                label_team_away: "Away Team",
+                ph_team_away: "e.g. Austria",
+                label_time: "Kick-off Time (CEST)",
+                label_stadium: "Stadium",
+                label_city: "City",
+                label_custom_title: "Custom Title (Leave empty to let AI generate it)",
+                ph_custom_title: "Custom headline...",
+                label_cover_strategy: "🖼️ Cover Image Strategy",
+                opt_photo_none: "No Photo / Embed Layout",
+                opt_photo_license: "Public License Photo (y)",
+                opt_photo_remote: "Remote Embed Link Unlicensed (N)",
+                label_photo_author: "✍️ Photo Author Name",
+                ph_photo_author: "e.g.: YantsImages",
+                label_photo_author_link: "🔗 Photo Author URL",
+                ph_photo_author_link: "e.g.: https://www.yantsimages.com/",
+                label_photo_license: "📜 License Name",
+                label_photo_license_link: "🔗 License URL",
+                label_caption_guideline: "✍️ Interactive Caption Prompt (Optional)",
+                ph_caption_guideline: "e.g.: Team celebratory roar after goal...",
+                label_redactor_guidelines: "Redactor Directives / Tactical Scouting Notes",
+                ph_redactor_guidelines: "Notes for AI, injured players, tactical analysis...",
+                btn_dispatch_publish: "🚀 TRIGGER GITHUB ACTIONS & PUBLISH",
+                msg_step5_success: "✅ Signal Successfully Broadcasted to GitHub Actions!",
+                msg_step5_desc: "The cloud redaction workflow is initiated. GitHub Actions will execute cr-generator.py, compile all 4 languages, and trigger Cloudflare Pages deployment.",
+                btn_reset_workflow: "🔄 Start New Redaction Session",
+                panel_terminal: "🟢 TRACKING TERMINAL LOG",
+                panel_revenue: "👑 REVENUE DASHBOARD (ADSTERRA)",
+                lbl_daily_revenue: "Daily Revenue",
+                lbl_avg_cpm: "Avg CPM",
+                chart_dataset_label: "Earnings ($)",
+                chart_days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                log_init: "[SYSTEM] Cloudflare Pages console ready and operational.",
+                log_config_saved: "[CONFIG] GitHub connection parameters saved locally in browser.",
+                log_context_set: "[CONTEXT] Competition targeted: ",
+                log_filter_set: "[FILTER] Time horizon set: option ",
+                log_sending_dispatch: "📡 Dispatching REST payload to GitHub Actions...",
+                log_dispatch_success: "🚀 [SUCCESS] GitHub Actions workflow dispatched!",
+                log_dispatch_running: "🤖 cr-generator.py is executing on cloud runners.",
+                log_error_prefix: "❌ [ERROR] ",
+                log_net_error_prefix: "❌ Network failure: ",
+                alert_missing_fields: "Please enter your GitHub Token and Repository at the top!",
+                alert_dispatch_failed: "Error dispatching GitHub workflow. Check Token and repo permissions.",
+                title_config_match: "⚽ Match Data Configuration"
+            },
+            es: {
+                app_page_title: "Champion's Report - Consola de Dirección",
+                header_subtitle: "Consola de Dirección Editorial",
+                status_online: "CLOUD SERVERLESS ONLINE",
+                config_title: "⚙️ Conexión GitHub Actions:",
+                ph_gh_token: "GitHub Personal Access Token (PAT)",
+                ph_gh_repo: "owner/repo (ej. user/champions-report)",
+                ph_gh_branch: "Rama (main)",
+                panel_pipeline: "🔵 PIPELINE GENERACIÓN EDITORIAL",
+                label_step1_competition: "Fase 1: Competición / Palabra Clave",
+                ph_step1_competition: "Ej: FIFA World Cup 2026, LaLiga, Champions League",
+                btn_step1_confirm: "🔍 Confirmar Competición y Proceder",
+                label_step2_filter: "Fase 2: Filtro Temporal",
+                opt_today: "Partidos de HOY",
+                opt_yesterday: "Partidos de AYER",
+                opt_tomorrow: "Partidos de MAÑANA",
+                opt_all_matches: "TODOS los Partidos",
+                btn_step2_proceed: "📡 Proceder a la Selección del Partido",
+                label_step3_select: "Seleccionar o Configurar Partido:",
+                btn_step3_manual: "📝 Configuración Asistida del Partido",
+                label_team_home: "Equipo Local",
+                ph_team_home: "Ej. España",
+                label_team_away: "Equipo Visitante",
+                ph_team_away: "Ej. Austria",
+                label_time: "Horario (CEST)",
+                label_stadium: "Estadio",
+                label_city: "Ciudad",
+                label_custom_title: "Título Personalizado (Vacío para autogenerar con IA)",
+                ph_custom_title: "Titular personalizado...",
+                label_cover_strategy: "🖼️ Estrategia de Portada",
+                opt_photo_none: "Sin Foto / Diseño Embed",
+                opt_photo_license: "Con Licencia Pública (y)",
+                opt_photo_remote: "Enlace Embed Remoto Sin Licencia (N)",
+                label_photo_author: "✍️ Nombre Autor de la Foto",
+                ph_photo_author: "Ej: YantsImages",
+                label_photo_author_link: "🔗 Enlace Autor de la Foto",
+                ph_photo_author_link: "Ej: https://www.yantsimages.com/",
+                label_photo_license: "📜 Nombre de la Licencia",
+                label_photo_license_link: "🔗 URL de la Licencia",
+                label_caption_guideline: "✍️ Instrucción Pie de Foto (Opcional)",
+                ph_caption_guideline: "Ej: Celebración de los jugadores tras el gol...",
+                label_redactor_guidelines: "Directrices Editoriales / Notas Tácticas",
+                ph_redactor_guidelines: "Notas para la IA, bajas, planteamientos tácticos...",
+                btn_dispatch_publish: "🚀 ENVIAR COMANDO A GITHUB ACTIONS & PUBLICAR",
+                msg_step5_success: "✅ ¡Señal Enviada Correctamente a GitHub Actions!",
+                msg_step5_desc: "El workflow ha iniciado. GitHub Actions ejecutará cr-generator.py, compilará los 4 idiomas y desplegará en Cloudflare Pages.",
+                btn_reset_workflow: "🔄 Nueva Sesión Editorial",
+                panel_terminal: "🟢 TRACKING TERMINAL LOG",
+                panel_revenue: "👑 REVENUE DASHBOARD (ADSTERRA)",
+                lbl_daily_revenue: "Ingresos Diarios",
+                lbl_avg_cpm: "CPM Medio",
+                chart_dataset_label: "Ingresos ($)",
+                chart_days: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+                log_init: "[SISTEMA] Consola Cloudflare Pages operativa.",
+                log_config_saved: "[CONFIG] Parámetros guardados localmente.",
+                log_context_set: "[CONTEXTO] Competición establecida: ",
+                log_filter_set: "[FILTRO] Filtro temporal establecido: opción ",
+                log_sending_dispatch: "📡 Enviando petición a GitHub Actions...",
+                log_dispatch_success: "🚀 [ÉXITO] ¡Workflow de GitHub Actions iniciado!",
+                log_dispatch_running: "🤖 cr-generator.py está ejecutándose en cloud.",
+                log_error_prefix: "❌ [ERROR] ",
+                log_net_error_prefix: "❌ Error de red: ",
+                alert_missing_fields: "¡Introduce el Token de GitHub y el Repositorio arriba!",
+                alert_dispatch_failed: "Error al iniciar workflow. Revisa el Token y permisos.",
+                title_config_match: "⚽ Configuración del Partido"
+            },
+            fr: {
+                app_page_title: "Champion's Report - Console de Direction",
+                header_subtitle: "Console Éditoriale de Direction",
+                status_online: "CLOUD SERVERLESS ONLINE",
+                config_title: "⚙️ Connexion GitHub Actions:",
+                ph_gh_token: "GitHub Personal Access Token (PAT)",
+                ph_gh_repo: "owner/repo (ex. user/champions-report)",
+                ph_gh_branch: "Branche (main)",
+                panel_pipeline: "🔵 PIPELINE GÉNÉRATION ÉDITORIALE",
+                label_step1_competition: "Étape 1: Compétition / Mot-clé",
+                ph_step1_competition: "Ex: FIFA World Cup 2026, Ligue 1, Champions League",
+                btn_step1_confirm: "🔍 Confirmer la Compétition et Continuer",
+                label_step2_filter: "Étape 2: Filtre Temporel",
+                opt_today: "Matchs d'AUJOURD'HUI",
+                opt_yesterday: "Matchs d'HIER",
+                opt_tomorrow: "Matchs de DEMAIN",
+                opt_all_matches: "TOUS les Matchs",
+                btn_step2_proceed: "📡 Procéder à la Sélection du Match",
+                label_step3_select: "Sélectionner ou Configurer Match:",
+                btn_step3_manual: "📝 Configuration Manuelle du Match",
+                label_team_home: "Équipe à Domicile",
+                ph_team_home: "Ex. Espagne",
+                label_team_away: "Équipe à l'Extérieur",
+                ph_team_away: "Ex. Autriche",
+                label_time: "Heure (CEST)",
+                label_stadium: "Stade",
+                label_city: "Ville",
+                label_custom_title: "Titre Personnalisé (Laisser vide pour auto-génération)",
+                ph_custom_title: "Titre personnalisé...",
+                label_cover_strategy: "🖼️ Stratégie Image de Couverture",
+                opt_photo_none: "Aucune Photo / Layout Embed",
+                opt_photo_license: "Avec Licence Publique (y)",
+                opt_photo_remote: "Lien Embed Distant Sans Licence (N)",
+                label_photo_author: "✍️ Nom de l'Auteur Photo",
+                ph_photo_author: "Ex: YantsImages",
+                label_photo_author_link: "🔗 Lien de l'Auteur Photo",
+                ph_photo_author_link: "Ex: https://www.yantsimages.com/",
+                label_photo_license: "📜 Nom de la Licence",
+                label_photo_license_link: "🔗 URL de la Licence",
+                label_caption_guideline: "✍️ Instruction Légende Photo (Optionnelle)",
+                ph_caption_guideline: "Ex: Joie collective des joueurs...",
+                label_redactor_guidelines: "Directives du Rédacteur / Notes Tactiques",
+                ph_redactor_guidelines: "Consignes IA, absents, analyse tactique...",
+                btn_dispatch_publish: "🚀 DÉCLENCHER GITHUB ACTIONS & PUBLIER",
+                msg_step5_success: "✅ Signal Transmis avec Succès à GitHub Actions!",
+                msg_step5_desc: "Le workflow cloud est lancé. GitHub Actions exécutera cr-generator.py, compilera les 4 langues et déploiera sur Cloudflare Pages.",
+                btn_reset_workflow: "🔄 Nouvelle Session Éditoriale",
+                panel_terminal: "🟢 TRACKING TERMINAL LOG",
+                panel_revenue: "👑 REVENUE DASHBOARD (ADSTERRA)",
+                lbl_daily_revenue: "Revenus Quotidiens",
+                lbl_avg_cpm: "CPM Moyen",
+                chart_dataset_label: "Revenus ($)",
+                chart_days: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+                log_init: "[SYSTÈME] Console Cloudflare Pages opérationnelle.",
+                log_config_saved: "[CONFIG] Paramètres sauvegardés localement.",
+                log_context_set: "[CONTEXTE] Compétition ciblée: ",
+                log_filter_set: "[FILTRE] Filtre temporel: option ",
+                log_sending_dispatch: "📡 Envoi de la requête à GitHub Actions...",
+                log_dispatch_success: "🚀 [SUCCÈS] Workflow GitHub Actions déclenché!",
+                log_dispatch_running: "🤖 cr-generator.py s'exécute sur les runners.",
+                log_error_prefix: "❌ [ERREUR] ",
+                log_net_error_prefix: "❌ Erreur réseau: ",
+                alert_missing_fields: "Veuillez renseigner le Token GitHub et le Répertoire!",
+                alert_dispatch_failed: "Échec du workflow. Vérifiez le Token et les permissions.",
+                title_config_match: "⚽ Configuration du Match"
+            }
+        };
+
+        function t(key) {
+            return (I18N_CONSOLE[currentLang] && I18N_CONSOLE[currentLang][key]) || (I18N_CONSOLE["it"][key]) || key;
+        }
+
+        function applyTranslations() {
+            document.getElementById("html_root").setAttribute("lang", currentLang);
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const k = el.getAttribute("data-i18n");
+                el.innerText = t(k);
+            });
+            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+                const k = el.getAttribute("data-i18n-placeholder");
+                el.setAttribute("placeholder", t(k));
+            });
+            if (currentCompetition) {
+                document.getElementById("context_badge").innerText = t("log_context_set") + currentCompetition;
+            }
+            initAdsterraChart();
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('cr_ui_lang', lang);
+            applyTranslations();
+            log(`[I18N] Lang: ${lang.toUpperCase()}`);
+        }
 
         // Inizializzazione Configurazione Locale
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('gh_token').value = localStorage.getItem('cr_gh_token') || "";
             document.getElementById('gh_repo').value = localStorage.getItem('cr_gh_repo') || "";
             document.getElementById('gh_branch').value = localStorage.getItem('cr_gh_branch') || "main";
-            initAdsterraChart();
+            document.getElementById('ui_lang').value = currentLang;
+            applyTranslations();
+            log(t("log_init"));
         });
 
         function saveConfig() {
             localStorage.setItem('cr_gh_token', document.getElementById('gh_token').value.trim());
             localStorage.setItem('cr_gh_repo', document.getElementById('gh_repo').value.trim());
             localStorage.setItem('cr_gh_branch', document.getElementById('gh_branch').value.trim());
-            log("[CONFIG] Parametri GitHub salvati in locale nel browser.");
+            log(t("log_config_saved"));
         }
 
         function log(msg) {
@@ -251,19 +550,19 @@
         function nextStep1() {
             const kw = document.getElementById("keyword").value.trim() || "FIFA World Cup 2026";
             currentCompetition = kw;
-            document.getElementById("context_badge").innerText = "🏆 Competizione Selezionata: " + currentCompetition;
-            log("[CONTEXT] Competizione impostata: " + currentCompetition);
+            document.getElementById("context_badge").innerText = t("log_context_set") + currentCompetition;
+            log(t("log_context_set") + currentCompetition);
             switchStep("step_2");
         }
 
         function nextStep2() {
             const horizon = document.getElementById("time_horizon").value;
-            log("[FILTER] Orizzonte temporale impostato: opzione " + horizon);
+            log(t("log_filter_set") + horizon);
             setupManualMatch();
         }
 
         function setupManualMatch() {
-            document.getElementById("selected_match_title").innerText = "⚽ Configurazione Dati Match (" + currentCompetition + ")";
+            document.getElementById("selected_match_title").innerText = `${t("title_config_match")} (${currentCompetition})`;
             switchStep("step_4");
         }
 
@@ -274,7 +573,7 @@
             const branch = document.getElementById('gh_branch').value.trim() || "main";
 
             if (!token || !repo) {
-                alert("Inserisci il GitHub Token e la Repository in alto!");
+                alert(t("alert_missing_fields"));
                 return;
             }
 
@@ -298,7 +597,7 @@
                 }
             };
 
-            log("📡 Invio richiesta REST a GitHub Actions...");
+            log(t("log_sending_dispatch"));
             const url = `https://api.github.com/repos/${repo}/actions/workflows/generate_dispatch.yml/dispatches`;
 
             try {
@@ -313,16 +612,16 @@
                 });
 
                 if (response.status === 204) {
-                    log("🚀 [SUCCESSO] Workflow GitHub Actions avviato!");
-                    log("🤖 cr-generator.py è ora in esecuzione nei runner di GitHub.");
+                    log(t("log_dispatch_success"));
+                    log(t("log_dispatch_running"));
                     switchStep("step_5");
                 } else {
                     const err = await response.text();
-                    log(`❌ [ERRORE ${response.status}] ${err}`);
-                    alert("Errore nell'avvio del workflow GitHub. Controlla il Token e i permessi del repository.");
+                    log(`${t("log_error_prefix")}${response.status}: ${err}`);
+                    alert(t("alert_dispatch_failed"));
                 }
             } catch (e) {
-                log(`❌ Errore di rete: ${e.message}`);
+                log(`${t("log_net_error_prefix")}${e.message}`);
             }
         }
 
@@ -336,12 +635,15 @@
 
         function initAdsterraChart() {
             const ctx = document.getElementById('revenueChart').getContext('2d');
-            new Chart(ctx, {
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy();
+            }
+            revenueChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+                    labels: t("chart_days"),
                     datasets: [{
-                        label: 'Entrate ($)',
+                        label: t("chart_dataset_label"),
                         data: [12.4, 18.2, 15.0, 24.5, 30.1, 28.4, 35.0],
                         borderColor: '#0044ff',
                         backgroundColor: 'rgba(0, 68, 255, 0.05)',
@@ -353,10 +655,6 @@
             });
             document.getElementById('disp_revenue').innerText = "$35.00";
             document.getElementById('disp_cpm').innerText = "$1.85";
-        }
-
-        function setLanguage(lang) {
-            log(`[I18N] Lingua interfaccia impostata su: ${lang.toUpperCase()}`);
         }
     </script>
 </body>
