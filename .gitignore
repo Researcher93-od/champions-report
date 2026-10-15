@@ -1,11 +1,7 @@
-venv/
-.streamlit/secrets.toml
+# Cache Python generata dai runner di GitHub Actions
 __pycache__/
-template.html
-service-account.json
-service-account.json
-.env
+*.py[cod]
 
-# Sicurezza: Mai caricare ZIP di deploy o chiavi credenziali
-champions-report.zip
-*.json
+# File di archivio temporanei
+*.zip
+*.log
