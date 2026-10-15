@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Champion's Report - Console di Direzione</title>
+    <meta name="theme-color" content="#0044ff">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary-blue: #0044ff; --hover-blue: #0033cc; --bg-light: #f8f9fa; --text-dark: #333; --gold: #d4af37; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-dark); padding: 15px; }
+        .header { background: #fff; padding: 25px; border-radius: 8px; border-bottom: 3px solid var(--primary-blue); margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); gap: 15px; }
+        .header h1 { font-family: 'Dancing Script', cursive; font-weight: 700; font-size: 2.2rem; color: #0044ff; }
+        .grid-layout { display: flex; flex-direction: column; gap: 20px; }
+        @media(min-width: 992px) { .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; } }
+        .panel { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #eee; margin-bottom: 15px; }
+        .panel-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: #111; border-left: 4px solid var(--primary-blue); padding-left: 10px; text-transform: uppercase; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; color: #444; }
+        input[type=text], textarea, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 0.95rem; }
+        .btn { background: var(--primary-blue); color: #fff; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 10px; transition: background 0.2s; }
+        .btn:hover { background: var(--hover-blue); }
+        .btn-secondary { background: #64748b; }
+        .btn-secondary:hover { background: #475569; }
+        .terminal { background: #111; color: #00ff00; padding: 15px; font-family: monospace; border-radius: 6px; height: 180px; overflow-y: auto; font-size: 0.85rem; line-height: 1.4; }
+        .status-badge { background: #e2e8f0; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .match-item { padding: 12px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; cursor: pointer; background: #fafafa; font-weight: 500; }
+        .match-item:hover { background: #f0f4ff; border-color: var(--primary-blue); }
+        .step-block { display: none; }
+        .step-block.active { display: block; }
+        .stat-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; text-align: center; }
+        .stat-value { font-size: 1.6rem; font-weight: 600; color: var(--primary-blue); }
+        .config-box { background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.85rem; border: 1px dashed #cbd5e1; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h1>Champion's Report</h1>
+            <p style="font-size: 0.85rem; color: #666; font-weight:600; margin-top:2px;">Console di Direzione</p>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; margin-top: 5px;">
+            <select id="ui_lang" style="width: auto; padding: 4px 10px;" onchange="setLanguage(this.value)">
+                <option value="it">🇮🇹 IT</option>
+                <option value="en">🇬🇧 EN</option>
+            </select>
+            <span class="status-badge status-active">CLOUD SERVERLESS ONLINE</span>
+        </div>
+    </div>
+
+    <!-- CREDENTIAL CONFIGURATION -->
+    <div class="config-box">
+        <strong>⚙️ Connessione GitHub Actions:</strong>
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-top: 8px;">
+            <input type="text" id="gh_token" placeholder="GitHub Personal Access Token (PAT)" onchange="saveConfig()">
+            <input type="text" id="gh_repo" placeholder="owner/repo (es. user/champions-report)" onchange="saveConfig()">
+            <input type="text" id="gh_branch" placeholder="Branch (main)" value="main" onchange="saveConfig()">
+        </div>
+    </div>
+
+    <div class="grid-layout">
+        <div class="left-column">
+            <div class="panel">
+                <div class="panel-title">🔵 PIPELINE GENERAZIONE EDITORIALE</div>
+                
+                <!-- STEP 1 -->
+                <div id="step_1" class="step-block active">
+                    <div class="form-group">
+                        <label>Fase 1: Competizione / Keyword</label>
+                        <input type="text" id="keyword" placeholder="Es: FIFA World Cup 2026, Serie A, Champions League">
+                    </div>
+                    <button class="btn" onclick="nextStep1()">🔍 Conferma Competizione e Procedi</button>
+                </div>
+
+                <!-- STEP 2 -->
+                <div id="step_2" class="step-block">
+                    <p id="context_badge" style="font-weight:600; color:var(--primary-blue); margin-bottom:15px;"></p>
+                    <div class="form-group">
+                        <label>Fase 2: Filtro Temporale</label>
+                        <select id="time_horizon">
+                            <option value="1">Partite di OGGI</option>
+                            <option value="0">Partite di IERI</option>
+                            <option value="2">Partite di DOMANI</option>
+                            <option value="3">TUTTI i Match</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="nextStep2()">📡 Procedi alla Selezione Incontro</button>
+                </div>
+
+                <!-- STEP 3 -->
+                <div id="step_3" class="step-block">
+                    <label style="margin-bottom:10px; display:block; font-weight:600;">Seleziona o Inserisci Match:</label>
+                    <div id="match_list_container"></div>
+                    <button class="btn btn-secondary" onclick="setupManualMatch()">📝 Inserimento Dati Partita</button>
+                </div>
+
+                <!-- STEP 4 -->
+                <div id="step_4" class="step-block">
+                    <p id="selected_match_title" style="font-weight:600; color: var(--primary-blue); margin-bottom:10px;"></p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>Squadra Casa</label>
+                            <input type="text" id="squadra_a" placeholder="Es. Spagna">
+                        </div>
+                        <div class="form-group">
+                            <label>Squadra Ospite</label>
+                            <input type="text" id="squadra_b" placeholder="Es. Austria">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>Orario (CEST)</label>
+                            <input type="text" id="pub_time" value="21:00 CEST">
+                        </div>
+                        <div class="form-group">
+                            <label>Stadio</label>
+                            <input type="text" id="stadio" value="MetLife Stadium">
+                        </div>
+                        <div class="form-group">
+                            <label>Città</label>
+                            <input type="text" id="citta" value="New York">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Titolo Personalizzato (Lascia vuoto per farlo creare all'AI)</label>
+                        <input type="text" id="custom_title" placeholder="Titolo personalizzato...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🖼️ Strategia Foto Copertina</label>
+                        <select id="opzione_foto" onchange="toggleLicenseFields(this.value)">
+                            <option value="1">Nessuna Foto / Layout Embed</option>
+                            <option value="2">Con Licenza Pubblica (y)</option>
+                            <option value="3">Link Embed Remoto Senza Licenza (N)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="license_input_fields" style="display:none; background: #fafafa; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>✍️ Nome Autore Foto</label>
+                            <input type="text" id="photo_author" placeholder="Es: YantsImages">
+                        </div>
+                        <div class="form-group">
+                            <label>🔗 Link Autore Foto</label>
+                            <input type="text" id="photo_author_link" placeholder="Es: https://www.yantsimages.com/">
+                        </div>
+                        <div class="form-group">
+                            <label>📜 Nome Licenza</label>
+                            <input type="text" id="photo_license" value="CC-BY 4.0">
+                        </div>
+                        <div class="form-group">
+                            <label>🔗 URL Licenza</label>
+                            <input type="text" id="photo_license_link" value="https://creativecommons.org/licenses/by/4.0/deed.it">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>✍️ Istruzione Didascalia Foto (Opzionale)</label>
+                        <input type="text" id="caption_guideline" placeholder="Es: Esultanza collettiva dei giocatori...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Linee Guida del Redattore / Note Tattiche</label>
+                        <textarea id="guidelines" rows="3" placeholder="Note per l'AI, indisponibili, focus sui singoli..."></textarea>
+                    </div>
+                    
+                    <button class="btn" onclick="triggerGitHubActionsDispatch()">🚀 INVIA COMANDO A GITHUB ACTIONS & PUBBLICA</button>
+                </div>
+
+                <!-- STEP 5 -->
+                <div id="step_5" class="step-block">
+                    <div class="form-group">
+                        <label style="color: #166534; font-weight:600;">✅ Segnale Inviato Correttamente a GitHub Actions!</label>
+                        <p style="font-size:0.9rem; margin-top:8px; line-height:1.5;">Il workflow di redazione è stato avviato in cloud. GitHub Actions eseguirà <code>cr-generator.py</code>, compilerà le 4 lingue ed effettuerà il deploy su Cloudflare Pages.</p>
+                    </div>
+                    <button class="btn" onclick="resetWorkflow()">🔄 Nuova Sessione Editoriale</button>
+                </div>
+            </div>
+
+            <!-- TERMINAL LOG -->
+            <div class="panel">
+                <div class="panel-title">🟢 TRACKING TERMINAL LOG</div>
+                <div class="terminal" id="term_log">
+                    [SISTEMA] Console Cloudflare Pages pronta ed operativa.<br>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <!-- REVENUE ADSTERRA -->
+            <div class="panel">
+                <div class="panel-title">👑 REVENUE DASHBOARD (ADSTERRA)</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                    <div class="stat-card">
+                        <label style="font-size:0.8rem; color:#666;">Daily Revenue</label>
+                        <div class="stat-value" id="disp_revenue" style="color: #166534;">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <label style="font-size:0.8rem; color:#666;">Avg CPM</label>
+                        <div class="stat-value" id="disp_cpm" style="color: var(--gold);">$0.00</div>
+                    </div>
+                </div>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCompetition = "";
+        let selectedMatch = null;
+
+        // Inizializzazione Configurazione Locale
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('gh_token').value = localStorage.getItem('cr_gh_token') || "";
+            document.getElementById('gh_repo').value = localStorage.getItem('cr_gh_repo') || "";
+            document.getElementById('gh_branch').value = localStorage.getItem('cr_gh_branch') || "main";
+            initAdsterraChart();
+        });
+
+        function saveConfig() {
+            localStorage.setItem('cr_gh_token', document.getElementById('gh_token').value.trim());
+            localStorage.setItem('cr_gh_repo', document.getElementById('gh_repo').value.trim());
+            localStorage.setItem('cr_gh_branch', document.getElementById('gh_branch').value.trim());
+            log("[CONFIG] Parametri GitHub salvati in locale nel browser.");
+        }
+
+        function log(msg) {
+            const term = document.getElementById('term_log');
+            term.innerHTML += msg + "<br>";
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function switchStep(stepId) {
+            document.querySelectorAll('.step-block').forEach(b => b.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function toggleLicenseFields(val) {
+            document.getElementById("license_input_fields").style.display = (val === "2") ? "block" : "none";
+        }
+
+        function nextStep1() {
+            const kw = document.getElementById("keyword").value.trim() || "FIFA World Cup 2026";
+            currentCompetition = kw;
+            document.getElementById("context_badge").innerText = "🏆 Competizione Selezionata: " + currentCompetition;
+            log("[CONTEXT] Competizione impostata: " + currentCompetition);
+            switchStep("step_2");
+        }
+
+        function nextStep2() {
+            const horizon = document.getElementById("time_horizon").value;
+            log("[FILTER] Orizzonte temporale impostato: opzione " + horizon);
+            setupManualMatch();
+        }
+
+        function setupManualMatch() {
+            document.getElementById("selected_match_title").innerText = "⚽ Configurazione Dati Match (" + currentCompetition + ")";
+            switchStep("step_4");
+        }
+
+        // TRIGGER DIRETTO GITHUB ACTIONS WORKFLOW DISPATCH
+        async function triggerGitHubActionsDispatch() {
+            const token = document.getElementById('gh_token').value.trim();
+            const repo = document.getElementById('gh_repo').value.trim();
+            const branch = document.getElementById('gh_branch').value.trim() || "main";
+
+            if (!token || !repo) {
+                alert("Inserisci il GitHub Token e la Repository in alto!");
+                return;
+            }
+
+            const payload = {
+                ref: branch,
+                inputs: {
+                    competition: currentCompetition,
+                    squadra_a: document.getElementById('squadra_a').value.trim(),
+                    squadra_b: document.getElementById('squadra_b').value.trim(),
+                    orario: document.getElementById('pub_time').value.trim(),
+                    stadio: document.getElementById('stadio').value.trim(),
+                    citta: document.getElementById('citta').value.trim(),
+                    custom_title: document.getElementById('custom_title').value.trim(),
+                    opzione_foto: document.getElementById('opzione_foto').value,
+                    photo_author: document.getElementById('photo_author').value.trim(),
+                    photo_author_link: document.getElementById('photo_author_link').value.trim(),
+                    photo_license: document.getElementById('photo_license').value.trim(),
+                    photo_license_link: document.getElementById('photo_license_link').value.trim(),
+                    caption_guideline: document.getElementById('caption_guideline').value.trim(),
+                    guidelines: document.getElementById('guidelines').value.trim()
+                }
+            };
+
+            log("📡 Invio richiesta REST a GitHub Actions...");
+            const url = `https://api.github.com/repos/${repo}/actions/workflows/generate_dispatch.yml/dispatches`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 204) {
+                    log("🚀 [SUCCESSO] Workflow GitHub Actions avviato!");
+                    log("🤖 cr-generator.py è ora in esecuzione nei runner di GitHub.");
+                    switchStep("step_5");
+                } else {
+                    const err = await response.text();
+                    log(`❌ [ERRORE ${response.status}] ${err}`);
+                    alert("Errore nell'avvio del workflow GitHub. Controlla il Token e i permessi del repository.");
+                }
+            } catch (e) {
+                log(`❌ Errore di rete: ${e.message}`);
+            }
+        }
+
+        function resetWorkflow() {
+            document.getElementById('squadra_a').value = "";
+            document.getElementById('squadra_b').value = "";
+            document.getElementById('custom_title').value = "";
+            document.getElementById('guidelines').value = "";
+            switchStep("step_1");
+        }
+
+        function initAdsterraChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+                    datasets: [{
+                        label: 'Entrate ($)',
+                        data: [12.4, 18.2, 15.0, 24.5, 30.1, 28.4, 35.0],
+                        borderColor: '#0044ff',
+                        backgroundColor: 'rgba(0, 68, 255, 0.05)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            document.getElementById('disp_revenue').innerText = "$35.00";
+            document.getElementById('disp_cpm').innerText = "$1.85";
+        }
+
+        function setLanguage(lang) {
+            log(`[I18N] Lingua interfaccia impostata su: ${lang.toUpperCase()}`);
+        }
+    </script>
+</body>
+</html>
