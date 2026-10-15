@@ -3,9 +3,6 @@ import sys
 import time
 import json
 import shutil
-import http.server
-import socketserver
-import threading
 import requests
 import urllib3
 import re
@@ -39,10 +36,9 @@ os.makedirs(ASSETS_DIR, exist_ok=True)
 os.makedirs(ARTICLES_OUTPUT_DIR, exist_ok=True)
 
 # ==============================================================================
-# DYNAMIC TRANSLATION DICTIONARY (I18N SYSTEM)
+# DYNAMIC TRANSLATION DICTIONARY (I18N SYSTEM - ZHTR COMPLIANT)
 # ==============================================================================
-CURRENT_LANG = "en"  # Default global UI environment language
-ATTIVO_SERVER_PREVIEW = None
+CURRENT_LANG = os.environ.get("CR_LANG", "it").lower()
 
 I18N_DICTIONARY = {
     "en": {
@@ -79,13 +75,13 @@ I18N_DICTIONARY = {
         "ui_img_copied": "📸 Image successfully copied and renamed for SEO: ",
         "ui_img_missing": "⚠️ Warning: File '{}' not found in '{}'. Remember to add it manually.",
         "ui_engine_start": "\n🚀 Booting multilingual AI engine with Semantic Dossier analysis...",
-        "ui_preview_title": "\n====================================================================\n🌐 GRAPHICAL PREVIEW AVAILABLE (Works in Incognito mode)\n👉 Open real link: http://127.0.0.1:8080/articles/{}/it.html\n====================================================================",
+        "ui_preview_title": "\n====================================================================\n🌐 PRODUCTION PREVIEW AVAILABLE\n👉 Open real link: https://championsreport-admin.editories.com/articles/{}/it.html\n====================================================================",
         "ui_generated_title": "Generated IT Title: ",
         "ui_user_satisfaction": "\nSatisfied with the result? [Y] Save and Deploy / [N] Request edits to AI: ",
         "ui_saved_path": "\n📦 Article physically saved in path: ",
         "ui_compressing": "🤐 Compressing assets and articles...",
         "ui_archive_ready": "✅ Archive champions-report.zip ready for upload",
-        "ui_cloudflare_pause": "\n--------------------------------------------------------------------\n🚀 PAUSE FOR MANUAL DEPLOY ON CLOUDFLARE PAGES\n1. Grab the newly generated folder on your phone.\n2. Upload/deploy it via Cloudflare Pages dashboard.\n3. Verify that the article is online on the real domain.\n--------------------------------------------------------------------",
+        "ui_cloudflare_pause": "\n--------------------------------------------------------------------\n🚀 CLOUDFLARE PAGES WORKFLOW DISPATCH DEPLOY\n--------------------------------------------------------------------",
         "ui_websub_prompt": "\n👉 Once deploy is completed and live online, press [ENTER] to launch WebSub Indexing Ping...",
         "ui_pinging": "\n📡 Sending instant indexation ping notification...",
         "ui_success_finish": "🏁 Operations completed with total success!",
@@ -93,7 +89,7 @@ I18N_DICTIONARY = {
         "ui_rebuilding": "\n🔄 Generating tactical update structure...",
         "ui_json_error": "❌ Critical Error: AI did not return a valid JSON structure. Restarting generation...",
         "ui_template_error": "❌ Error during template compilation: ",
-        "ui_shutdown_clean": "\n\n🛑 Manual interruption caught (Ctrl+C). Clean shutdown of server.",
+        "ui_shutdown_clean": "\n\n🛑 Manual interruption caught (Ctrl+C). Clean shutdown of process.",
         "tag_already_written": "🔵 [ALREADY WRITTEN]",
         "tag_live_finished": "🟡 Live/Finished",
         "tag_future": "🟢 Future (Not started)",
@@ -137,7 +133,7 @@ I18N_DICTIONARY = {
         "ui_pretty_fr": "🇫🇷 FR: ",
         "ui_env_read_error": "⚠️ Error reading .env file: {}",
         "ui_config_incomplete": "❌ Error: Incomplete configuration.",
-        "ui_config_env_instructions": "Make sure you created a '.env' file containing: GEMINI_API_KEY=your_key_here",
+        "ui_config_env_instructions": "Make sure GEMINI_API_KEY is configured in your environment or secrets.",
         "ui_port_fallback": "⚠️ Port {} bypass fallback triggered: {}",
         "ui_ai_escalation": "⚠️ [AI ESCALATION] {} is temporarily saturated (Status {}).",
         "ui_ai_trying_fallback": "Trying the next fallback model engine...",
@@ -165,10 +161,12 @@ I18N_DICTIONARY = {
         "ui_null_input": "❌ Null input field. Aborting process.",
         "ui_cover_name_empty": "⚠️ Error: File name cannot be empty. Specify exact syntax.",
         "ui_no_cover_data": "No cover image analytical data.",
-        "ui_no_remote_data": "Nessun dato remoto riscontrato.",
+        "ui_no_remote_data": "No remote context data fetched.",
         "ui_editorial_postmatch_note": "\n\n[EDITORIAL NOTE: This match is finished. Do NOT use the lineages block. Focus exclusively on final tactical match review and statistics.]",
         "ui_context_postmatch": "Official Post-Match Review ({})",
-        "ui_context_prematch": "Official Pre-Match Fixture ({})"
+        "ui_context_prematch": "Official Pre-Match Fixture ({})",
+        "ui_dispatch_inputs_loaded": "📥 [INPUT DISPATCH] Parameters successfully parsed from console trigger payload.",
+        "ui_automated_execution": "🤖 Headless automated execution initiated."
     },
     "it": {
         "locale": "it_IT",
@@ -180,7 +178,7 @@ I18N_DICTIONARY = {
         "nav_market": "Mercato",
         "nav_live": "Live",
         "meta_journal": "Champion's Report Journal",
-        "ui_welcome": "      🏆 CHAMPION'S REPORT JOURNAL - AUTOMATED REDACTION 🏆     ",
+        "ui_welcome": "      🏆 CHAMPION'S REPORT JOURNAL - REDAZIONE AUTOMATIZZATA 🏆     ",
         "ui_input_keyword": "\n🔍 Inserisci Competizione, Squadra o Parola Chiave (es. Mondiali, Serie A, Barcellona)",
         "ui_input_keyword_help": "[Lascia VUOTO e premi INVIO per l'auto-rilevamento live del contesto]: ",
         "ui_time_horizon": "\n--------------------------------------------------------------------\n📅 Scegli l'orizzonte temporale per la ricerca partite sul web:",
@@ -204,13 +202,13 @@ I18N_DICTIONARY = {
         "ui_img_copied": "📸 Immagine copiata e rinominata con successo per la SEO: ",
         "ui_img_missing": "⚠️ Attenzione: File '{}' non trovato in '{}'. Ricordati di aggiungerlo manualmente.",
         "ui_engine_start": "\n🚀 Avvio motore IA multilingua con analisi Dossier Semantico...",
-        "ui_preview_title": "\n====================================================================\n🌐 ANTEPRIMA GRAFICA DISPONIBILE (Funziona anche in incognito)\n👉 Apri link reale: http://127.0.0.1:8080/articles/{}/it.html\n====================================================================",
+        "ui_preview_title": "\n====================================================================\n🌐 ANTEPRIMA PRODUZIONE DISPONIBILE\n👉 Apri link: https://championsreport-admin.editories.com/articles/{}/it.html\n====================================================================",
         "ui_generated_title": "Titolo IT Generato: ",
         "ui_user_satisfaction": "\nSoddisfatto del risultato? [Y] Salva e Pubblica / [N] Richiedi modifiche all'IA: ",
         "ui_saved_path": "\n📦 Articolo salvato fisicamente nel percorso: ",
         "ui_compressing": "🤐 Compressione asset e articoli in corso...",
         "ui_archive_ready": "✅ Archivio champions-report.zip pronto per il caricamento",
-        "ui_cloudflare_pause": "\n--------------------------------------------------------------------\n🚀 PAUSA PER DEPLOY MANUALE SU CLOUDFLARE PAGES\n1. Prendi la nuova cartella generata sul tuo dispositivo.\n2. Carica/distribuisci tramite dashboard di Cloudflare Pages.\n3. Verifica che l'articolo sia online sul dominio reale.\n--------------------------------------------------------------------",
+        "ui_cloudflare_pause": "\n--------------------------------------------------------------------\n🚀 DEPLOY CLOUDFLARE PAGES VIA WORKFLOW DISPATCH\n--------------------------------------------------------------------",
         "ui_websub_prompt": "\n👉 A deploy ultimato e visibile online, premi [INVIO] per lanciare il Ping di Indicizzazione WebSub...",
         "ui_pinging": "\n📡 Invio notifica di indicizzazione immediata...",
         "ui_success_finish": "🏁 Operazioni completate con pieno successo!",
@@ -218,7 +216,7 @@ I18N_DICTIONARY = {
         "ui_rebuilding": "\n🔄 Generazione struttura di aggiornamento tattico...",
         "ui_json_error": "❌ Errore Critico: L'IA non ha restituito una struttura JSON valida. Riavvio generazione...",
         "ui_template_error": "❌ Errore durante la compilazione del template: ",
-        "ui_shutdown_clean": "\n\n🛑 Interruzione manuale rilevata (Ctrl+C). Arresto pulito del server.",
+        "ui_shutdown_clean": "\n\n🛑 Interruzione manuale rilevata (Ctrl+C). Arresto pulito del processo.",
         "tag_already_written": "🔵 [GIÀ SCRITTO]",
         "tag_live_finished": "🟡 Live/Terminato",
         "tag_future": "🟢 Futuro (Non iniziato)",
@@ -262,7 +260,7 @@ I18N_DICTIONARY = {
         "ui_pretty_fr": "🇫🇷 FR: ",
         "ui_env_read_error": "⚠️ Errore lettura file .env: {}",
         "ui_config_incomplete": "❌ Errore: Configurazione incompleta.",
-        "ui_config_env_instructions": "Assicurati di aver creato un file '.env' contenente: GEMINI_API_KEY=chiave_qui",
+        "ui_config_env_instructions": "Assicurati di aver impostato GEMINI_API_KEY nell'ambiente o nei secrets.",
         "ui_port_fallback": "⚠️ Fallback bypass porta {} innescato: {}",
         "ui_ai_escalation": "⚠️ [SCALATA IA] {} è temporaneamente saturo (Stato {}).",
         "ui_ai_trying_fallback": "Tentativo con il motore fallback successivo...",
@@ -293,7 +291,9 @@ I18N_DICTIONARY = {
         "ui_no_remote_data": "Nessun dato remoto riscontrato.",
         "ui_editorial_postmatch_note": "\n\n[NOTA EDITORIALE: Match terminato. NON usare il blocco formazioni. Concentrati esclusivamente su cronaca e statistiche finali.]",
         "ui_context_postmatch": "Revisione Post-Match Ufficiale ({})",
-        "ui_context_prematch": "Match Ufficiale Pre-Partita ({})"
+        "ui_context_prematch": "Match Ufficiale Pre-Partita ({})",
+        "ui_dispatch_inputs_loaded": "📥 [INPUT DISPATCH] Parametri letti con successo dal trigger della console.",
+        "ui_automated_execution": "🤖 Esecuzione automatizzata headless innescata."
     },
     "es": {
         "locale": "es_ES",
@@ -320,16 +320,16 @@ I18N_DICTIONARY = {
 }
 
 def t(chiave):
-    """i18n lookup function."""
-    return I18N_DICTIONARY[CURRENT_LANG].get(chiave, chiave)
+    """i18n lookup function complying strictly with Zero-Hardcoded Texts Rule."""
+    return I18N_DICTIONARY.get(CURRENT_LANG, I18N_DICTIONARY["it"]).get(chiave, chiave)
 
 # ==============================================================================
-# API KEY CONFIGURATION FROM .ENV FILE
+# API KEY CONFIGURATION FROM ENV OR SECRETS
 # ==============================================================================
-API_KEY = None
+API_KEY = os.environ.get("GEMINI_API_KEY")
 ENV_PATH = os.path.join(PROJECT_DIR, ".env") if os.path.exists(os.path.join(PROJECT_DIR, ".env")) else os.path.join(BASE_DIR, ".env")
 
-if os.path.exists(ENV_PATH):
+if not API_KEY and os.path.exists(ENV_PATH):
     try:
         with open(ENV_PATH, "r") as f:
             for line in f:
@@ -345,87 +345,12 @@ if not API_KEY:
 
 AI_MODELS_POOL = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]
 
-import readline
-
-def input_interattivo_avanzato(prompt_testo, prefill=""):
-    """Gestisce l'input a riga singola permettendo lo spostamento del cursore senza cancellare."""
-    def hook():
-        readline.insert_text(prefill)
-        readline.redisplay()
-    readline.set_pre_input_hook(hook)
-    try:
-        return input(prompt_testo)
-    finally:
-        readline.set_pre_input_hook(None)
-
-def leggi_input_multilinea_avanzato(messaggio_iniziale):
-    print(messaggio_iniziale)
-    print(t("ui_multiline_advanced_confirm"))
-    linee = []
-    while True:
-        try:
-            linea = input()
-            if linea == "" and (len(linee) == 0 or linee[-1] == ""):
-                if len(linee) > 0:
-                    linee.pop()  # Rimuove l'invio precedente vuoto
-                break
-            linee.append(linea)
-        except EOFError:
-            break
-    return "\n".join(linee)
-
-# ==============================================================================
-# UTILITY HELPER FUNCTIONS (DECLARED BEFORE CALL SCOPE)
-# ==============================================================================
-def avvia_server_anteprima(percorso_progetto, port=8080):
-    """Starts a lightweight python background thread preview server with active socket release validation."""
-    global ATTIVO_SERVER_PREVIEW
-    if ATTIVO_SERVER_PREVIEW is not None:
-        try:
-            ATTIVO_SERVER_PREVIEW.shutdown()
-            ATTIVO_SERVER_PREVIEW.server_close()
-            time.sleep(0.5)
-        except Exception:
-            pass
-    os.chdir(percorso_progetto)
-    class SilentHTTPHandler(http.server.SimpleHTTPRequestHandler):
-        def log_message(self, format, *args):
-            pass  # Silenzia i log sul terminale per non rompere l'input utente
-    handler = SilentHTTPHandler
-    socketserver.TCPServer.allow_reuse_address = True
-    try:
-        ATTIVO_SERVER_PREVIEW = socketserver.TCPServer(("", port), handler)
-        thread = threading.Thread(target=ATTIVO_SERVER_PREVIEW.serve_forever)
-        thread.daemon = True
-        thread.start()
-        return ATTIVO_SERVER_PREVIEW
-    except Exception as e:
-        print(t("ui_port_fallback").format(port, e))
-        return ATTIVO_SERVER_PREVIEW
-
-def leggi_input_multilinea(messaggio_iniziale):
-    print(messaggio_iniziale)
-    print(t("ui_multiline_confirm"))
-    linee = []
-    while True:
-        try:
-            linea = input()
-            if linea == "":
-                break
-            linee.append(linea)
-        except EOFError:
-            break
-    return "\n".join(linee)
-
 # ==============================================================================
 # REST COGNITIVE CORES & MODEL FAILOVER HANDLING
 # ==============================================================================
 def chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False):
-    """
-    Executes a native REST HTTP call to Gemini models with Google Search Grounding support,
-    managing cyclic models failover and exponential backoff on 503/429 concurrency errors.
-    """
-    pool_modelli = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]
+    """Executes a native REST HTTP call to Gemini models with Google Search Grounding support."""
+    pool_modelli = AI_MODELS_POOL
     attesa_saturazione = 15
     while True:
         for modello_nome in pool_modelli:
@@ -515,7 +440,7 @@ def genera_con_scalo_ai(prompt_sistema, prompt_utente):
         mentre_attendi = min(mentre_attendi * 2, 120)
 
 # ==============================================================================
-# BASE HTML LAYOUT TEMPLATE (NAVIGATION HIDDEN VIA COMMENTS)
+# BASE HTML LAYOUT TEMPLATE
 # ==============================================================================
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="{LANG}">
@@ -645,7 +570,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 """
 
 FEED_TEMPLATE = """<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">
 <channel>
     <title>Champions Report Mondiali 2026</title>
     <link>https://championsreport.editories.com</link>
@@ -812,29 +737,8 @@ def esegui_ping_websub(slug):
     except Exception as e:
         print(t("ui_websub_error").format(e))
 
-
 # ==============================================================================
-# 1. LIVE CONTEXT AUTO-DISCOVERY SCANNER (HUNTER WARMUP)
-# ==============================================================================
-def rileva_contesto_calcio_del_giorno(data_target):
-    """Executes a grounding micro-call to isolate the main football tournament running live."""
-    print(t("ui_hunter_warmup"))
-    prompt_contesto = f"""Quali sono i tornei o le competizioni di calcio principali (nazionali o internazionali) in corso di svolgimento nella data del {data_target}?
-    Rispondi unicamente con il nome della competizione più importante in lingua inglese (es: FIFA World Cup 2026, UEFA Euro 2026, UEFA Champions League). Non aggiungere altre parole."""
-
-    try:
-        competizione_rilevata = chiedi_raw_ai(None, prompt_contesto, usa_search=True)
-        if competizione_rilevata and len(competizione_rilevata.strip()) > 3:
-            contesto_pulito = competizione_rilevata.strip().split('\n')[0].replace('*', '').strip()
-            print(t("ui_context_found").format(contesto_pulito))
-            return contesto_pulito
-    except Exception:
-        pass
-    return "World Cup"
-
-
-# ==============================================================================
-# 2. INTERNATIONAL SLUG ALGORITHM GENERATION (SEO CLEAN)
+# INTERNATIONAL SLUG ALGORITHM GENERATION (SEO CLEAN)
 # ==============================================================================
 def genera_slug_internazionale_ai(squadra_a, squadra_b, competizione, anno):
     """Translates team names to English on the fly and generates structural international slugs."""
@@ -854,144 +758,12 @@ def genera_slug_internazionale_ai(squadra_a, squadra_b, competizione, anno):
     fallback = f"{squadra_a.lower()}-{squadra_b.lower()}-match{anno}".replace(" ", "")
     return "".join(c for c in fallback if c.isalnum() or c in "-_")
 
-
-# ==============================================================================
-# 3. QUALITATIVE TRAFFIC ANALYSIS FOR PREDICTIVE GOLDEN SLOT TIMING
-# ==============================================================================
-def calcola_slot_oro_pubblicazione_ai(squadra_a, squadra_b, orario_match, stadio, citta, data_testo):
-    """Analyzes kickoff data metrics and locations to compute strategic high-volume traffic slots."""
-    print(t("ui_cognitive_prediction"))
-    prompt_orario = f"""Sei un esperto SEO e data analyst sportivo. Analizza questo evento:
-    Match: {squadra_a} vs {squadra_b}
-    Calcio d'inizio: {orario_match}
-    Luogo: {stadio}, {citta} ({data_testo})
-
-    COMPITO: Calcola l'orario di pubblicazione strategico (Slot d'Oro) per massimizzare le visite prima che l'attenzione sul web esploda (es: 2-3 ore prima del calcio d'inizio se in Europa, o calcolato sul fuso orario nativo se d'oltreoceano).
-    CONVERTI TASSATIVAMENTE questo orario finale nel formato fuso italiano (es: 18:30 CEST o 14:15 CEST).
-    Fornisci SOLO l'orario convertito in formato 'HH:MM CEST'. Nessun commento o testo aggiuntivo."""
-    try:
-        orario_calcolato = chiedi_raw_ai(None, prompt_orario, usa_search=False)
-        if orario_calcolato and ":" in orario_calcolato:
-            return orario_calcolato.strip().replace("*", "")
-    except Exception:
-        pass
-    return "19:00 CEST"
-
-
-# ==============================================================================
-# TARGETED DISCOVERY WEB ENGINE (LASER TIME-FILTERED HUNTER ELEMENT)
-# ==============================================================================
-def targeted_discovery_remota_ai(parola_chiave, data_target, anno_corrente):
-    """Injects deterministic time restrictions directly into Google queries to narrow the search footprint."""
-    print(t("ui_targeted_discovery").format(parola_chiave, data_target))
-
-    query_iper_mirata = f"partite calcio oggi {data_target} competizione {parola_chiave} {anno_corrente} orario italia"
-    prompt_utente_cerca = f"""Effettua una ricerca sul web in tempo reale usando questa query: '{query_iper_mirata}'.
-    Trova unicamente i match programmati o giocati in questa data specifica ({data_target}).
-    Normalizza tassativamente gli orari dei match convertendoli tutti nel fuso orario italiano (CEST).
-    Esempio: se una partita si gioca a Los Angeles alle 17:00 del 1 luglio, calcola che l'ora italiana corrisponde alle 02:00 del 2 luglio CEST, quindi mostrala sotto la data del 2 luglio.
-    Elenca in lingua inglese le squadre involved, l'orario finale convertito in ora italiana (CEST), lo stadio e la città."""
-
-    risultato_ricerca_testuale = chiedi_raw_ai(None, prompt_utente_cerca, usa_search=True)
-    if not risultato_ricerca_testuale or len(risultato_ricerca_testuale.strip()) < 10:
-        print(t("ui_no_raw_data"))
-        return []
-
-    print(t("ui_cognitive_parsing"))
-
-    prompt_sistema_parse = "Sei un analista dati. Converti le informazioni fornite in un array JSON nativo valido e pulito."
-    prompt_utente_parse = f"""Analizza questo blocco informativo raccolto dal web:
----
-{risultato_ricerca_testuale}
----
-COMPITO: Isola i match che appartengono alla data del {data_target} secondo il fuso orario italiano/CEST e strutturali in un array JSON nativo.
-Assicurati che il campo 'ora' rifletta chirurgicamente l'orario italiano (es: '02:00 CEST' o '21:00 CEST'), resolving le discrepanze orarie dei report grezzi internazionali.
-
-Struttura esatta richiesta (nomi dei campi e valori strutturali rigorosamente in inglese):
-[ {{
-    "squadra_a": "Nome Squadra Casa",
-    "squadra_b": "Nome Squadra Ospite",
-    "ora": "Orario convertito in ora italiana (es. 02:00 CEST o 21:00 CEST)",
-    "data_iso": "{data_target}",
-    "data_testo": "Data estesa in inglese (es. July 2, {anno_corrente})",
-    "stadio": "Nome Stadio",
-    "citta": "Città"
-}} ]
-
-REGOLE TASSATIVE:
-1. Se nel testo non ci sono partite per il {data_target}, restituisci un array vuoto: []
-2. Fornisci SOLO il JSON puro, senza markdown."""
-
-    raw_json = chiedi_raw_ai(prompt_sistema_parse, prompt_utente_parse, usa_search=False)
-
-    try:
-        clean_json_str = raw_json.strip()
-        if "```json" in clean_json_str:
-            clean_json_str = clean_json_str.split("```json")[1].split("```")[0].strip()
-        elif "```" in clean_json_str:
-            clean_json_str = clean_json_str.split("```")[1].split("```")[0].strip()
-
-        match_json = re.search(r'\[\s*\{.*\}\s*\]', clean_json_str, re.DOTALL)
-        if match_json:
-            return json.loads(match_json.group(0))
-        return json.loads(clean_json_str)
-    except Exception:
-        return []
-
 def estrai_dati_tecnici_ai(squadra_a, squadra_b, anno_corrente):
     """Stato 3: Pulls down probable setups, tactical news, and team conditions."""
     print(t("ui_stato3_extraction").format(squadra_a, squadra_b))
     prompt_sistema = "Sei un analista tattico della redazione sportiva. Generi report tecnici sulle squadre."
     prompt_utente = f"Generate an updated detailed technical scouting dossier for the match {squadra_a} vs {squadra_b} within the tournament context of the year {anno_corrente}. Tightly extract expected probable lineups, open tactical doubts, full injured/suspended players lists, and current team form metrics. The entire output blueprint MUST be written strictly in English."
     return chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False)
-
-def scansiona_immagine_vision_ai(percorso_immagine, match_info=None):
-    """Decodes the local image to Base64 and executes a multimodal Vision REST call to Gemini."""
-    import base64
-    if not os.path.exists(percorso_immagine):
-        return t("ui_vision_none")
-    try:
-        with open(percorso_immagine, "rb") as img_f:
-            b64_data = base64.b64encode(img_f.read()).decode("utf-8")
-
-        mime_type = "image/jpeg"
-        if percorso_immagine.lower().endswith(".png"):
-            mime_type = "image/png"
-        elif percorso_immagine.lower().endswith(".webp"):
-            mime_type = "image/webp"
-
-        if match_info:
-            contesto_match = f"\nContext Match Details: {match_info.get('squadra_a', 'Unknown')} vs {match_info.get('squadra_b', 'Unknown')} at {match_info.get('stadio', 'Stadium')}, {match_info.get('citta', 'City')} ({match_info.get('data_testo', 'Today')})."
-        else:
-            contesto_match = ""
-
-        prompt_vision = f"Analyze this football match cover photo. Describe the players present, jersey colors, expressions, actions, and connect them accurately to the known context of the event.{contesto_match} Provide a highly professional, concise journalistic analysis summary for the redaction."
-
-        for modello_nome in AI_MODELS_POOL:
-            try:
-                url = f"[https://generativelanguage.googleapis.com/v1beta/models/](https://generativelanguage.googleapis.com/v1beta/models/){modello_nome}:generateContent?key={API_KEY}"
-                headers = {"Content-Type": "application/json"}
-                payload = {
-                    "contents": [{
-                        "parts": [
-                            {"text": prompt_vision},
-                            {
-                                "inlineData": {
-                                    "mimeType": mime_type,
-                                    "data": b64_data
-                                }
-                            }
-                        ]
-                    }]
-                }
-                r = requests.post(url, headers=headers, json=payload, timeout=40)
-                if r.status_code == 200:
-                    return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
-            except Exception:
-                continue
-    except Exception as e:
-        return t("ui_vision_breakdown").format(e)
-    return t("ui_vision_unavailable")
 
 def genera_guida(match_info, dossier_tecnico):
     """Stato 4: Formats a synthesis layout wrapper to guide localized copywriters."""
@@ -1017,7 +789,7 @@ def genera_guida(match_info, dossier_tecnico):
     return "\n".join(linee)
 
 # ==============================================================================
-# MAIN REDACTION PIPELINE EXECUTION BLOCK
+# MAIN BACKEND PIPELINE EXECUTION BLOCK (GITHUB ACTIONS HEADLESS / DISPATCH)
 # ==============================================================================
 if __name__ == "__main__":
     try:
@@ -1028,163 +800,59 @@ if __name__ == "__main__":
         data_corrente = datetime.now()
         anno_corrente = data_corrente.year
 
-        # STEP 1: KEYWORD SEARCH SELECTION
-        print(t("ui_input_keyword"))
-        query_input = input_interattivo_avanzato(t("ui_input_keyword_help")).strip()
+        # Lettura parametri inviati dalla Console via GitHub Actions Dispatch
+        query_comp = os.environ.get("INPUT_COMPETITION") or "FIFA World Cup 2026"
+        squadra_a = os.environ.get("INPUT_SQUADRA_A") or "Spagna"
+        squadra_b = os.environ.get("INPUT_SQUADRA_B") or "Austria"
+        ora_match = os.environ.get("INPUT_ORARIO") or "21:00 CEST"
+        stadio_match = os.environ.get("INPUT_STADIO") or "MetLife Stadium"
+        citta_match = os.environ.get("INPUT_CITTA") or "New York"
+        titolo_custom = os.environ.get("INPUT_CUSTOM_TITLE", "").strip()
+        guidelines_utente = os.environ.get("INPUT_GUIDELINES", "").strip()
+        opzione_foto = os.environ.get("INPUT_OPZIONE_FOTO", "1")
+        photo_author = os.environ.get("INPUT_PHOTO_AUTHOR", "").strip()
+        photo_author_link = os.environ.get("INPUT_PHOTO_AUTHOR_LINK", "").strip()
+        photo_license = os.environ.get("INPUT_PHOTO_LICENSE", "").strip()
+        photo_license_link = os.environ.get("INPUT_PHOTO_LICENSE_LINK", "").strip()
+        caption_guideline = os.environ.get("INPUT_CAPTION_GUIDELINE", "").strip()
 
-        if not query_input:
-            query_comp = rileva_contesto_calcio_del_giorno(data_corrente.strftime("%d %B %Y"))
-        else:
-            query_comp = query_input
+        print(t("ui_dispatch_inputs_loaded"))
+        print(t("ui_automated_execution"))
 
-        # STEP 2: TIME BOUNDARY CONFIGURATION
-        print(t("ui_time_horizon"))
-        print(t("ui_opt_today"))
-        print(t("ui_opt_tomorrow"))
-        scelta_tempo = input_interattivo_avanzato(t("ui_select_option")).strip() or "1"
-
-        target_date = data_corrente + timedelta(days=1) if scelta_tempo == "2" else data_corrente
+        target_date = data_corrente
         iso_giorno = target_date.strftime("%Y-%m-%d")
 
-        # 🔍 FASE 1: SCANSIONE DELL ARCHIVIO LOCALE E DIAGNOSTICA
-        articoli_scritti = os.listdir(ARTICLES_OUTPUT_DIR) if os.path.exists(ARTICLES_OUTPUT_DIR) else []
-        match_filtrati = targeted_discovery_remota_ai(query_comp, iso_giorno, anno_corrente)
+        partita_iniziata_o_terminata = False
+        try:
+            ora_pulita = ora_match.split()[0]
+            ore_m, min_m = map(int, ora_pulita.split(":"))
+            ora_match_dt = target_date.replace(hour=ore_m, minute=min_m, second=0, microsecond=0)
+            if datetime.now() > ora_match_dt:
+                partita_iniziata_o_terminata = True
+        except Exception:
+            pass
 
-        match_selezionato = None
-        lista_match = []
+        slug_articolo = genera_slug_internazionale_ai(squadra_a, squadra_b, query_comp, anno_corrente)
 
-        if match_filtrati:
-            print(t("ui_matches_detected"))
-            for m in match_filtrati[:6]:
-                sq_a = m.get("squadra_a", "Unknown")
-                sq_b = m.get("squadra_b", "Unknown")
-                ora_raw = m.get("ora", "18:00 CEST")
+        match_selezionato = {
+            "id": "1",
+            "squadra_a": squadra_a,
+            "squadra_b": squadra_b,
+            "ora": ora_match,
+            "data_iso": iso_giorno,
+            "data_testo": target_date.strftime("%B %d, %Y").strip(),
+            "stadio": stadio_match,
+            "citta": citta_match,
+            "partita_iniziata_o_terminata": partita_iniziata_o_terminata
+        }
 
-                partita_iniziata_o_terminata = False
-                try:
-                    ora_pulita = ora_raw.split()[0]
-                    ore_m, min_m = map(int, ora_pulita.split(":"))
-                    ora_match_dt = target_date.replace(hour=ore_m, minute=min_m, second=0, microsecond=0)
-                    if datetime.now() > ora_match_dt:
-                        partita_iniziata_o_terminata = True
-                except Exception:
-                    pass
-
-                torneo_record = m.get("competizione", query_comp)
-                slug_teorico = genera_slug_internazionale_ai(sq_a, sq_b, torneo_record, anno_corrente)
-                cartella_esistente = slug_teorico if slug_teorico in articoli_scritti else None
-
-                if cartella_esistente:
-                    tag_diagnostico = t("tag_already_written")
-                elif partita_iniziata_o_terminata:
-                    tag_diagnostico = t("tag_live_finished")
-                else:
-                    tag_diagnostico = t("tag_future")
-
-                m_id = str(len(lista_match) + 1)
-                print(f" [{m_id}] {tag_diagnostico} {sq_a} vs {sq_b} ({ora_raw})")
-
-                lista_match.append({
-                    "id": m_id,
-                    "squadra_a": sq_a,
-                    "squadra_b": sq_b,
-                    "ora": ora_raw,
-                    "data_iso": m.get("data_iso", iso_giorno),
-                    "data_testo": m.get("data_testo", target_date.strftime("%B %d, %Y")),
-                    "stadio": m.get("stadio", "MetLife Stadium"),
-                    "citta": m.get("citta", "International Arena"),
-                    "partita_iniziata_o_terminata": partita_iniziata_o_terminata,
-                    "cartella_esistente": cartella_esistente
-                })
-
-            scelta = input_interattivo_avanzato(t("ui_select_match_id")).strip()
-            try:
-                if scelta:
-                    match_selezionato = lista_match[int(scelta) - 1]
-            except Exception:
-                pass
-
-        if not match_selezionato:
-            print(t("ui_manual_mode"))
-            sq_a = input(t("ui_input_home")).strip()
-            if not sq_a:
-                print(t("ui_null_input"))
-                sys.exit(0)
-            sq_b = input(t("ui_input_away")).strip()
-            ora_m = input(t("ui_input_time")).strip() or "20:45 CEST"
-            stadio_m = input(t("ui_input_stadium")).strip() or "MetLife Stadium"
-            citta_m = input(t("ui_input_city")).strip() or "New York"
-
-            partita_iniziata_o_terminata = False
-            try:
-                ora_pulita = ora_m.split()[0]
-                ore_m, min_m = map(int, ora_pulita.split(":"))
-                ora_match_dt = target_date.replace(hour=ore_m, minute=min_m, second=0, microsecond=0)
-                if datetime.now() > ora_match_dt:
-                    partita_iniziata_o_terminata = True
-            except Exception:
-                pass
-
-            slug_teorico_man = genera_slug_internazionale_ai(sq_a, sq_b, query_comp, anno_corrente)
-            cartella_esistente = slug_teorico_man if slug_teorico_man in articoli_scritti else None
-
-            match_selezionato = {
-                "id": "1", "squadra_a": sq_a, "squadra_b": sq_b, "ora": ora_m,
-                "data_iso": iso_giorno, "data_testo": target_date.strftime("%B %d, %Y").strip(),
-                "stadio": stadio_m, "citta": citta_m,
-                "partita_iniziata_o_terminata": partita_iniziata_o_terminata,
-                "cartella_esistente": cartella_esistente
-            }
-
-        # 🎯 FASE 2: SCELTA DELLA MODALITÀ OPERATIVA (FILTRO TEMPORALE AUTOMATICO)
-        if not match_selezionato["partita_iniziata_o_terminata"]:
-            scelta_modalita = "1"
+        scelta_modalita = "2" if partita_iniziata_o_terminata else "1"
+        if scelta_modalita == "1":
             print(t("ui_fase2_pre_match"))
         else:
-            scelta_modalita = "2"
             print(t("ui_fase2_post_match"))
 
-        # ⚠️ FASE 3: CONTROLLO DI RISCRITTURA COERENTE (SARTORIALE)
-        if match_selezionato["cartella_esistente"]:
-            ha_post_match = False
-            percorso_it = os.path.join(ARTICLES_OUTPUT_DIR, match_selezionato["cartella_esistente"], "it.html")
-            if os.path.exists(percorso_it):
-                try:
-                    with open(percorso_it, "r", encoding="utf-8") as f_check:
-                        contenuto_html = f_check.read()
-                        if "FINISHED" in contenuto_html or "Post-Match" in contenuto_html or "Cronaca" in contenuto_html:
-                            ha_post_match = True
-                except Exception:
-                    pass
-
-            proponi_riscrittura = False
-            messaggio_alert = ""
-
-            if scelta_modalita == "1":
-                proponi_riscrittura = True
-                messaggio_alert = t("ui_fase3_alert_pre").format(match_selezionato['squadra_a'], match_selezionato['squadra_b'])
-            elif scelta_modalita == "2" and ha_post_match:
-                proponi_riscrittura = True
-                messaggio_alert = t("ui_fase3_alert_post").format(match_selezionato['squadra_a'], match_selezionato['squadra_b'])
-
-            if proponi_riscrittura:
-                print(f"\n{messaggio_alert}")
-                print(t("ui_fase3_operation_title"))
-                print(t("ui_fase3_opt_update"))
-                print(t("ui_fase3_opt_rewrite"))
-                scelta_op = input(t("ui_fase3_select_option")).strip()
-
-                if scelta_op == "1":
-                    print(t("ui_fase3_mode_update"))
-                    nota_aggiornamento = input_interattivo_avanzato(t("ui_fase3_input_flash"))
-                    match_selezionato["nota_flash_urgente"] = nota_aggiornamento
-                elif scelta_op == "2":
-                    print(t("ui_fase3_mode_rewrite"))
-                else:
-                    print(t("ui_fase3_cancelled_msg"))
-                    sys.exit(0)
-
-        # 🚀 FASE 4: INNESCO DEL DOSSIER ED ESTRAZIONE AI MIRATA
+        # FASE 4: Dossier e Blueprint
         dossier = estrai_dati_tecnici_ai(match_selezionato["squadra_a"], match_selezionato["squadra_b"], anno_corrente)
         if scelta_modalita == "2":
             dossier += t("ui_editorial_postmatch_note")
@@ -1192,66 +860,27 @@ if __name__ == "__main__":
         match_selezionato["dossier_match"] = dossier
         match_selezionato["dati_contesto"] = t("ui_context_postmatch").format(query_comp) if scelta_modalita == "2" else t("ui_context_prematch").format(query_comp)
 
-        testo_guida_definitivo = genera_guida(match_selezionato, match_selezionato["dossier_match"])
-        print(testo_guida_definitivo)
+        testo_guida = genera_guida(match_selezionato, match_selezionato["dossier_match"])
+        print(testo_guida)
 
-        slug_pulito = genera_slug_internazionale_ai(match_selezionato['squadra_a'], match_selezionato['squadra_b'], query_comp, anno_corrente)
-        slug_articolo = input_interattivo_avanzato(f"{t('ui_input_slug')} [{slug_pulito}]: ").strip() or slug_pulito
+        # Gestione immagine di copertina
+        nome_foto_finalizzata = "logo.png"
+        didascalia_istruzione = ""
 
-        orario_predetto_default = calcola_slot_oro_pubblicazione_ai(
-            match_selezionato['squadra_a'], match_selezionato['squadra_b'],
-            match_selezionato['ora'], match_selezionato['stadio'],
-            match_selezionato['citta'], match_selezionato['data_testo']
-        )
+        if opzione_foto == "2":
+            nome_foto_finalizzata = f"{slug_articolo}.jpg"
+            author_html = f'<a href="{photo_author_link}" target="_blank" rel="noopener noreferrer">{photo_author}</a>' if photo_author_link else photo_author
+            license_html = f'<a href="{photo_license_link}" target="_blank" rel="noopener noreferrer">{photo_license}</a>' if photo_license_link else photo_license
+            crediti = f" (Foto di {author_html} / {license_html})" if photo_author else ""
+            if caption_guideline:
+                didascalia_istruzione = f"Usa questa didascalia: '{caption_guideline}'. Appendi: '{crediti}'."
+            else:
+                didascalia_istruzione = f"Genera una didascalia giornalistica d'alto livello. Appendi: '{crediti}'."
+        elif opzione_foto == "3" and guidelines_utente.startswith("http"):
+            nome_foto_finalizzata = guidelines_utente.strip()
 
-        print(t("ui_input_title"))
-        print(t("ui_title_multiline_help"))
-        linee_titolo = []
-        while True:
-            l_tit = input()
-            if l_tit == "":
-                break
-            linee_titolo.append(l_tit)
-        titolo_custom = "\n".join(linee_titolo).strip()
-        orario_pub_custom = input_interattivo_avanzato(f"{t('ui_input_pub_time')} [{orario_predetto_default}]: ").strip() or orario_predetto_default
+        match_selezionato["immagine_copertina"] = nome_foto_finalizzata
 
-        prompt_redazionale_utente = leggi_input_multilinea_avanzato(t("ui_input_multiline_prompt"))
-
-        print(f"{t('ui_check_downloads')}{DOWNLOADS_DIR}")
-        nome_foto = ""
-        while not nome_foto:
-            nome_foto = input_interattivo_avanzato(t("ui_input_cover")).strip()
-            if not nome_foto:
-                print(t("ui_cover_name_empty"))
-
-        estensione = os.path.splitext(nome_foto)[1] or ".jpg"
-        nome_foto_finalizzat_assets = f"{slug_articolo}{estensione}"
-
-        percorso_foto_origine = os.path.join(DOWNLOADS_DIR, nome_foto)
-        if os.path.exists(percorso_foto_origine):
-            print(t("ui_vision_init"))
-            vision_dossier = scansiona_immagine_vision_ai(percorso_foto_origine, match_selezionato)
-            print("--------------------------------------------------------------------")
-            print(t("ui_vision_output").format(vision_dossier))
-            print("--------------------------------------------------------------------")
-            print(t("ui_caption_prompt_title"))
-            print(t("ui_caption_prompt_help"))
-            print(t("ui_caption_prompt_confirm"))
-            linee_didascalia = []
-            while True:
-                l_did = input()
-                if l_did == "":
-                    break
-                linee_didascalia.append(l_did)
-            didascalia_istruzione = "\n".join(linee_didascalia).strip()
-            shutil.copy(percorso_foto_origine, os.path.join(ASSETS_DIR, nome_foto_finalizzat_assets))
-            print(f"{t('ui_img_copied')}{nome_foto_finalizzat_assets}")
-        else:
-            print(t('ui_img_missing').format(nome_foto, DOWNLOADS_DIR))
-            vision_dossier = t("ui_no_cover_data")
-            didascalia_istruzione = ""
-        
-        match_selezionato["immagine_copertina"] = nome_foto_finalizzat_assets
         prompt_completo_ai = f"""Sviluppa l'articolo giornalistico sportivo multilingua seguendo fedelmente queste linee guida ed informazioni reali riscontrate:
 - Incontro: {match_selezionato['squadra_a']} vs {match_selezionato['squadra_b']}
 - Data e Ora: {match_selezionato['data_testo']} alle ore {match_selezionato['ora']}
@@ -1261,90 +890,42 @@ DOSSIER INFORMATIVO ESTRATTO IN TEMPO REALE DA PROCESSARE:
 {match_selezionato.get('dossier_match', t('ui_no_remote_data'))}
 
 Direttive ed Espansioni fornite dal Redattore:
-{prompt_redazionale_utente}
+{guidelines_utente}
 """
         if didascalia_istruzione:
-            prompt_completo_ai += f"\n- Istruzione Redazionale Didascalia Foto: Genera la didascalia basandoti sull'analisi dell'immagine fornita dal modulo Vision, seguendo questa guida interattiva del redattore: {didascalia_istruzione}. Traducila in tutte e 4 le lingue."
+            prompt_completo_ai += f"\n- Istruzione Redazionale Didascalia Foto: {didascalia_istruzione}. Traducila in tutte e 4 le lingue."
         if titolo_custom:
             prompt_completo_ai += f"\n- Vincolo Titolo Italiano: Devi usare tassativamente questo titolo: '{titolo_custom}'. Traducilo in modo coerente e vario for le altre tre lingue."
 
         print(t("ui_engine_start"))
         raw_ai_output = genera_con_scalo_ai(PROMPT_SISTEMA_EDITORIALE, prompt_completo_ai)
 
-        revisione_attiva = True
-        while revisione_attiva:
-            try:
-                clean_json_str = raw_ai_output.strip().replace("```json", "").replace("```", "")
-                dati_generati_json = json.loads(clean_json_str)
+        clean_json_str = raw_ai_output.strip().replace("```json", "").replace("```", "")
+        dati_generati_json = json.loads(clean_json_str)
 
-                compila_file_finali(slug_articolo, match_selezionato, dati_generati_json, orario_pub_custom)
+        compila_file_finali(slug_articolo, match_selezionato, dati_generati_json, ora_match.split()[0])
 
-                server_preview = avvia_server_anteprima(PROJECT_DIR, port=8080)
+        print(f"{t('ui_saved_path')}{os.path.join(ARTICLES_OUTPUT_DIR, slug_articolo)}/")
+        print(f"{t('ui_generated_title')}{dati_generati_json['it']['titolo']}")
+        print(t("ui_production_links"))
+        print(f"{t('ui_link_it')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/it.html")
+        print(f"{t('ui_link_en')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/en.html")
+        print(f"{t('ui_link_es')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/es.html")
+        print(f"{t('ui_link_fr')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/fr.html")
+        print(f"{t('ui_link_rss')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/feed.xml")
+        print(t("ui_google_prettylinks"))
+        print(f"{t('ui_pretty_it')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/it")
+        print(f"{t('ui_pretty_en')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/en")
+        print(f"{t('ui_pretty_es')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/es")
+        print(f"{t('ui_pretty_fr')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/fr\n")
 
-                print(t("ui_preview_title").format(slug_articolo))
-                print(f"{t('ui_generated_title')}{dati_generati_json['it']['titolo']}")
-
-                scelta_utente = input(t("ui_user_satisfaction")).strip().lower()
-
-                try:
-                    server_preview.shutdown()
-                    server_preview.server_close()
-                except Exception:
-                    pass
-
-                if scelta_utente == 'y':
-                    revisione_attiva = False
-                    print(f"{t('ui_saved_path')}{os.path.join(ARTICLES_OUTPUT_DIR, slug_articolo)}/")
-                    print(t("ui_compressing"))
-                    os.system("rm -f champions-report.zip")
-                    os.system("zip -r champions-report.zip assets articles > /dev/null")
-                    print(t("ui_archive_ready"))
-                    print(t("ui_cloudflare_pause"))
-                    print(t("ui_production_links"))
-                    print(f"{t('ui_link_it')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/it.html")
-                    print(f"{t('ui_link_en')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/en.html")
-                    print(f"{t('ui_link_es')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/es.html")
-                    print(f"{t('ui_link_fr')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/fr.html")
-                    print(f"{t('ui_link_rss')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/feed.xml")
-                    print(t("ui_google_prettylinks"))
-                    print(f"{t('ui_pretty_it')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/it")
-                    print(f"{t('ui_pretty_en')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/en")
-                    print(f"{t('ui_pretty_es')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/es")
-                    print(f"{t('ui_pretty_fr')}[https://championsreport.editories.com/articles/](https://championsreport.editories.com/articles/){slug_articolo}/fr\n")
-                    input(t("ui_websub_prompt"))
-                    print(t("ui_pinging"))
-                    esegui_ping_websub(slug_articolo)
-                    print(t("ui_success_finish"))
-                else:
-                    modifica_richiesta = input(t("ui_ai_correction")).strip()
-                    print(t("ui_saving_draft"))
-                    prompt_sistema_modifica_chirurgica = """Sei un revisore editoriale di file JSON strutturati.
-Il tuo UNICO compito è ricevere in input un pacchetto JSON multilingua, localizzare chirurgicamente le chiavi o i dettagli testuali richiesti dal redattore e restituire il JSON modificato solo ed esclusivamente in quei punti.
-MANTIENI TOTALMENTE IDENTICI tutti gli altri blocchi HTML, descrizioni e titoli intatti se non interessati dalla richiesta, senza ri-generarli o inventarli da zero.
-Restituisci ESCLUSIVAMENTE un oggetto JSON nativo valido, senza blocchi di testo esterni o marcatori markdown di tipo ```json."""
-
-                    prompt_correzione_chirurgica = f"""Dati JSON della Bozza Attuale:
-{json.dumps(dati_generati_json, indent=2, ensure_ascii=False)}
-
-Richiesta di variazione del redattore:
-{modifica_richiesta}
-
-COMPITO: Applica la variazione richiesta sopra nel JSON modificando solo i campi necessari in tutte e 4 le lingue (es: se la richiesta riguarda la didascalia della foto, modifica solo 'didascalia_foto' in it, en, es, fr). Lascia intatto il resto."""
-
-                    print(t("ui_processing_surgical"))
-                    raw_ai_output = genera_con_scalo_ai(prompt_sistema_modifica_chirurgica, prompt_correzione_chirurgica)
-
-            except json.JSONDecodeError:
-                print(t("ui_json_error"))
-                raw_ai_output = genera_con_scalo_ai(PROMPT_SISTEMA_EDITORIALE, prompt_completo_ai)
-            except Exception as e:
-                print(f"{t('ui_template_error')}{e}")
-                revisione_attiva = False
+        print(t("ui_pinging"))
+        esegui_ping_websub(slug_articolo)
+        print(t("ui_success_finish"))
 
     except KeyboardInterrupt:
         print(t("ui_shutdown_clean"))
-        try:
-            server_preview.shutdown()
-        except NameError:
-            pass
         sys.exit(0)
+    except Exception as e:
+        print(f"{t('ui_template_error')}{e}")
+        sys.exit(1)
