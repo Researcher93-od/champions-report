@@ -343,7 +343,7 @@ if not API_KEY:
     print(t("ui_config_env_instructions"))
     sys.exit(1)
 
-AI_MODELS_POOL = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-latest"]
+AI_MODELS_POOL = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]
 
 import readline
 
@@ -425,7 +425,7 @@ def chiedi_raw_ai(prompt_sistema, prompt_utente, usa_search=False):
     Executes a native REST HTTP call to Gemini models with Google Search Grounding support,
     managing cyclic models failover and exponential backoff on 503/429 concurrency errors.
     """
-    pool_modelli = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-latest"]
+    pool_modelli = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]
     attesa_saturazione = 15
     while True:
         for modello_nome in pool_modelli:
@@ -733,7 +733,7 @@ def compila_file_finali(slug, dati_partita, dati_generati_json, orario_pubblicaz
 
     mesi_it = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     mesi_en = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    mesi_es = ["", "de enero", "de febrero", "de marzo", "de abril", "de mayo", "de junio", "de julio", "de agosto", "de septiembre", "de octubre", "de noviembre", "de diciembre"]
+    mesi_es = ["", "de enero", "de febrero", "de marzo", "de abril", "de mayo", "de junio", "de julio", "de agosto", "de septiembre", "de ottobre", "de noviembre", "de diciembre"]
     mesi_fr = ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 
     for lang in ["it", "en", "es", "fr"]:
