@@ -1,0 +1,30 @@
+name: "Champion's Report - Cloudflare Pages Deployment"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: "Deploy Automatico su Cloudflare Pages"
+    
+    steps:
+      - name: "Fase 1: Controllo Checkout del Repository"
+        uses: actions/checkout@v4
+
+      - name: "Fase 2: Setup dell'ambiente Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: "Fase 3: Pubblicazione e Deploy su Cloudflare Pages"
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: "champions-report"
+          directory: "."
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
