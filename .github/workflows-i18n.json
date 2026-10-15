@@ -1,0 +1,27 @@
+{
+  "en": {
+    "CR_WORKFLOW_DISPATCH_TITLE": "Champion's Report - Editorial Generation",
+    "INPUT_KEY_COMPETITION": "Competition / Tournament Name",
+    "INPUT_KEY_TEAM_HOME": "Home Team (Team A)",
+    "INPUT_KEY_TEAM_AWAY": "Away Team (Team B)",
+    "INPUT_KEY_MATCH_TIME": "Match Time",
+    "INPUT_KEY_VENUE_STADIUM": "Stadium / Venue",
+    "INPUT_KEY_VENUE_CITY": "City",
+    "INPUT_KEY_CUSTOM_TITLE": "Custom Title (Optional)",
+    "INPUT_KEY_PHOTO_STRATEGY": "Photo Strategy (1 = Standard, etc.)",
+    "INPUT_KEY_PHOTO_AUTHOR": "Photo Author",
+    "INPUT_KEY_PHOTO_AUTHOR_LINK": "Photo Author Link",
+    "INPUT_KEY_PHOTO_LICENSE": "Photo License",
+    "INPUT_KEY_PHOTO_LICENSE_LINK": "Photo License Link",
+    "INPUT_KEY_CAPTION_GUIDELINE": "Caption Guidelines",
+    "INPUT_KEY_EDITORIAL_GUIDELINES": "Additional Editorial Guidelines",
+    "STEP_CHECKOUT_REPOSITORY": "Step 1: Repository Checkout",
+    "STEP_SETUP_PYTHON": "Step 2: Setup Python Environment",
+    "STEP_INSTALL_DEPENDENCIES": "Step 3: Install Dependencies",
+    "STEP_RUN_EDITORIAL_ENGINE": "Step 4: Run AI Editorial Engine",
+    "STEP_COMMIT_AND_SYNC_REPOSITORY": "Step 5: Commit and Sync Repository",
+    "STEP_CLOUDFLARE_PAGES_DEPLOY_WRANGLER": "Step 6: Publish and Deploy to Cloudflare Pages",
+    "CI_COMMIT_EDITORIAL_PUBLISH": "Automatic article publishing",
+    "CI_LOG_NO_CHANGES": "No changes detected in editorial content."
+  }
+}
